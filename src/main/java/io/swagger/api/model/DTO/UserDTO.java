@@ -1,12 +1,16 @@
 package io.swagger.api.model.DTO;
 
 import java.util.Objects;
+import java.util.UUID;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.threeten.bp.LocalDate;
 import org.springframework.validation.annotation.Validated;
+
+import javax.persistence.Id;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 
@@ -18,8 +22,9 @@ import javax.validation.constraints.*;
 
 
 public class UserDTO   {
+  @Id
   @JsonProperty("userId")
-  private Integer userId = null;
+  private UUID userId = null;
 
   @JsonProperty("firstName")
   private String firstName = null;
@@ -114,7 +119,7 @@ public class UserDTO   {
   @JsonProperty("transactionLimit")
   private Double transactionLimit = null;
 
-  public UserDTO userId(Integer userId) {
+  public UserDTO userId(UUID userId) {
     this.userId = userId;
     return this;
   }
@@ -126,11 +131,11 @@ public class UserDTO   {
   @Schema(example = "10", required = true, description = "")
       @NotNull
 
-    public Integer getUserId() {
+    public UUID getUserId() {
     return userId;
   }
 
-  public void setUserId(Integer userId) {
+  public void setUserId(UUID userId) {
     this.userId = userId;
   }
 
