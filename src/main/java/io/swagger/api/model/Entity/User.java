@@ -1,5 +1,6 @@
 package io.swagger.api.model.Entity;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -10,7 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import org.threeten.bp.LocalDate;
 import org.springframework.validation.annotation.Validated;
 
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 
@@ -20,9 +21,10 @@ import javax.validation.constraints.*;
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-04T11:53:18.205Z[GMT]")
 
-
+@Entity
 public class User {
   @Id
+  @GeneratedValue
   @JsonProperty("userId")
   private UUID userId = null;
 
@@ -78,7 +80,8 @@ public class User {
   private RoleEnum role = null;
 
   @JsonProperty("accounts")
-  private Account accounts = null;
+  @OneToMany(mappedBy = "userID")
+  private List<Account> accounts = null;
 
   /**
    * Gets or Sets accountStatus
@@ -281,7 +284,7 @@ public class User {
     this.role = role;
   }
 
-  public User accounts(Account accounts) {
+  public User accounts(List<Account> accounts) {
     this.accounts = accounts;
     return this;
   }
@@ -294,11 +297,11 @@ public class User {
       @NotNull
 
     @Valid
-    public Account getAccounts() {
+    public List<Account> getAccounts() {
     return accounts;
   }
 
-  public void setAccounts(Account accounts) {
+  public void setAccounts(List<Account> accounts) {
     this.accounts = accounts;
   }
 
@@ -421,5 +424,23 @@ public class User {
       return "null";
     }
     return o.toString().replace("\n", "\n    ");
+  }
+
+  public User(UUID userId, String firstName, String lastName, String email, LocalDate dateOfBirth, String address, String phoneNumber, RoleEnum role, List<Account> accounts, AccountStatusEnum accountStatus, Double dayLimit, Double transactionLimit) {
+    this.userId = userId;
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.email = email;
+    this.dateOfBirth = dateOfBirth;
+    this.address = address;
+    this.phoneNumber = phoneNumber;
+    this.role = role;
+    this.accounts = accounts;
+    this.accountStatus = accountStatus;
+    this.dayLimit = dayLimit;
+    this.transactionLimit = transactionLimit;
+  }
+
+  public User() {
   }
 }

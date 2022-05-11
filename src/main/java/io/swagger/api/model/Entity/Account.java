@@ -1,12 +1,16 @@
 package io.swagger.api.model.Entity;
 
 import java.util.Objects;
+import java.util.UUID;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.validation.constraints.*;
 
 /**
@@ -15,10 +19,13 @@ import javax.validation.constraints.*;
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-04T11:53:18.205Z[GMT]")
 
-
+@Entity
 public class Account {
   @JsonProperty("IBAN")
+  @Id
   private String IBAN = null;
+
+  private UUID userID;
 
   /**
    * Gets or Sets accountType
@@ -82,6 +89,14 @@ public class Account {
   public Account accountType(AccountTypeEnum accountType) {
     this.accountType = accountType;
     return this;
+  }
+
+  public UUID getUserID() {
+    return userID;
+  }
+
+  public void setUserID(UUID userID) {
+    this.userID = userID;
   }
 
   /**

@@ -6,9 +6,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-@Entity
 public class TransactionDTO {
-    @Id
+
     private Integer transactionId;
 
     public enum TypeEnum {

@@ -6,14 +6,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import java.util.List;
 import java.util.UUID;
 
-@Entity
+
 public class UserDTO {
-    @Id
+
     private UUID userID;
 
     private String firstName;
