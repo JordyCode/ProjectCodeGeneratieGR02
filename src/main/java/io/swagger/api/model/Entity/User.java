@@ -39,7 +39,7 @@ public class User {
   private LocalDate dateOfBirth = null;
 
   @JsonProperty("address")
-  private Adress address = null;
+  private String address = null;
 
   @JsonProperty("phoneNumber")
   private String phoneNumber = null;
@@ -220,7 +220,7 @@ public class User {
     this.dateOfBirth = dateOfBirth;
   }
 
-  public User address(Adress address) {
+  public User address(String address) {
     this.address = address;
     return this;
   }
@@ -233,11 +233,11 @@ public class User {
       @NotNull
 
     @Valid
-    public Adress getAddress() {
+    public String getAddress() {
     return address;
   }
 
-  public void setAddress(Adress address) {
+  public void setAddress(String address) {
     this.address = address;
   }
 

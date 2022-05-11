@@ -2,7 +2,7 @@ package io.swagger.api.controller;
 
 import io.swagger.api.LoginApi;
 import io.swagger.api.model.Entity.AuthenticationToken;
-import io.swagger.api.model.Entity.Login;
+import io.swagger.api.model.DTO.LoginDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -34,7 +34,7 @@ public class LoginApiController implements LoginApi {
         this.request = request;
     }
 
-    public ResponseEntity<AuthenticationToken> authenticate(@Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody Login body) {
+    public ResponseEntity<AuthenticationToken> authenticate(@Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody LoginDTO body) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {

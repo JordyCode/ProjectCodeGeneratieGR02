@@ -6,7 +6,7 @@
 package io.swagger.api;
 
 import io.swagger.api.model.Entity.AuthenticationToken;
-import io.swagger.api.model.Entity.Login;
+import io.swagger.api.model.DTO.LoginDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -35,7 +35,7 @@ public interface LoginApi {
         produces = { "application/json" }, 
         consumes = { "application/json" }, 
         method = RequestMethod.POST)
-    ResponseEntity<AuthenticationToken> authenticate(@Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody Login body);
+    ResponseEntity<AuthenticationToken> authenticate(@Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody LoginDTO body);
 
 }
 
