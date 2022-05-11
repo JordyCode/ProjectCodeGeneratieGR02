@@ -1,4 +1,4 @@
-package io.swagger.api.model.DTO;
+package io.swagger.api.model.Entity;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -8,13 +8,13 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.constraints.*;
 
 /**
- * AddressDTO
+ * Adress
  */
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-04T11:53:18.205Z[GMT]")
 
 
-public class AddressDTO   {
+public class Adress {
   @JsonProperty("streetName")
   private String streetName = null;
 
@@ -30,7 +30,7 @@ public class AddressDTO   {
   @JsonProperty("country")
   private String country = null;
 
-  public AddressDTO streetName(String streetName) {
+  public Adress streetName(String streetName) {
     this.streetName = streetName;
     return this;
   }
@@ -50,7 +50,7 @@ public class AddressDTO   {
     this.streetName = streetName;
   }
 
-  public AddressDTO houseNumber(Integer houseNumber) {
+  public Adress houseNumber(Integer houseNumber) {
     this.houseNumber = houseNumber;
     return this;
   }
@@ -70,7 +70,7 @@ public class AddressDTO   {
     this.houseNumber = houseNumber;
   }
 
-  public AddressDTO postalCode(String postalCode) {
+  public Adress postalCode(String postalCode) {
     this.postalCode = postalCode;
     return this;
   }
@@ -90,7 +90,7 @@ public class AddressDTO   {
     this.postalCode = postalCode;
   }
 
-  public AddressDTO city(String city) {
+  public Adress city(String city) {
     this.city = city;
     return this;
   }
@@ -110,7 +110,7 @@ public class AddressDTO   {
     this.city = city;
   }
 
-  public AddressDTO country(String country) {
+  public Adress country(String country) {
     this.country = country;
     return this;
   }
@@ -139,12 +139,12 @@ public class AddressDTO   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    AddressDTO addressDTO = (AddressDTO) o;
-    return Objects.equals(this.streetName, addressDTO.streetName) &&
-        Objects.equals(this.houseNumber, addressDTO.houseNumber) &&
-        Objects.equals(this.postalCode, addressDTO.postalCode) &&
-        Objects.equals(this.city, addressDTO.city) &&
-        Objects.equals(this.country, addressDTO.country);
+    Adress adress = (Adress) o;
+    return Objects.equals(this.streetName, adress.streetName) &&
+        Objects.equals(this.houseNumber, adress.houseNumber) &&
+        Objects.equals(this.postalCode, adress.postalCode) &&
+        Objects.equals(this.city, adress.city) &&
+        Objects.equals(this.country, adress.country);
   }
 
   @Override
@@ -155,7 +155,7 @@ public class AddressDTO   {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class AddressDTO {\n");
+    sb.append("class Adress {\n");
     
     sb.append("    streetName: ").append(toIndentedString(streetName)).append("\n");
     sb.append("    houseNumber: ").append(toIndentedString(houseNumber)).append("\n");

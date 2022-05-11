@@ -1,12 +1,11 @@
 package io.swagger.api.repository;
 
-import io.swagger.api.model.Account;
+import io.swagger.api.model.DTO.AccountDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface AccountRepository extends JpaRepository<Account, Long> {
-    Account getAccountByID(Long userId);
-
-    Account findByIBAN (String IBAN);
+@Repository
+public interface AccountRepository extends JpaRepository<AccountDTO, Long> {
 
 
 }

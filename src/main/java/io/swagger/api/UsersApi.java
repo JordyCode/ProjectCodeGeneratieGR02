@@ -5,7 +5,7 @@
  */
 package io.swagger.api;
 
-import io.swagger.api.model.DTO.UserDTO;
+import io.swagger.api.model.Entity.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -34,34 +34,34 @@ public interface UsersApi {
     @Operation(summary = "Get a specific user", description = "When you are an admin you are able to see other users data. When you are a user you can only see your own details.", security = {
         @SecurityRequirement(name = "bearerAuth")    }, tags={ "employees", "users" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Getting specific user successful", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))),
+        @ApiResponse(responseCode = "200", description = "Getting specific user successful", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
         
         @ApiResponse(responseCode = "400", description = "bad input parameter"),
         
-        @ApiResponse(responseCode = "404", description = "User not found") })
+        @ApiResponse(responseCode = "404", description = "UserDTO not found") })
     @RequestMapping(value = "/users/{id}",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<UserDTO> getSpecificUser(@Parameter(in = ParameterIn.PATH, description = "ID from the user", required=true, schema=@Schema()) @PathVariable("id") Integer id);
+    ResponseEntity<User> getSpecificUser(@Parameter(in = ParameterIn.PATH, description = "ID from the user", required=true, schema=@Schema()) @PathVariable("id") Integer id);
 
 
     @Operation(summary = "Gets list of users", description = "Employee can see all users, regular users can only see their own details", security = {
         @SecurityRequirement(name = "bearerAuth")    }, tags={ "users", "employees" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Succesfully retrieved users!", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = UserDTO.class)))),
+        @ApiResponse(responseCode = "200", description = "Succesfully retrieved users!", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = User.class)))),
         
         @ApiResponse(responseCode = "400", description = "BadRequest") })
     @RequestMapping(value = "/users",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<List<UserDTO>> usersGet(@Min(1) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "The numbers of users to return." ,schema=@Schema(allowableValues={  }, minimum="1", maximum="50"
+    ResponseEntity<List<User>> usersGet(@Min(1) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "The numbers of users to return." ,schema=@Schema(allowableValues={  }, minimum="1", maximum="50"
 , defaultValue="20")) @Valid @RequestParam(value = "limit", required = false, defaultValue="20") Integer limit);
 
 
     @Operation(summary = "Updates an user", description = "", security = {
         @SecurityRequirement(name = "bearerAuth")    }, tags={ "employees", "users" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "user data", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = UserDTO.class)))),
+        @ApiResponse(responseCode = "200", description = "user data", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = User.class)))),
         
         @ApiResponse(responseCode = "400", description = "bad input parameter"),
         
@@ -69,20 +69,20 @@ public interface UsersApi {
     @RequestMapping(value = "/users/{id}",
         produces = { "application/json" }, 
         method = RequestMethod.PUT)
-    ResponseEntity<List<UserDTO>> usersIdPut(@Parameter(in = ParameterIn.PATH, description = "ID of the user to update", required=true, schema=@Schema()) @PathVariable("id") Integer id);
+    ResponseEntity<List<User>> usersIdPut(@Parameter(in = ParameterIn.PATH, description = "ID of the user to update", required=true, schema=@Schema()) @PathVariable("id") Integer id);
 
 
     @Operation(summary = "Creates a new user.", description = "", security = {
         @SecurityRequirement(name = "bearerAuth")    }, tags={ "employees", "users" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Created a new user", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = UserDTO.class)))),
+        @ApiResponse(responseCode = "200", description = "Created a new user", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = User.class)))),
         
         @ApiResponse(responseCode = "400", description = "bad input parameter") })
     @RequestMapping(value = "/users",
         produces = { "application/json" }, 
         consumes = { "application/json" }, 
         method = RequestMethod.POST)
-    ResponseEntity<List<UserDTO>> usersPost(@Parameter(in = ParameterIn.DEFAULT, description = "Creates a new user account", required=true, schema=@Schema()) @Valid @RequestBody UserDTO body);
+    ResponseEntity<List<User>> usersPost(@Parameter(in = ParameterIn.DEFAULT, description = "Creates a new user account", required=true, schema=@Schema()) @Valid @RequestBody User body);
 
 }
 

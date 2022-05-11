@@ -1,15 +1,10 @@
 package io.swagger.api.repository;
 
-import io.swagger.api.model.Transaction;
-import io.swagger.api.model.User;
+import io.swagger.api.model.DTO.TransactionDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
-public interface TransactionRepository extends JpaRepository<Transaction, Long> {
-    Transaction getTransactionById(Long id);
+public interface TransactionRepository extends JpaRepository<TransactionDTO, Long> {
 
-    List<Transaction> getTransactionByOwner(User user);
 }

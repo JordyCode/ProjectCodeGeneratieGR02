@@ -1,4 +1,4 @@
-package io.swagger.api.model.DTO;
+package io.swagger.api.model.Entity;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -8,20 +8,20 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.constraints.*;
 
 /**
- * LoginDTO
+ * Login
  */
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-04T11:53:18.205Z[GMT]")
 
 
-public class LoginDTO   {
+public class Login {
   @JsonProperty("username")
   private String username = null;
 
   @JsonProperty("password")
   private String password = null;
 
-  public LoginDTO username(String username) {
+  public Login username(String username) {
     this.username = username;
     return this;
   }
@@ -41,7 +41,7 @@ public class LoginDTO   {
     this.username = username;
   }
 
-  public LoginDTO password(String password) {
+  public Login password(String password) {
     this.password = password;
     return this;
   }
@@ -70,9 +70,9 @@ public class LoginDTO   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    LoginDTO loginDTO = (LoginDTO) o;
-    return Objects.equals(this.username, loginDTO.username) &&
-        Objects.equals(this.password, loginDTO.password);
+    Login login = (Login) o;
+    return Objects.equals(this.username, login.username) &&
+        Objects.equals(this.password, login.password);
   }
 
   @Override
@@ -83,7 +83,7 @@ public class LoginDTO   {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class LoginDTO {\n");
+    sb.append("class Login {\n");
     
     sb.append("    username: ").append(toIndentedString(username)).append("\n");
     sb.append("    password: ").append(toIndentedString(password)).append("\n");
