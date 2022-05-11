@@ -1,7 +1,7 @@
 package io.swagger.api.controller;
 
 import io.swagger.api.TransactionsApi;
-import io.swagger.api.model.DTO.TransactionDTO;
+import io.swagger.api.model.Entity.Transaction;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -37,47 +37,47 @@ public class TransactionsApiController implements TransactionsApi {
         this.request = request;
     }
 
-    public ResponseEntity<TransactionDTO> getSpecificTransaction(@Parameter(in = ParameterIn.PATH, description = "ID from the transaction", required=true, schema=@Schema()) @PathVariable("id") Integer id) {
+    public ResponseEntity<Transaction> getSpecificTransaction(@Parameter(in = ParameterIn.PATH, description = "ID from the transaction", required=true, schema=@Schema()) @PathVariable("id") Integer id) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
-                return new ResponseEntity<TransactionDTO>(objectMapper.readValue("{\n  \"amount\" : 200,\n  \"account_to\" : \"NL20INHO0032070023\",\n  \"performed_by\" : 151,\n  \"account_from\" : \"NL20INHO0032076001\",\n  \"type\" : \"Deposit\",\n  \"transactionId\" : 1,\n  \"timestamp\" : \"29/04/2021\"\n}", TransactionDTO.class), HttpStatus.NOT_IMPLEMENTED);
+                return new ResponseEntity<Transaction>(objectMapper.readValue("{\n  \"amount\" : 200,\n  \"account_to\" : \"NL20INHO0032070023\",\n  \"performed_by\" : 151,\n  \"account_from\" : \"NL20INHO0032076001\",\n  \"type\" : \"Deposit\",\n  \"transactionId\" : 1,\n  \"timestamp\" : \"29/04/2021\"\n}", Transaction.class), HttpStatus.NOT_IMPLEMENTED);
             } catch (IOException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<TransactionDTO>(HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity<Transaction>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
 
-        return new ResponseEntity<TransactionDTO>(HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity<Transaction>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    public ResponseEntity<List<TransactionDTO>> transactionsGet(@Min(1) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "The numbers of transactions to return." ,schema=@Schema(allowableValues={  }, minimum="1", maximum="50"
+    public ResponseEntity<List<Transaction>> transactionsGet(@Min(1) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "The numbers of transactions to return." ,schema=@Schema(allowableValues={  }, minimum="1", maximum="50"
 , defaultValue="20")) @Valid @RequestParam(value = "limit", required = false, defaultValue="20") Integer limit) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
-                return new ResponseEntity<List<TransactionDTO>>(objectMapper.readValue("{\n  \"id\" : 666,\n  \"timestamp\" : \"2022-21-04T17:59:44+01:00\",\n  \"account_from\" : \"NL81ABNA0378156792\",\n  \"account_to\" : \"NL81ABNA0367185389\",\n  \"amount\" : 3000\n}", List.class), HttpStatus.NOT_IMPLEMENTED);
+                return new ResponseEntity<List<Transaction>>(objectMapper.readValue("{\n  \"id\" : 666,\n  \"timestamp\" : \"2022-21-04T17:59:44+01:00\",\n  \"account_from\" : \"NL81ABNA0378156792\",\n  \"account_to\" : \"NL81ABNA0367185389\",\n  \"amount\" : 3000\n}", List.class), HttpStatus.NOT_IMPLEMENTED);
             } catch (IOException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<List<TransactionDTO>>(HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity<List<Transaction>>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
 
-        return new ResponseEntity<List<TransactionDTO>>(HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity<List<Transaction>>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    public ResponseEntity<List<TransactionDTO>> transactionsPost(@Parameter(in = ParameterIn.DEFAULT, description = "Create transactions", schema=@Schema()) @Valid @RequestBody TransactionDTO body) {
+    public ResponseEntity<List<Transaction>> transactionsPost(@Parameter(in = ParameterIn.DEFAULT, description = "Create transactions", schema=@Schema()) @Valid @RequestBody Transaction body) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
-                return new ResponseEntity<List<TransactionDTO>>(objectMapper.readValue("[ {\n  \"amount\" : 200,\n  \"account_to\" : \"NL20INHO0032070023\",\n  \"performed_by\" : 151,\n  \"account_from\" : \"NL20INHO0032076001\",\n  \"type\" : \"Deposit\",\n  \"transactionId\" : 1,\n  \"timestamp\" : \"29/04/2021\"\n}, {\n  \"amount\" : 200,\n  \"account_to\" : \"NL20INHO0032070023\",\n  \"performed_by\" : 151,\n  \"account_from\" : \"NL20INHO0032076001\",\n  \"type\" : \"Deposit\",\n  \"transactionId\" : 1,\n  \"timestamp\" : \"29/04/2021\"\n} ]", List.class), HttpStatus.NOT_IMPLEMENTED);
+                return new ResponseEntity<List<Transaction>>(objectMapper.readValue("[ {\n  \"amount\" : 200,\n  \"account_to\" : \"NL20INHO0032070023\",\n  \"performed_by\" : 151,\n  \"account_from\" : \"NL20INHO0032076001\",\n  \"type\" : \"Deposit\",\n  \"transactionId\" : 1,\n  \"timestamp\" : \"29/04/2021\"\n}, {\n  \"amount\" : 200,\n  \"account_to\" : \"NL20INHO0032070023\",\n  \"performed_by\" : 151,\n  \"account_from\" : \"NL20INHO0032076001\",\n  \"type\" : \"Deposit\",\n  \"transactionId\" : 1,\n  \"timestamp\" : \"29/04/2021\"\n} ]", List.class), HttpStatus.NOT_IMPLEMENTED);
             } catch (IOException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<List<TransactionDTO>>(HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity<List<Transaction>>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
 
-        return new ResponseEntity<List<TransactionDTO>>(HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity<List<Transaction>>(HttpStatus.NOT_IMPLEMENTED);
     }
 
 }
