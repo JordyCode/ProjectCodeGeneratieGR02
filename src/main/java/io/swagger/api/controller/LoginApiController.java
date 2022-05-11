@@ -1,6 +1,7 @@
 package io.swagger.api.controller;
 
 import io.swagger.api.LoginApi;
+//import io.swagger.api.model.AuthenticationToken;
 import io.swagger.api.model.AuthenticationToken;
 import io.swagger.api.model.DTO.LoginDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -1,5 +1,6 @@
 package io.swagger.api.model.Entity;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -7,10 +8,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.hibernate.annotations.Cascade;
 import org.threeten.bp.LocalDate;
 import org.springframework.validation.annotation.Validated;
 
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 
@@ -20,29 +22,30 @@ import javax.validation.constraints.*;
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-04T11:53:18.205Z[GMT]")
 
-
+@Entity
 public class User {
   @Id
+  @GeneratedValue
   @JsonProperty("userId")
-  private UUID userId = null;
+  private UUID userId;
 
   @JsonProperty("firstName")
-  private String firstName = null;
+  private String firstName;
 
   @JsonProperty("lastName")
-  private String lastName = null;
+  private String lastName;
 
   @JsonProperty("email")
-  private String email = null;
+  private String email;
 
   @JsonProperty("dateOfBirth")
-  private LocalDate dateOfBirth = null;
+  private LocalDate dateOfBirth;
 
   @JsonProperty("address")
-  private String address = null;
+  private String address;
 
   @JsonProperty("phoneNumber")
-  private String phoneNumber = null;
+  private String phoneNumber;
 
   /**
    * Gets or Sets role
@@ -75,10 +78,11 @@ public class User {
     }
   }
   @JsonProperty("role")
-  private RoleEnum role = null;
+  private RoleEnum role;
 
   @JsonProperty("accounts")
-  private Account accounts = null;
+  @OneToMany(mappedBy = "user")
+  private List<Account> accounts;
 
   /**
    * Gets or Sets accountStatus
@@ -281,7 +285,7 @@ public class User {
     this.role = role;
   }
 
-  public User accounts(Account accounts) {
+  public User accounts(List<Account> accounts) {
     this.accounts = accounts;
     return this;
   }
@@ -294,11 +298,11 @@ public class User {
       @NotNull
 
     @Valid
-    public Account getAccounts() {
+    public List<Account> getAccounts() {
     return accounts;
   }
 
-  public void setAccounts(Account accounts) {
+  public void setAccounts(List<Account> accounts) {
     this.accounts = accounts;
   }
 
@@ -421,5 +425,23 @@ public class User {
       return "null";
     }
     return o.toString().replace("\n", "\n    ");
+  }
+
+  public User(UUID userId, String firstName, String lastName, String email, LocalDate dateOfBirth, String address, String phoneNumber, RoleEnum role, List<Account> accounts, AccountStatusEnum accountStatus, Double dayLimit, Double transactionLimit) {
+    this.userId = userId;
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.email = email;
+    this.dateOfBirth = dateOfBirth;
+    this.address = address;
+    this.phoneNumber = phoneNumber;
+    this.role = role;
+    this.accounts = accounts;
+    this.accountStatus = accountStatus;
+    this.dayLimit = dayLimit;
+    this.transactionLimit = transactionLimit;
+  }
+
+  public User() {
   }
 }

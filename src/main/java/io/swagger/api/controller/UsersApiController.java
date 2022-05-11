@@ -87,16 +87,16 @@ public class UsersApiController implements UsersApi {
         return new ResponseEntity<List<User>>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    public ResponseEntity<List<User>> usersPost(@Parameter(in = ParameterIn.DEFAULT, description = "Creates a new user account", required=true, schema=@Schema()) @Valid @RequestBody User body) {
+    public ResponseEntity<UserDTO> usersPost(@Parameter(in = ParameterIn.DEFAULT, description = "Creates a new user account", required=true, schema=@Schema()) @Valid @RequestBody User body) {
 
         ModelMapper modelMapper = new ModelMapper();
-        UserDTO userDTO = modelMapper.map(body, UserDTO.class);
+        User user = modelMapper.map(body, User.class);
 
-        userDTO = userService.add(userDTO);
+        user = userService.add(user);
 
-        User response = modelMapper.map(userDTO, User.class);
+        UserDTO response = modelMapper.map(user, UserDTO.class);
 
-        return new ResponseEntity<List<User>>(HttpStatus.CREATED);
+        return new ResponseEntity<UserDTO>(response, HttpStatus.CREATED);
     }
 
 }

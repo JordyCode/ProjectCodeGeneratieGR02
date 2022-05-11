@@ -1,6 +1,7 @@
 package io.swagger.api.service;
 
 import io.swagger.api.model.DTO.UserDTO;
+import io.swagger.api.model.Entity.User;
 import io.swagger.api.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,11 +14,11 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public UserDTO add(UserDTO u){
+    public User add(User u){
         return userRepository.save(u);
     }
 
-    public List<UserDTO> getAll(){
+    public List<User> getAll(){
         return userRepository.findAll();
     }
 
