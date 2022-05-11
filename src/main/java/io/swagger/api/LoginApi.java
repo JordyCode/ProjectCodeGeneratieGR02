@@ -5,7 +5,7 @@
  */
 package io.swagger.api;
 
-import io.swagger.api.model.Entity.AuthenticationToken;
+import io.swagger.api.model.AuthenticationToken;
 import io.swagger.api.model.DTO.LoginDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

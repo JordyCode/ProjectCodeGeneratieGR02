@@ -1,4 +1,4 @@
-package io.swagger.api.model.Entity;
+package io.swagger.api.model;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
