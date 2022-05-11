@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.hibernate.annotations.Cascade;
 import org.threeten.bp.LocalDate;
 import org.springframework.validation.annotation.Validated;
 
@@ -26,25 +27,25 @@ public class User {
   @Id
   @GeneratedValue
   @JsonProperty("userId")
-  private UUID userId = null;
+  private UUID userId;
 
   @JsonProperty("firstName")
-  private String firstName = null;
+  private String firstName;
 
   @JsonProperty("lastName")
-  private String lastName = null;
+  private String lastName;
 
   @JsonProperty("email")
-  private String email = null;
+  private String email;
 
   @JsonProperty("dateOfBirth")
-  private LocalDate dateOfBirth = null;
+  private LocalDate dateOfBirth;
 
   @JsonProperty("address")
-  private String address = null;
+  private String address;
 
   @JsonProperty("phoneNumber")
-  private String phoneNumber = null;
+  private String phoneNumber;
 
   /**
    * Gets or Sets role
@@ -77,11 +78,11 @@ public class User {
     }
   }
   @JsonProperty("role")
-  private RoleEnum role = null;
+  private RoleEnum role;
 
   @JsonProperty("accounts")
-  @OneToMany(mappedBy = "userID")
-  private List<Account> accounts = null;
+  @OneToMany(mappedBy = "user")
+  private List<Account> accounts;
 
   /**
    * Gets or Sets accountStatus

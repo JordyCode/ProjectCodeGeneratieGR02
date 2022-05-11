@@ -3,14 +3,14 @@ package io.swagger.api.model.Entity;
 import java.util.Objects;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.*;
 
 /**
@@ -23,9 +23,10 @@ import javax.validation.constraints.*;
 public class Account {
   @JsonProperty("IBAN")
   @Id
-  private String IBAN = null;
-
-  private UUID userID;
+  @GeneratedValue
+  private String IBAN;
+  @ManyToOne(cascade = CascadeType.ALL)
+  private User user;
 
   /**
    * Gets or Sets accountType
@@ -58,13 +59,13 @@ public class Account {
     }
   }
   @JsonProperty("accountType")
-  private AccountTypeEnum accountType = null;
+  private AccountTypeEnum accountType;
 
   @JsonProperty("balance")
-  private Double balance = null;
+  private Double balance;
 
   @JsonProperty("absoluteLimit")
-  private Double absoluteLimit = null;
+  private Double absoluteLimit;
 
   public Account IBAN(String IBAN) {
     this.IBAN = IBAN;
@@ -89,14 +90,6 @@ public class Account {
   public Account accountType(AccountTypeEnum accountType) {
     this.accountType = accountType;
     return this;
-  }
-
-  public UUID getUserID() {
-    return userID;
-  }
-
-  public void setUserID(UUID userID) {
-    this.userID = userID;
   }
 
   /**
@@ -198,5 +191,24 @@ public class Account {
       return "null";
     }
     return o.toString().replace("\n", "\n    ");
+  }
+
+  public User getUser() {
+    return user;
+  }
+
+  public void setUser(User user) {
+    this.user = user;
+  }
+
+  public Account(String IBAN, User user, AccountTypeEnum accountType, Double balance, Double absoluteLimit) {
+    this.IBAN = IBAN;
+    this.user = user;
+    this.accountType = accountType;
+    this.balance = balance;
+    this.absoluteLimit = absoluteLimit;
+  }
+
+  public Account() {
   }
 }

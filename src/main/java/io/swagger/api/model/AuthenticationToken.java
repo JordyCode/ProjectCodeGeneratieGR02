@@ -60,7 +60,7 @@ public class AuthenticationToken   {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class AuthenticationToken {\n");
-    
+
     sb.append("    token: ").append(toIndentedString(token)).append("\n");
     sb.append("}");
     return sb.toString();
