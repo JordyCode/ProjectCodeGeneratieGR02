@@ -5,6 +5,7 @@
  */
 package io.swagger.api;
 
+import io.swagger.api.model.DTO.AccountDTO;
 import io.swagger.api.model.Entity.Account;
 import io.swagger.api.model.Entity.User;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,14 +19,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.util.List;
+import java.util.UUID;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-04T11:53:18.205Z[GMT]")
 @Validated
@@ -42,14 +41,13 @@ public interface AccountsApi {
     @RequestMapping(value = "/accounts",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<List<User>> accountsGet(@Min(1) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "The numbers of accounts to return." ,schema=@Schema(allowableValues={  }, minimum="1", maximum="50"
-, defaultValue="20")) @Valid @RequestParam(value = "limit", required = false, defaultValue="20") Integer limit);
+    ResponseEntity<?> accountsGet();
 
 
-    @Operation(summary = "Get a specefic account", description = "ID of the bank account", security = {
+    @Operation(summary = "Get a specific account", description = "ID of the bank account", security = {
         @SecurityRequirement(name = "bearerAuth")    }, tags={ "AccountDTO" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Return a specefic account", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Account.class)))),
+        @ApiResponse(responseCode = "200", description = "Return a specific account", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Account.class)))),
         
         @ApiResponse(responseCode = "400", description = "Input not correct"),
         
@@ -57,13 +55,13 @@ public interface AccountsApi {
     @RequestMapping(value = "/accounts/{ID}",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<List<Account>> accountsIDGet(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("ID") Integer ID);
+    ResponseEntity<?> accountsIDGet(@Parameter(in = ParameterIn.PATH, description = "Account ID", required=true, schema=@Schema()) @PathVariable("ID") UUID ID);
 
 
-    @Operation(summary = "Update a specefic account", description = "This POST updates a specefic account, connected by it's ID", security = {
+    @Operation(summary = "Update a specific account", description = "This POST updates a specific account, connected by it's ID", security = {
         @SecurityRequirement(name = "bearerAuth")    }, tags={ "AccountDTO" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Update a specefic account", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Account.class)))),
+        @ApiResponse(responseCode = "200", description = "Update a specific account", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Account.class)))),
         
         @ApiResponse(responseCode = "400", description = "Input not correct"),
         
@@ -71,7 +69,7 @@ public interface AccountsApi {
     @RequestMapping(value = "/accounts/{ID}",
         produces = { "application/json" }, 
         method = RequestMethod.PUT)
-    ResponseEntity<List<Account>> accountsIDPut(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("ID") Integer ID);
+    ResponseEntity<?> accountsIDPut(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("ID") UUID ID, @Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody Account body);
 
 
     @Operation(summary = "Create a new account", description = "This will create a new bank account", security = {
@@ -83,7 +81,7 @@ public interface AccountsApi {
     @RequestMapping(value = "/accounts",
         produces = { "application/json" }, 
         method = RequestMethod.POST)
-    ResponseEntity<List<Account>> accountsPost();
+    ResponseEntity<?> accountsPost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody AccountDTO body);
 
 }
 
