@@ -2,6 +2,8 @@ package io.swagger.api.model.DTO;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import io.swagger.api.model.Entity.Account;
+import io.swagger.api.model.Entity.User;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -10,37 +12,31 @@ import java.util.UUID;
 
 public class AccountDTO {
 
+    private Account.AccountTypeEnum accountTypeEnum;
+
+    private User user;
+
     private String IBAN;
 
-    private enum AccountTypeEnum {
-        CURRENT("Current"),
+    private double balance;
 
-        SAVINGS("Savings");
+    private double absoluteLimit;
 
-        private String value;
-
-        AccountTypeEnum(String value) {
-            this.value = value;
-        }
-
-        @Override
-        @JsonValue
-        public String toString() {
-            return String.valueOf(value);
-        }
-
-        @JsonCreator
-        public static AccountDTO.AccountTypeEnum fromValue(String text) {
-            for (AccountDTO.AccountTypeEnum b : AccountDTO.AccountTypeEnum.values()) {
-                if (String.valueOf(b.value).equals(text)) {
-                    return b;
-                }
-            }
-            return null;
-        }
+    public Account.AccountTypeEnum getAccountTypeEnum() {
+        return accountTypeEnum;
     }
 
-    private double balance;
+    public void setAccountTypeEnum(Account.AccountTypeEnum accountTypeEnum) {
+        this.accountTypeEnum = accountTypeEnum;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public String getIBAN() {
         return IBAN;
@@ -58,13 +54,11 @@ public class AccountDTO {
         this.balance = balance;
     }
 
-    public UUID getUserID() {
-        return userID;
+    public double getAbsoluteLimit() {
+        return absoluteLimit;
     }
 
-    public void setUserID(UUID userID) {
-        this.userID = userID;
+    public void setAbsoluteLimit(double absoluteLimit) {
+        this.absoluteLimit = absoluteLimit;
     }
-
-    private UUID userID;
 }

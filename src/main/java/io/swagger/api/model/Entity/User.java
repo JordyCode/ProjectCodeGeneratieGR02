@@ -12,6 +12,7 @@ import org.hibernate.annotations.Cascade;
 import org.threeten.bp.LocalDate;
 import org.springframework.validation.annotation.Validated;
 
+import javax.management.relation.Role;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
@@ -38,14 +39,23 @@ public class User {
   @JsonProperty("email")
   private String email;
 
+  @JsonProperty("username")
+  private String username = null;
+
+  @JsonProperty("password")
+  private String password = null;
+
   @JsonProperty("dateOfBirth")
   private LocalDate dateOfBirth;
 
-  @JsonProperty("address")
-  private String address;
+//  @JsonProperty("address")
+//  private String address;
+//
+//  @JsonProperty("phoneNumber")
+//  private String phoneNumber;
 
-  @JsonProperty("phoneNumber")
-  private String phoneNumber;
+  @ElementCollection(fetch = FetchType.EAGER)
+  private List<Role> roles;
 
   /**
    * Gets or Sets role
@@ -224,45 +234,45 @@ public class User {
     this.dateOfBirth = dateOfBirth;
   }
 
-  public User address(String address) {
-    this.address = address;
+  public User username(String username) {
+    this.username = username;
     return this;
   }
 
   /**
-   * Get address
-   * @return address
+   * Get username
+   * @return username
    **/
   @Schema(required = true, description = "")
       @NotNull
 
     @Valid
-    public String getAddress() {
-    return address;
+    public String getUsername() {
+    return username;
   }
 
-  public void setAddress(String address) {
-    this.address = address;
+  public void setUsername(String username) {
+    this.username = username;
   }
 
-  public User phoneNumber(String phoneNumber) {
-    this.phoneNumber = phoneNumber;
+  public User password(String password) {
+    this.password = password;
     return this;
   }
 
   /**
-   * Get phoneNumber
-   * @return phoneNumber
+   * Get password
+   * @return password
    **/
-  @Schema(example = "683726482", required = true, description = "")
+  @Schema(example = "secret", required = true, description = "")
       @NotNull
 
-    public String getPhoneNumber() {
-    return phoneNumber;
+    public String getPassword() {
+    return password;
   }
 
-  public void setPhoneNumber(String phoneNumber) {
-    this.phoneNumber = phoneNumber;
+  public void setPassword(String password) {
+    this.password = password;
   }
 
   public User role(RoleEnum role) {
@@ -381,8 +391,8 @@ public class User {
         Objects.equals(this.lastName, user.lastName) &&
         Objects.equals(this.email, user.email) &&
         Objects.equals(this.dateOfBirth, user.dateOfBirth) &&
-        Objects.equals(this.address, user.address) &&
-        Objects.equals(this.phoneNumber, user.phoneNumber) &&
+        Objects.equals(this.username, user.username) &&
+        Objects.equals(this.password, user.password) &&
         Objects.equals(this.role, user.role) &&
         Objects.equals(this.accounts, user.accounts) &&
         Objects.equals(this.accountStatus, user.accountStatus) &&
@@ -392,7 +402,7 @@ public class User {
 
   @Override
   public int hashCode() {
-    return Objects.hash(userId, firstName, lastName, email, dateOfBirth, address, phoneNumber, role, accounts, accountStatus, dayLimit, transactionLimit);
+    return Objects.hash(userId, firstName, lastName, email, dateOfBirth, username, password, role, accounts, accountStatus, dayLimit, transactionLimit);
   }
 
   @Override
@@ -405,8 +415,8 @@ public class User {
     sb.append("    lastName: ").append(toIndentedString(lastName)).append("\n");
     sb.append("    email: ").append(toIndentedString(email)).append("\n");
     sb.append("    dateOfBirth: ").append(toIndentedString(dateOfBirth)).append("\n");
-    sb.append("    address: ").append(toIndentedString(address)).append("\n");
-    sb.append("    phoneNumber: ").append(toIndentedString(phoneNumber)).append("\n");
+    sb.append("    username: ").append(toIndentedString(username)).append("\n");
+    sb.append("    password: ").append(toIndentedString(password)).append("\n");
     sb.append("    role: ").append(toIndentedString(role)).append("\n");
     sb.append("    accounts: ").append(toIndentedString(accounts)).append("\n");
     sb.append("    accountStatus: ").append(toIndentedString(accountStatus)).append("\n");
@@ -427,19 +437,20 @@ public class User {
     return o.toString().replace("\n", "\n    ");
   }
 
-  public User(UUID userId, String firstName, String lastName, String email, LocalDate dateOfBirth, String address, String phoneNumber, RoleEnum role, List<Account> accounts, AccountStatusEnum accountStatus, Double dayLimit, Double transactionLimit) {
+  public User(UUID userId, String firstName, String lastName, String email, LocalDate dateOfBirth, String username, String password, RoleEnum role, List<Account> accounts, AccountStatusEnum accountStatus, Double dayLimit, Double transactionLimit, List<Role> roles) {
     this.userId = userId;
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;
     this.dateOfBirth = dateOfBirth;
-    this.address = address;
-    this.phoneNumber = phoneNumber;
+    this.username = username;
+    this.password = password;
     this.role = role;
     this.accounts = accounts;
     this.accountStatus = accountStatus;
     this.dayLimit = dayLimit;
     this.transactionLimit = transactionLimit;
+    this.roles = roles;
   }
 
   public User() {

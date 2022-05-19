@@ -21,10 +21,13 @@ import javax.validation.constraints.*;
 
 @Entity
 public class Account {
-  @JsonProperty("IBAN")
+
+  @JsonProperty("id")
   @Id
   @GeneratedValue
-  private String IBAN;
+  private UUID id = null;
+  @JsonProperty("IBAN")
+  private String IBAN = null;
   @ManyToOne(cascade = CascadeType.ALL)
   private User user;
 
@@ -70,6 +73,14 @@ public class Account {
   public Account IBAN(String IBAN) {
     this.IBAN = IBAN;
     return this;
+  }
+
+  public UUID getId() {
+    return id;
+  }
+
+  public void setId(UUID id) {
+    this.id = id;
   }
 
   /**

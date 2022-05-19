@@ -1,16 +1,22 @@
 package io.swagger.api.controller;
 
 import io.swagger.api.AccountsApi;
+import io.swagger.api.model.DTO.AccountDTO;
 import io.swagger.api.model.Entity.Account;
 import io.swagger.api.model.Entity.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.api.service.AccountService;
+import io.swagger.api.service.UserService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,7 +25,10 @@ import javax.validation.constraints.*;
 import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-04T11:53:18.205Z[GMT]")
 @RestController
@@ -31,67 +40,104 @@ public class AccountsApiController implements AccountsApi {
 
     private final HttpServletRequest request;
 
-    @org.springframework.beans.factory.annotation.Autowired
+    @Autowired
+    private AccountService accountService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
     public AccountsApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
         this.request = request;
     }
 
-    public ResponseEntity<List<User>> accountsGet(@Min(1) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "The numbers of accounts to return." ,schema=@Schema(allowableValues={  }, minimum="1", maximum="50"
-, defaultValue="20")) @Valid @RequestParam(value = "limit", required = false, defaultValue="20") Integer limit) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<List<User>>(objectMapper.readValue("[ {\n  \"accountStatus\" : \"Active\",\n  \"firstName\" : \"Peter\",\n  \"lastName\" : \"Visser\",\n  \"address\" : {\n    \"country\" : \"The Netherlands\",\n    \"streetName\" : \"Clematislaan\",\n    \"city\" : \"Oegstgeest\",\n    \"postalCode\" : \"2343VK\",\n    \"houseNumber\" : 69\n  },\n  \"phoneNumber\" : \"683726482\",\n  \"role\" : \"Customer\",\n  \"dayLimit\" : 200,\n  \"dateOfBirth\" : \"0013-05-23T00:00:00.000+00:00\",\n  \"accounts\" : {\n    \"IBAN\" : \"NL91 ABNA 0417 1643 00\",\n    \"balance\" : 3242.11,\n    \"absoluteLimit\" : -500,\n    \"accountType\" : \"Current\"\n  },\n  \"transactionLimit\" : 2000,\n  \"userId\" : 10,\n  \"email\" : \"Peter_Visser@hotmail.com\"\n}, {\n  \"accountStatus\" : \"Active\",\n  \"firstName\" : \"Peter\",\n  \"lastName\" : \"Visser\",\n  \"address\" : {\n    \"country\" : \"The Netherlands\",\n    \"streetName\" : \"Clematislaan\",\n    \"city\" : \"Oegstgeest\",\n    \"postalCode\" : \"2343VK\",\n    \"houseNumber\" : 69\n  },\n  \"phoneNumber\" : \"683726482\",\n  \"role\" : \"Customer\",\n  \"dayLimit\" : 200,\n  \"dateOfBirth\" : \"0013-05-23T00:00:00.000+00:00\",\n  \"accounts\" : {\n    \"IBAN\" : \"NL91 ABNA 0417 1643 00\",\n    \"balance\" : 3242.11,\n    \"absoluteLimit\" : -500,\n    \"accountType\" : \"Current\"\n  },\n  \"transactionLimit\" : 2000,\n  \"userId\" : 10,\n  \"email\" : \"Peter_Visser@hotmail.com\"\n} ]", List.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<List<User>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    @PreAuthorize("hasAnyRole('EMPLOYEE','USER')")
+    public ResponseEntity<?> accountsGet() {
+        try {
+            // Create a list to save the accounts
+            List<Account> accounts = new ArrayList<>();
+
+            // Check the role of the user
+            if (request.isUserInRole("ROLE_EMPLOYEE")) {
+                // When the user is an employee it will get all the accounts
+                accounts = accountService.getAllAccounts();
+            } else {
+                // Get the security information
+                Principal principal = request.getUserPrincipal();
+
+                // Get the current user
+                User user = userService.findByUsername(principal.getName());
+
+                accounts = accountService.getAccountsByUser(user);
+            }
+
+            if (accounts != null) {
+                return ResponseEntity.status(HttpStatus.OK).body(accounts);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
         }
-
-        return new ResponseEntity<List<User>>(HttpStatus.NOT_IMPLEMENTED);
-    }
-
-    public ResponseEntity<List<Account>> accountsIDGet(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("ID") Integer ID) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<List<Account>>(objectMapper.readValue("[ {\n  \"IBAN\" : \"NL91 ABNA 0417 1643 00\",\n  \"balance\" : 3242.11,\n  \"absoluteLimit\" : -500,\n  \"accountType\" : \"Current\"\n}, {\n  \"IBAN\" : \"NL91 ABNA 0417 1643 00\",\n  \"balance\" : 3242.11,\n  \"absoluteLimit\" : -500,\n  \"accountType\" : \"Current\"\n} ]", List.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<List<Account>>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+        catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
-
-        return new ResponseEntity<List<Account>>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    public ResponseEntity<List<Account>> accountsIDPut(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("ID") Integer ID) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<List<Account>>(objectMapper.readValue("[ {\n  \"IBAN\" : \"NL91 ABNA 0417 1643 00\",\n  \"balance\" : 3242.11,\n  \"absoluteLimit\" : -500,\n  \"accountType\" : \"Current\"\n}, {\n  \"IBAN\" : \"NL91 ABNA 0417 1643 00\",\n  \"balance\" : 3242.11,\n  \"absoluteLimit\" : -500,\n  \"accountType\" : \"Current\"\n} ]", List.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<List<Account>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    @PreAuthorize("hasAnyRole('EMPLOYEE','USER')")
+    public ResponseEntity<?> accountsIDGet(@Parameter(in = ParameterIn.PATH, description = "Account ID", required=true, schema=@Schema()) @PathVariable("ID") UUID ID) {
+        try
+        {
+            Principal principal = request.getUserPrincipal();
+            User user = userService.findByUsername(principal.getName());
+
+            // Check if the user is an employee or a normal user
+            if (request.isUserInRole("ROLE_EMPLOYEE") || accountService.checkIfAccountIsOwner(ID, user)) {
+                Account account = accountService.getAccountById(ID);
+
+                if (account != null) {
+                    return ResponseEntity.status(HttpStatus.OK).body(account);
+                } else {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                }
+            } else {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
+        } catch (Exception e)
+        {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
-
-        return new ResponseEntity<List<Account>>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    public ResponseEntity<List<Account>> accountsPost() {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<List<Account>>(objectMapper.readValue("[ {\n  \"IBAN\" : \"NL91 ABNA 0417 1643 00\",\n  \"balance\" : 3242.11,\n  \"absoluteLimit\" : -500,\n  \"accountType\" : \"Current\"\n}, {\n  \"IBAN\" : \"NL91 ABNA 0417 1643 00\",\n  \"balance\" : 3242.11,\n  \"absoluteLimit\" : -500,\n  \"accountType\" : \"Current\"\n} ]", List.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<List<Account>>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    public ResponseEntity<?> accountsIDPut(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("ID") UUID ID, @Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody Account body) {
+        try {
+            body.setId(ID);
+            Account result = accountService.save(body);
 
-        return new ResponseEntity<List<Account>>(HttpStatus.NOT_IMPLEMENTED);
+            return ResponseEntity.status(200).body(result);
+
+        } catch (IllegalArgumentException iae) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    public ResponseEntity<?> accountsPost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody AccountDTO body) {
+        try {
+            // Create a new account
+            Account account = new Account();
+
+            // Set the properties
+            account.setAccountType(body.getAccountTypeEnum());
+            account.setUser(body.getUser());
+            account.setAbsoluteLimit(body.getAbsoluteLimit());
+            account.setBalance(0.00);
+
+            Account result = accountService.add(account, true);
+
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
 }
