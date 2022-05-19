@@ -5,11 +5,13 @@ import io.swagger.api.LoginApi;
 import io.swagger.api.model.AuthenticationToken;
 import io.swagger.api.model.DTO.LoginDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.api.service.UserService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,24 +31,24 @@ public class LoginApiController implements LoginApi {
 
     private final HttpServletRequest request;
 
+    @Autowired
+    private UserService userService;
+
     @org.springframework.beans.factory.annotation.Autowired
     public LoginApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
         this.request = request;
     }
 
-    public ResponseEntity<AuthenticationToken> authenticate(@Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody LoginDTO body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<AuthenticationToken>(objectMapper.readValue("{\n  \"token\" : \"d290f1ee-6c54-4b01-90e6-d701748f0851\"\n}", AuthenticationToken.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<AuthenticationToken>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+    public ResponseEntity<?> authenticate(@Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody LoginDTO body) {
+        try {
+            String token = userService.login(body.getUsername(), body.getPassword());
+            AuthenticationToken authenticationToken = new AuthenticationToken();
+            authenticationToken.setToken(token);
+
+            return new ResponseEntity<>(authenticationToken, HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
-
-        return new ResponseEntity<AuthenticationToken>(HttpStatus.NOT_IMPLEMENTED);
     }
-
 }

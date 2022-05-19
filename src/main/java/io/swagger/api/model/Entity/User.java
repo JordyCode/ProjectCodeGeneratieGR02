@@ -55,40 +55,7 @@ public class User {
 //  private String phoneNumber;
 
   @ElementCollection(fetch = FetchType.EAGER)
-  private List<Role> roles;
-
-  /**
-   * Gets or Sets role
-   */
-  public enum RoleEnum {
-    CUSTOMER("Customer"),
-    
-    EMPLOYEE("Employee");
-
-    private String value;
-
-    RoleEnum(String value) {
-      this.value = value;
-    }
-
-    @Override
-    @JsonValue
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static RoleEnum fromValue(String text) {
-      for (RoleEnum b : RoleEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
-          return b;
-        }
-      }
-      return null;
-    }
-  }
-  @JsonProperty("role")
-  private RoleEnum role;
+  private List<io.swagger.api.model.Role> roles;
 
   @JsonProperty("accounts")
   @OneToMany(mappedBy = "user")
@@ -275,26 +242,6 @@ public class User {
     this.password = password;
   }
 
-  public User role(RoleEnum role) {
-    this.role = role;
-    return this;
-  }
-
-  /**
-   * Get role
-   * @return role
-   **/
-  @Schema(example = "Customer", required = true, description = "")
-      @NotNull
-
-    public RoleEnum getRole() {
-    return role;
-  }
-
-  public void setRole(RoleEnum role) {
-    this.role = role;
-  }
-
   public User accounts(List<Account> accounts) {
     this.accounts = accounts;
     return this;
@@ -334,6 +281,14 @@ public class User {
 
   public void setAccountStatus(AccountStatusEnum accountStatus) {
     this.accountStatus = accountStatus;
+  }
+
+  public List<io.swagger.api.model.Role> getRoles() {
+    return roles;
+  }
+
+  public void setRoles(List<io.swagger.api.model.Role> roles) {
+    this.roles = roles;
   }
 
   public User dayLimit(Double dayLimit) {
@@ -393,7 +348,6 @@ public class User {
         Objects.equals(this.dateOfBirth, user.dateOfBirth) &&
         Objects.equals(this.username, user.username) &&
         Objects.equals(this.password, user.password) &&
-        Objects.equals(this.role, user.role) &&
         Objects.equals(this.accounts, user.accounts) &&
         Objects.equals(this.accountStatus, user.accountStatus) &&
         Objects.equals(this.dayLimit, user.dayLimit) &&
@@ -402,7 +356,7 @@ public class User {
 
   @Override
   public int hashCode() {
-    return Objects.hash(userId, firstName, lastName, email, dateOfBirth, username, password, role, accounts, accountStatus, dayLimit, transactionLimit);
+    return Objects.hash(userId, firstName, lastName, email, dateOfBirth, username, password, accounts, accountStatus, dayLimit, transactionLimit);
   }
 
   @Override
@@ -417,7 +371,6 @@ public class User {
     sb.append("    dateOfBirth: ").append(toIndentedString(dateOfBirth)).append("\n");
     sb.append("    username: ").append(toIndentedString(username)).append("\n");
     sb.append("    password: ").append(toIndentedString(password)).append("\n");
-    sb.append("    role: ").append(toIndentedString(role)).append("\n");
     sb.append("    accounts: ").append(toIndentedString(accounts)).append("\n");
     sb.append("    accountStatus: ").append(toIndentedString(accountStatus)).append("\n");
     sb.append("    dayLimit: ").append(toIndentedString(dayLimit)).append("\n");
@@ -437,7 +390,7 @@ public class User {
     return o.toString().replace("\n", "\n    ");
   }
 
-  public User(UUID userId, String firstName, String lastName, String email, LocalDate dateOfBirth, String username, String password, RoleEnum role, List<Account> accounts, AccountStatusEnum accountStatus, Double dayLimit, Double transactionLimit, List<Role> roles) {
+  public User(UUID userId, String firstName, String lastName, String email, LocalDate dateOfBirth, String username, String password, List<Account> accounts, AccountStatusEnum accountStatus, Double dayLimit, Double transactionLimit, List<io.swagger.api.model.Role> roles) {
     this.userId = userId;
     this.firstName = firstName;
     this.lastName = lastName;
@@ -445,7 +398,6 @@ public class User {
     this.dateOfBirth = dateOfBirth;
     this.username = username;
     this.password = password;
-    this.role = role;
     this.accounts = accounts;
     this.accountStatus = accountStatus;
     this.dayLimit = dayLimit;

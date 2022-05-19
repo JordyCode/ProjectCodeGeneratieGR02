@@ -92,7 +92,7 @@ public class UsersApiController implements UsersApi {
         ModelMapper modelMapper = new ModelMapper();
         User user = modelMapper.map(body, User.class);
 
-        user = userService.add(user);
+        //user = userService.add(user);
 
         UserDTO response = modelMapper.map(user, UserDTO.class);
 
