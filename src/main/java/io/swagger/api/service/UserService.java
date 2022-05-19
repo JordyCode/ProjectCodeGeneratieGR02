@@ -1,10 +1,18 @@
 package io.swagger.api.service;
 
+import io.swagger.api.jwt.JwtTokenProvider;
 import io.swagger.api.model.DTO.UserDTO;
 import io.swagger.api.model.Entity.User;
+import io.swagger.api.model.Role;
 import io.swagger.api.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -16,57 +24,46 @@ import java.util.UUID;
 public class UserService {
 
     @Autowired
+    PasswordEncoder passwordEncoder;
+
+    @Autowired
+    AuthenticationManager authenticationManager;
+
+    @Autowired
+    JwtTokenProvider jwtTokenProvider;
+
+    @Autowired
     private UserRepository userRepository;
 
-//    @Autowired
-//    private JwtTokenProvider jwtTokenProvider;
-//
-//    @Autowired
-//    private AuthenticationManager authenticationManager;
-//
-//    @Autowired
-//    private PasswordEncoder passwordEncoder;
-//
-//    public String login(String username, String password) {
-//        try {
-//            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-//
-//            User user = userRepository.findByUsername(username);
-//            return jwtTokenProvider.createToken(username, user.getRoles());
-//        } catch (AuthenticationException exception) {
-//            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Username/password invalid");
-//        }
-//    }
-//
-//    public User add(User user, boolean employee) {
-//        // Check if the user doesn't already exist
-//        if (userRepository.findByUsername(user.getUsername()) == null) {
-//
-//            user.setPassword(passwordEncoder.encode(user.getPassword()));
-//
-//            if (employee) {
-//                user.setRoles(Arrays.asList(Role.ROLE_EMPLOYEE, Role.ROLE_USER));
-//                user.setAccessLevel(Arrays.asList(User.AccessLevelEnum.EMPLOYEE, User.AccessLevelEnum.USER));
-//            } else {
-//                user.setRoles(Arrays.asList(Role.ROLE_USER));
-//                user.setAccessLevel(Arrays.asList(User.AccessLevelEnum.USER));
-//            }
-//
-//            user.setStatus(Arrays.asList(User.StatusEnum.ACTIVE));
-//
-//            userRepository.save(user);
-//            return user;
-//        } else {
-//            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Username already in use");
-//        }
-//    }
+    public String login(String username, String password) {
+
+        String token = "";
+
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+            User user = userRepository.findByUsername(username);
+            token = jwtTokenProvider.createToken(username, user.getRoles());
+        } catch (AuthenticationException ex) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Invalid username/password");
+        }
+
+        return token;
+    }
+
+    public User add(User user) {
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        userRepository.save(user);
+
+        return user;
+    }
 
     public User saveUser(User user) {
         if (userRepository.findByUsername(user.getUsername()) != null) {
             return userRepository.save(user);
         }
-        else
-        {
+        else {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Username not found");
         }
     }
@@ -91,5 +88,4 @@ public class UserService {
         }
         return userRepository.getUserById(id);
     }
-
 }
