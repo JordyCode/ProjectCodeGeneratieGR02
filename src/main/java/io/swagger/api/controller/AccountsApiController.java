@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-04T11:53:18.205Z[GMT]")
 @RestController
@@ -84,15 +83,15 @@ public class AccountsApiController implements AccountsApi {
     }
 
     @PreAuthorize("hasAnyRole('EMPLOYEE','USER')")
-    public ResponseEntity<?> accountsIDGet(@Parameter(in = ParameterIn.PATH, description = "Account ID", required=true, schema=@Schema()) @PathVariable("ID") UUID ID) {
+    public ResponseEntity<?> accountsIDGet(@Parameter(in = ParameterIn.PATH, description = "Account id", required=true, schema=@Schema()) @PathVariable("id") Long id) {
         try
         {
             Principal principal = request.getUserPrincipal();
             User user = userService.findByUsername(principal.getName());
 
             // Check if the user is an employee or a normal user
-            if (request.isUserInRole("ROLE_EMPLOYEE") || accountService.checkIfAccountIsOwner(ID, user)) {
-                Account account = accountService.getAccountById(ID);
+            if (request.isUserInRole("ROLE_EMPLOYEE") || accountService.checkIfAccountIsOwner(id, user)) {
+                Account account = accountService.getAccountById(id);
 
                 if (account != null) {
                     return ResponseEntity.status(HttpStatus.OK).body(account);
@@ -102,16 +101,16 @@ public class AccountsApiController implements AccountsApi {
             } else {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
-        } catch (Exception e)
+        } catch (Exception ex)
         {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
     }
 
     @PreAuthorize("hasRole('EMPLOYEE')")
-    public ResponseEntity<?> accountsIDPut(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("ID") UUID ID, @Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody Account body) {
+    public ResponseEntity<?> accountsIDPut(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("id") Long id, @Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody Account body) {
         try {
-            body.setId(ID);
+            body.setId(id);
             Account result = accountService.save(body);
 
             return ResponseEntity.status(200).body(result);
@@ -136,8 +135,8 @@ public class AccountsApiController implements AccountsApi {
             Account result = accountService.add(account, true);
 
             return ResponseEntity.status(HttpStatus.OK).body(result);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
     }
 }

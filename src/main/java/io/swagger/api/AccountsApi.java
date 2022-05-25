@@ -20,11 +20,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
-import javax.validation.constraints.*;
-import java.util.List;
-import java.util.UUID;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-04T11:53:18.205Z[GMT]")
 @Validated
@@ -52,10 +48,10 @@ public interface AccountsApi {
         @ApiResponse(responseCode = "400", description = "Input not correct"),
         
         @ApiResponse(responseCode = "404", description = "There was account found with this {ID} ID, try again later") })
-    @RequestMapping(value = "/accounts/{ID}",
+    @RequestMapping(value = "/accounts/{id}",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<?> accountsIDGet(@Parameter(in = ParameterIn.PATH, description = "Account ID", required=true, schema=@Schema()) @PathVariable("ID") UUID ID);
+    ResponseEntity<?> accountsIDGet(@Parameter(in = ParameterIn.PATH, description = "Account ID", required=true, schema=@Schema()) @PathVariable("id") Long id);
 
 
     @Operation(summary = "Update a specific account", description = "This POST updates a specific account, connected by it's ID", security = {
@@ -66,10 +62,10 @@ public interface AccountsApi {
         @ApiResponse(responseCode = "400", description = "Input not correct"),
         
         @ApiResponse(responseCode = "404", description = "Something went wrong, try again later") })
-    @RequestMapping(value = "/accounts/{ID}",
+    @RequestMapping(value = "/accounts/{id}",
         produces = { "application/json" }, 
         method = RequestMethod.PUT)
-    ResponseEntity<?> accountsIDPut(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("ID") UUID ID, @Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody Account body);
+    ResponseEntity<?> accountsIDPut(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("ID") Long ID, @Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody Account body);
 
 
     @Operation(summary = "Create a new account", description = "This will create a new bank account", security = {

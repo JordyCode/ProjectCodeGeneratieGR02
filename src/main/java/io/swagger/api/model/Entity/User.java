@@ -2,17 +2,14 @@ package io.swagger.api.model.Entity;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.hibernate.annotations.Cascade;
-import org.threeten.bp.LocalDate;
 import org.springframework.validation.annotation.Validated;
 
-import javax.management.relation.Role;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
@@ -25,10 +22,11 @@ import javax.validation.constraints.*;
 
 @Entity
 public class User {
+
   @Id
   @GeneratedValue
   @JsonProperty("userId")
-  private UUID userId;
+  private Long userId;
 
   @JsonProperty("firstName")
   private String firstName;
@@ -46,7 +44,7 @@ public class User {
   private String password = null;
 
   @JsonProperty("dateOfBirth")
-  private LocalDate dateOfBirth;
+  private String dateOfBirth;
 
 //  @JsonProperty("address")
 //  private String address;
@@ -58,6 +56,7 @@ public class User {
   private List<io.swagger.api.model.Role> roles;
 
   @JsonProperty("accounts")
+  @JsonManagedReference
   @OneToMany(mappedBy = "user")
   private List<Account> accounts;
 
@@ -100,7 +99,7 @@ public class User {
   @JsonProperty("transactionLimit")
   private Double transactionLimit = null;
 
-  public User userId(UUID userId) {
+  public User userId(Long userId) {
     this.userId = userId;
     return this;
   }
@@ -112,11 +111,11 @@ public class User {
   @Schema(example = "10", required = true, description = "")
       @NotNull
 
-    public UUID getUserId() {
+    public Long getUserId() {
     return userId;
   }
 
-  public void setUserId(UUID userId) {
+  public void setUserId(Long userId) {
     this.userId = userId;
   }
 
@@ -180,7 +179,7 @@ public class User {
     this.email = email;
   }
 
-  public User dateOfBirth(LocalDate dateOfBirth) {
+  public User dateOfBirth(String dateOfBirth) {
     this.dateOfBirth = dateOfBirth;
     return this;
   }
@@ -193,11 +192,11 @@ public class User {
       @NotNull
 
     @Valid
-    public LocalDate getDateOfBirth() {
+    public String getDateOfBirth() {
     return dateOfBirth;
   }
 
-  public void setDateOfBirth(LocalDate dateOfBirth) {
+  public void setDateOfBirth(String dateOfBirth) {
     this.dateOfBirth = dateOfBirth;
   }
 
@@ -390,7 +389,7 @@ public class User {
     return o.toString().replace("\n", "\n    ");
   }
 
-  public User(UUID userId, String firstName, String lastName, String email, LocalDate dateOfBirth, String username, String password, List<Account> accounts, AccountStatusEnum accountStatus, Double dayLimit, Double transactionLimit, List<io.swagger.api.model.Role> roles) {
+  public User(Long userId, String firstName, String lastName, String email, String dateOfBirth, String username, String password, List<Account> accounts, AccountStatusEnum accountStatus, Double dayLimit, Double transactionLimit, List<io.swagger.api.model.Role> roles) {
     this.userId = userId;
     this.firstName = firstName;
     this.lastName = lastName;

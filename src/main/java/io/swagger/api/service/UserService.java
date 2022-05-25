@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class UserService {
@@ -50,7 +49,7 @@ public class UserService {
         return token;
     }
 
-    public User add(User user) {
+    public User add(User user, boolean isEmployee) {
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
@@ -82,10 +81,10 @@ public class UserService {
         return userRepository.findByUsername(name);
     }
 
-    public User getSpecificUser(UUID id) {
-        if (userRepository.getUserById(id) == null) {
+    public User getSpecificUser(Long userId) {
+        if (userRepository.getUserByUserId(userId) == null) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Id not found");
         }
-        return userRepository.getUserById(id);
+        return userRepository.getUserByUserId(userId);
     }
 }
