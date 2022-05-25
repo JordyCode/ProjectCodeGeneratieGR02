@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-04T11:53:18.205Z[GMT]")
 @RestController
@@ -84,7 +83,7 @@ public class AccountsApiController implements AccountsApi {
     }
 
     @PreAuthorize("hasAnyRole('EMPLOYEE','USER')")
-    public ResponseEntity<?> accountsIDGet(@Parameter(in = ParameterIn.PATH, description = "Account ID", required=true, schema=@Schema()) @PathVariable("ID") UUID ID) {
+    public ResponseEntity<?> accountsIDGet(@Parameter(in = ParameterIn.PATH, description = "Account ID", required=true, schema=@Schema()) @PathVariable("ID") Long ID) {
         try
         {
             Principal principal = request.getUserPrincipal();
@@ -109,7 +108,7 @@ public class AccountsApiController implements AccountsApi {
     }
 
     @PreAuthorize("hasRole('EMPLOYEE')")
-    public ResponseEntity<?> accountsIDPut(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("ID") UUID ID, @Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody Account body) {
+    public ResponseEntity<?> accountsIDPut(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("ID") Long ID, @Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody Account body) {
         try {
             body.setId(ID);
             Account result = accountService.save(body);

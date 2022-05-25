@@ -10,12 +10,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import java.util.List;
-import java.util.UUID;
 
 
 public class UserDTO {
 
-    private UUID userID;
+    private Long id;
 
     private String firstName;
 
@@ -56,7 +55,7 @@ public class UserDTO {
     }
     @JsonProperty("accountDTOList")
     @JsonManagedReference
-    @OneToMany(mappedBy = "userID")
+//    @OneToMany(mappedBy = "id")
     private List<AccountDTO> accountDTOList;
 
     private Double dayLimit = null;
@@ -66,8 +65,8 @@ public class UserDTO {
     public UserDTO() {
     }
 
-    public UserDTO(UUID userID, String firstName, String lastName, String email, String address, String phoneNumber, List<AccountDTO> accountDTOList, Double dayLimit, Double transactionLimit) {
-        this.userID = userID;
+    public UserDTO(Long id, String firstName, String lastName, String email, String address, String phoneNumber, List<AccountDTO> accountDTOList, Double dayLimit, Double transactionLimit) {
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -78,8 +77,8 @@ public class UserDTO {
         this.transactionLimit = transactionLimit;
     }
 
-    public UUID getUserID() {
-        return userID;
+    public Long getid() {
+        return id;
     }
 
     public String getFirstName() {

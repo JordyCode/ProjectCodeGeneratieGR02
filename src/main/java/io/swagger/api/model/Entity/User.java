@@ -2,7 +2,6 @@ package io.swagger.api.model.Entity;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -27,8 +26,8 @@ import javax.validation.constraints.*;
 public class User {
   @Id
   @GeneratedValue
-  @JsonProperty("userId")
-  private UUID userId;
+  @JsonProperty("id")
+  private Long id;
 
   @JsonProperty("firstName")
   private String firstName;
@@ -100,24 +99,24 @@ public class User {
   @JsonProperty("transactionLimit")
   private Double transactionLimit = null;
 
-  public User userId(UUID userId) {
-    this.userId = userId;
+  public User id(Long id) {
+    this.id = id;
     return this;
   }
 
   /**
-   * Get userId
-   * @return userId
+   * Get id
+   * @return id
    **/
   @Schema(example = "10", required = true, description = "")
       @NotNull
 
-    public UUID getUserId() {
-    return userId;
+    public Long getid() {
+    return id;
   }
 
-  public void setUserId(UUID userId) {
-    this.userId = userId;
+  public void setid(Long id) {
+    this.id = id;
   }
 
   public User firstName(String firstName) {
@@ -341,7 +340,7 @@ public class User {
       return false;
     }
     User user = (User) o;
-    return Objects.equals(this.userId, user.userId) &&
+    return Objects.equals(this.id, user.id) &&
         Objects.equals(this.firstName, user.firstName) &&
         Objects.equals(this.lastName, user.lastName) &&
         Objects.equals(this.email, user.email) &&
@@ -356,7 +355,7 @@ public class User {
 
   @Override
   public int hashCode() {
-    return Objects.hash(userId, firstName, lastName, email, dateOfBirth, username, password, accounts, accountStatus, dayLimit, transactionLimit);
+    return Objects.hash(id, firstName, lastName, email, dateOfBirth, username, password, accounts, accountStatus, dayLimit, transactionLimit);
   }
 
   @Override
@@ -364,7 +363,7 @@ public class User {
     StringBuilder sb = new StringBuilder();
     sb.append("class User {\n");
     
-    sb.append("    userId: ").append(toIndentedString(userId)).append("\n");
+    sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    firstName: ").append(toIndentedString(firstName)).append("\n");
     sb.append("    lastName: ").append(toIndentedString(lastName)).append("\n");
     sb.append("    email: ").append(toIndentedString(email)).append("\n");
@@ -390,8 +389,8 @@ public class User {
     return o.toString().replace("\n", "\n    ");
   }
 
-  public User(UUID userId, String firstName, String lastName, String email, LocalDate dateOfBirth, String username, String password, List<Account> accounts, AccountStatusEnum accountStatus, Double dayLimit, Double transactionLimit, List<io.swagger.api.model.Role> roles) {
-    this.userId = userId;
+  public User(Long id, String firstName, String lastName, String email, LocalDate dateOfBirth, String username, String password, List<Account> accounts, AccountStatusEnum accountStatus, Double dayLimit, Double transactionLimit, List<io.swagger.api.model.Role> roles) {
+    this.id = id;
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;

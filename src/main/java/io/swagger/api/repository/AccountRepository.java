@@ -7,12 +7,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.UUID;
 
 @Repository
 public interface AccountRepository extends JpaRepository<Account, String> {
 
-    Account getAccountById(UUID id);
+    Account getAccountById(Long id);
 
     Account findByIBAN(String IBAN);
 
@@ -20,5 +19,5 @@ public interface AccountRepository extends JpaRepository<Account, String> {
 
     List<Account> getAccountByOwner(User user);
 
-    boolean existsByIdAndOwner(UUID id, User owner);
+    boolean existsByIdAndOwner(Long id, User owner);
 }

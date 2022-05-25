@@ -8,8 +8,8 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, UUID> {
+public interface UserRepository extends JpaRepository<User, Long> {
     User findByUsername(String username);
 
-    User getUserById(UUID id);
+    User getUserById(Long id);
 }

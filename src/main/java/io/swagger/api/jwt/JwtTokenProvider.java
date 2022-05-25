@@ -31,7 +31,8 @@ import org.springframework.web.server.ResponseStatusException;
 // Some small adjusments are made
 
 @Component
-public class JwtTokenProvider {
+public class
+JwtTokenProvider {
 
     /**
      * THIS IS NOT A SECURE PRACTICE! For simplicity, we are storing a static key here. Ideally, in a

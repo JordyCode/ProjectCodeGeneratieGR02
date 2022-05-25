@@ -1,7 +1,6 @@
 package io.swagger.api.model.Entity;
 
 import java.util.Objects;
-import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -25,11 +24,11 @@ public class Account {
   @JsonProperty("id")
   @Id
   @GeneratedValue
-  private UUID id = null;
+  private Long id = null;
   @JsonProperty("IBAN")
   private String IBAN = null;
   @ManyToOne(cascade = CascadeType.ALL)
-  private User user;
+  private User owner;
 
   /**
    * Gets or Sets accountType
@@ -75,11 +74,11 @@ public class Account {
     return this;
   }
 
-  public UUID getId() {
+  public Long getId() {
     return id;
   }
 
-  public void setId(UUID id) {
+  public void setId(Long id) {
     this.id = id;
   }
 
@@ -205,16 +204,16 @@ public class Account {
   }
 
   public User getUser() {
-    return user;
+    return owner;
   }
 
   public void setUser(User user) {
-    this.user = user;
+    this.owner = user;
   }
 
   public Account(String IBAN, User user, AccountTypeEnum accountType, Double balance, Double absoluteLimit) {
     this.IBAN = IBAN;
-    this.user = user;
+    this.owner = user;
     this.accountType = accountType;
     this.balance = balance;
     this.absoluteLimit = absoluteLimit;
