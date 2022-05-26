@@ -19,12 +19,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import javax.validation.constraints.*;
 import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,11 +58,11 @@ public class AccountsApiController implements AccountsApi {
                 // When the user is an employee it will get all the accounts
                 accounts = accountService.getAllAccounts();
             } else {
-                // Get the security information
-                Principal principal = request.getUserPrincipal();
+                // Get the security information of the user
+                Principal userSecurityInfo = request.getUserPrincipal();
 
                 // Get the current user
-                User user = userService.findByUsername(principal.getName());
+                User user = userService.findByUsername(userSecurityInfo.getName());
 
                 accounts = accountService.getAccountsByUser(user);
             }
@@ -86,13 +82,13 @@ public class AccountsApiController implements AccountsApi {
     public ResponseEntity<?> accountsIDGet(@Parameter(in = ParameterIn.PATH, description = "Account id", required=true, schema=@Schema()) @PathVariable("id") Long id) {
         try
         {
-            Principal principal = request.getUserPrincipal();
-            User user = userService.findByUsername(principal.getName());
+            // Get the security information of the user
+            Principal userSecurityInfo = request.getUserPrincipal();
+            User user = userService.findByUsername(userSecurityInfo.getName());
 
-            // Check if the user is an employee or a normal user
-            if (request.isUserInRole("ROLE_EMPLOYEE") || accountService.checkIfAccountIsOwner(id, user)) {
+            // Check if the user is an employee or a normal user and check if the account owner is equal to the id of the user
+            if (request.isUserInRole("ROLE_EMPLOYEE") || accountService.checkIfAccountIsUser(id, user)) {
                 Account account = accountService.getAccountById(id);
-
                 if (account != null) {
                     return ResponseEntity.status(HttpStatus.OK).body(account);
                 } else {
@@ -132,6 +128,7 @@ public class AccountsApiController implements AccountsApi {
             account.setAbsoluteLimit(body.getAbsoluteLimit());
             account.setBalance(0.00);
 
+            // Add the new properties to the Account result
             Account result = accountService.add(account, true);
 
             return ResponseEntity.status(HttpStatus.OK).body(result);

@@ -59,7 +59,7 @@ public class AccountService {
         return accountRepository.getAccountById(id);
     }
 
-    public boolean checkIfAccountIsOwner(Long id, User user) {
+    public boolean checkIfAccountIsUser(Long id, User user) {
         if(!accountRepository.existsByIdAndUser(id, user))
         {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Account does not belong to owner");

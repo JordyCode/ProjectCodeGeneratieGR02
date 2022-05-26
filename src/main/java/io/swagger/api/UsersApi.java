@@ -55,8 +55,7 @@ public interface UsersApi {
     @RequestMapping(value = "/users",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<List<User>> usersGet(@Min(1) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "The numbers of users to return." ,schema=@Schema(allowableValues={  }, minimum="1", maximum="50"
-, defaultValue="20")) @Valid @RequestParam(value = "limit", required = false, defaultValue="20") Integer limit);
+    ResponseEntity<?> usersGet();
 
 
     @Operation(summary = "Updates an user", description = "", security = {
