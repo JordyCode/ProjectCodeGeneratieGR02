@@ -11,7 +11,6 @@ import org.iban4j.CountryCode;
 import org.iban4j.Iban;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class AccountService {
@@ -53,19 +52,19 @@ public class AccountService {
         return accountRepository.findAll();
     }
 
-    public Account getAccountById(UUID id) {
+    public Account getAccountById(Long id) {
         if (accountRepository.getAccountById(id) == null) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Id not found");
         }
         return accountRepository.getAccountById(id);
     }
 
-    public boolean checkIfAccountIsOwner(UUID id, User user) {
-        if(!accountRepository.existsByIdAndOwner(id, user))
+    public boolean checkIfAccountIsUser(Long id, User user) {
+        if(!accountRepository.existsByIdAndUser(id, user))
         {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Account does not belong to owner");
         }
-        return accountRepository.existsByIdAndOwner(id, user);
+        return accountRepository.existsByIdAndUser(id, user);
     }
 
     public Account save(Account users) {
@@ -76,7 +75,7 @@ public class AccountService {
     }
 
     public List<Account> getAccountsByUser(User user) {
-        return accountRepository.getAccountByOwner(user);
+        return accountRepository.getAccountByUser(user);
     }
     public boolean existByIBAN(String iban) {
         return accountRepository.existsByIBAN(iban);

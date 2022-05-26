@@ -1,9 +1,7 @@
 package io.swagger.api.model.Entity;
 
 import java.util.Objects;
-import java.util.UUID;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -25,7 +23,7 @@ public class Account {
   @JsonProperty("id")
   @Id
   @GeneratedValue
-  private UUID id = null;
+  private Long id = null;
   @JsonProperty("IBAN")
   private String IBAN = null;
   @ManyToOne(cascade = CascadeType.ALL)
@@ -61,6 +59,35 @@ public class Account {
       return null;
     }
   }
+
+  public enum AccountStatusEnum {
+    ACTIVE("active"),
+
+    INACTIVE("inactive");
+
+    private String value;
+
+    AccountStatusEnum(String value) {
+      this.value = value;
+    }
+
+    @Override
+    @JsonValue
+    public String toString() {
+      return String.valueOf(value);
+    }
+
+    @JsonCreator
+    public static AccountStatusEnum fromValue(String text) {
+      for (AccountStatusEnum b : AccountStatusEnum.values()) {
+        if (String.valueOf(b.value).equals(text)) {
+          return b;
+        }
+      }
+      return null;
+    }
+  }
+
   @JsonProperty("accountType")
   private AccountTypeEnum accountType;
 
@@ -70,16 +97,19 @@ public class Account {
   @JsonProperty("absoluteLimit")
   private Double absoluteLimit;
 
+  @JsonProperty("accountStatus")
+  private AccountStatusEnum accountStatus = null;
+
   public Account IBAN(String IBAN) {
     this.IBAN = IBAN;
     return this;
   }
 
-  public UUID getId() {
+  public Long getId() {
     return id;
   }
 
-  public void setId(UUID id) {
+  public void setId(Long id) {
     this.id = id;
   }
 
@@ -144,6 +174,26 @@ public class Account {
     return this;
   }
 
+  public Account accountStatus(AccountStatusEnum accountStatus) {
+    this.accountStatus = accountStatus;
+    return this;
+  }
+
+  /**
+   * Get accountStatus
+   *
+   * @return accountStatus
+   **/
+  @Schema(example = "active", description = "")
+
+  public AccountStatusEnum getAccountStatus() {
+    return accountStatus;
+  }
+
+  public void setAccountStatus(AccountStatusEnum accountStatus) {
+    this.accountStatus = accountStatus;
+  }
+
   /**
    * Get absoluteLimit
    * @return absoluteLimit
@@ -170,14 +220,15 @@ public class Account {
     }
     Account account = (Account) o;
     return Objects.equals(this.IBAN, account.IBAN) &&
-        Objects.equals(this.accountType, account.accountType) &&
-        Objects.equals(this.balance, account.balance) &&
-        Objects.equals(this.absoluteLimit, account.absoluteLimit);
+            Objects.equals(this.accountType, account.accountType) &&
+            Objects.equals(this.balance, account.balance) &&
+            Objects.equals(this.absoluteLimit, account.absoluteLimit) &&
+            Objects.equals(this.accountStatus, account.accountStatus);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(IBAN, accountType, balance, absoluteLimit);
+    return Objects.hash(IBAN, accountType, balance, absoluteLimit, accountStatus);
   }
 
   @Override
@@ -189,6 +240,7 @@ public class Account {
     sb.append("    accountType: ").append(toIndentedString(accountType)).append("\n");
     sb.append("    balance: ").append(toIndentedString(balance)).append("\n");
     sb.append("    absoluteLimit: ").append(toIndentedString(absoluteLimit)).append("\n");
+    sb.append("    accountStatus: ").append(toIndentedString(accountStatus)).append("\n");
     sb.append("}");
     return sb.toString();
   }
@@ -212,12 +264,13 @@ public class Account {
     this.user = user;
   }
 
-  public Account(String IBAN, User user, AccountTypeEnum accountType, Double balance, Double absoluteLimit) {
+  public Account(String IBAN, User user, AccountTypeEnum accountType, Double balance, Double absoluteLimit, AccountStatusEnum accountStatus) {
     this.IBAN = IBAN;
     this.user = user;
     this.accountType = accountType;
     this.balance = balance;
     this.absoluteLimit = absoluteLimit;
+    this.accountStatus = accountStatus;
   }
 
   public Account() {

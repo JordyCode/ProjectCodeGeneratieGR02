@@ -40,10 +40,10 @@ public interface UsersApi {
         @ApiResponse(responseCode = "400", description = "bad input parameter"),
         
         @ApiResponse(responseCode = "404", description = "UserDTO not found") })
-    @RequestMapping(value = "/users/{id}",
+    @RequestMapping(value = "/users/{userId}",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<User> getSpecificUser(@Parameter(in = ParameterIn.PATH, description = "ID from the user", required=true, schema=@Schema()) @PathVariable("id") Integer id);
+    ResponseEntity<?> getSpecificUser(@Parameter(in = ParameterIn.PATH, description = "ID from the user", required=true, schema=@Schema()) @PathVariable("userId") Long userId);
 
 
     @Operation(summary = "Gets list of users", description = "Employee can see all users, regular users can only see their own details", security = {
@@ -55,8 +55,7 @@ public interface UsersApi {
     @RequestMapping(value = "/users",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<List<User>> usersGet(@Min(1) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "The numbers of users to return." ,schema=@Schema(allowableValues={  }, minimum="1", maximum="50"
-, defaultValue="20")) @Valid @RequestParam(value = "limit", required = false, defaultValue="20") Integer limit);
+    ResponseEntity<?> usersGet();
 
 
     @Operation(summary = "Updates an user", description = "", security = {
@@ -67,10 +66,10 @@ public interface UsersApi {
         @ApiResponse(responseCode = "400", description = "bad input parameter"),
         
         @ApiResponse(responseCode = "404", description = "user not found") })
-    @RequestMapping(value = "/users/{id}",
+    @RequestMapping(value = "/users/{userId}",
         produces = { "application/json" }, 
         method = RequestMethod.PUT)
-    ResponseEntity<List<User>> usersIdPut(@Parameter(in = ParameterIn.PATH, description = "ID of the user to update", required=true, schema=@Schema()) @PathVariable("id") Integer id);
+    ResponseEntity<?> usersIdPut(@Parameter(in = ParameterIn.PATH, description = "ID of the user to update", required=true, schema=@Schema()) @PathVariable("userId") Long userId,  @Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody User body);
 
 
     @Operation(summary = "Creates a new user.", description = "", security = {
@@ -83,7 +82,7 @@ public interface UsersApi {
         produces = { "application/json" }, 
         consumes = { "application/json" }, 
         method = RequestMethod.POST)
-    ResponseEntity<UserDTO> usersPost(@Parameter(in = ParameterIn.DEFAULT, description = "Creates a new user account", required=true, schema=@Schema()) @Valid @RequestBody User body);
+    ResponseEntity<?> usersPost(@Parameter(in = ParameterIn.DEFAULT, description = "Creates a new user account", required=true, schema=@Schema()) @Valid @RequestBody UserDTO body);
 
 }
 

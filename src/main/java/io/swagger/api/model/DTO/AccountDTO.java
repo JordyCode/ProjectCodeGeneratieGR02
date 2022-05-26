@@ -5,11 +5,6 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.api.model.Entity.Account;
 import io.swagger.api.model.Entity.User;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import java.util.UUID;
-
-
 public class AccountDTO {
 
     private Account.AccountTypeEnum accountTypeEnum;

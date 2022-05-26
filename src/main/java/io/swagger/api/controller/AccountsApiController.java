@@ -19,16 +19,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import javax.validation.constraints.*;
 import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-04T11:53:18.205Z[GMT]")
 @RestController
@@ -63,11 +58,11 @@ public class AccountsApiController implements AccountsApi {
                 // When the user is an employee it will get all the accounts
                 accounts = accountService.getAllAccounts();
             } else {
-                // Get the security information
-                Principal principal = request.getUserPrincipal();
+                // Get the security information of the user
+                Principal userSecurityInfo = request.getUserPrincipal();
 
                 // Get the current user
-                User user = userService.findByUsername(principal.getName());
+                User user = userService.findByUsername(userSecurityInfo.getName());
 
                 accounts = accountService.getAccountsByUser(user);
             }
@@ -84,16 +79,16 @@ public class AccountsApiController implements AccountsApi {
     }
 
     @PreAuthorize("hasAnyRole('EMPLOYEE','USER')")
-    public ResponseEntity<?> accountsIDGet(@Parameter(in = ParameterIn.PATH, description = "Account ID", required=true, schema=@Schema()) @PathVariable("ID") UUID ID) {
+    public ResponseEntity<?> accountsIDGet(@Parameter(in = ParameterIn.PATH, description = "Account id", required=true, schema=@Schema()) @PathVariable("id") Long id) {
         try
         {
-            Principal principal = request.getUserPrincipal();
-            User user = userService.findByUsername(principal.getName());
+            // Get the security information of the user
+            Principal userSecurityInfo = request.getUserPrincipal();
+            User user = userService.findByUsername(userSecurityInfo.getName());
 
-            // Check if the user is an employee or a normal user
-            if (request.isUserInRole("ROLE_EMPLOYEE") || accountService.checkIfAccountIsOwner(ID, user)) {
-                Account account = accountService.getAccountById(ID);
-
+            // Check if the user is an employee or a normal user and check if the account owner is equal to the id of the user
+            if (request.isUserInRole("ROLE_EMPLOYEE") || accountService.checkIfAccountIsUser(id, user)) {
+                Account account = accountService.getAccountById(id);
                 if (account != null) {
                     return ResponseEntity.status(HttpStatus.OK).body(account);
                 } else {
@@ -102,16 +97,16 @@ public class AccountsApiController implements AccountsApi {
             } else {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
-        } catch (Exception e)
+        } catch (Exception ex)
         {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
     }
 
     @PreAuthorize("hasRole('EMPLOYEE')")
-    public ResponseEntity<?> accountsIDPut(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("ID") UUID ID, @Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody Account body) {
+    public ResponseEntity<?> accountsIDPut(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("id") Long id, @Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody Account body) {
         try {
-            body.setId(ID);
+            body.setId(id);
             Account result = accountService.save(body);
 
             return ResponseEntity.status(200).body(result);
@@ -133,11 +128,12 @@ public class AccountsApiController implements AccountsApi {
             account.setAbsoluteLimit(body.getAbsoluteLimit());
             account.setBalance(0.00);
 
+            // Add the new properties to the Account result
             Account result = accountService.add(account, true);
 
             return ResponseEntity.status(HttpStatus.OK).body(result);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
     }
 }

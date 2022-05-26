@@ -1,7 +1,6 @@
 package io.swagger.api.controller;
 
 import io.swagger.api.LoginApi;
-//import io.swagger.api.model.AuthenticationToken;
 import io.swagger.api.model.AuthenticationToken;
 import io.swagger.api.model.DTO.LoginDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-04T11:53:18.205Z[GMT]")
 @RestController
