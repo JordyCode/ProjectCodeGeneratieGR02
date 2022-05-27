@@ -35,12 +35,12 @@ public class AccountService {
 
     public String getIBAN() {
         // Generate a new IBAN
-        Iban iban = new Iban.Builder().countryCode(CountryCode.NL).bankCode("CODE").buildRandom();
+        Iban iban = new Iban.Builder().countryCode(CountryCode.NL).bankCode("INHO").buildRandom();
 
         // Check if the IBAN is not in use already
         // If the IBAN is already in use, keep looping till there is a unique IBAN
         while (existByIBAN(iban.toString())) {
-            iban = new Iban.Builder().countryCode(CountryCode.NL).bankCode("CODE").buildRandom();
+            iban = new Iban.Builder().countryCode(CountryCode.NL).bankCode("INHO").buildRandom();
         }
         return iban.toString();
     }
@@ -62,7 +62,7 @@ public class AccountService {
     public boolean checkIfAccountIsUser(Long id, User user) {
         if(!accountRepository.existsByIdAndUser(id, user))
         {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Account does not belong to owner");
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Account does not belong to user");
         }
         return accountRepository.existsByIdAndUser(id, user);
     }

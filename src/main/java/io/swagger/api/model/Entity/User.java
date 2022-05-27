@@ -241,26 +241,26 @@ public class User {
     this.password = password;
   }
 
-  public User accounts(List<Account> accounts) {
-    this.accounts = accounts;
-    return this;
-  }
-
-  /**
-   * Get accounts
-   * @return accounts
-   **/
-  @Schema(required = true, description = "")
-      @NotNull
-
-    @Valid
-    public List<Account> getAccounts() {
-    return accounts;
-  }
-
-  public void setAccounts(List<Account> accounts) {
-    this.accounts = accounts;
-  }
+//  public User accounts(List<Account> accounts) {
+//    this.accounts = accounts;
+//    return this;
+//  }
+//
+//  /**
+//   * Get accounts
+//   * @return accounts
+//   **/
+//  @Schema(required = true, description = "")
+//      @NotNull
+//
+//    @Valid
+//    public List<Account> getAccounts() {
+//    return accounts;
+//  }
+//
+//  public void setAccounts(List<Account> accounts) {
+//    this.accounts = accounts;
+//  }
 
   public User accountStatus(AccountStatusEnum accountStatus) {
     this.accountStatus = accountStatus;
@@ -347,7 +347,7 @@ public class User {
         Objects.equals(this.dateOfBirth, user.dateOfBirth) &&
         Objects.equals(this.username, user.username) &&
         Objects.equals(this.password, user.password) &&
-        Objects.equals(this.accounts, user.accounts) &&
+//        Objects.equals(this.accounts, user.accounts) &&
         Objects.equals(this.accountStatus, user.accountStatus) &&
         Objects.equals(this.dayLimit, user.dayLimit) &&
         Objects.equals(this.transactionLimit, user.transactionLimit);
@@ -355,7 +355,7 @@ public class User {
 
   @Override
   public int hashCode() {
-    return Objects.hash(userId, firstName, lastName, email, dateOfBirth, username, password, accounts, accountStatus, dayLimit, transactionLimit);
+    return Objects.hash(userId, firstName, lastName, email, dateOfBirth, username, password, accountStatus, dayLimit, transactionLimit);
   }
 
   @Override
@@ -370,7 +370,7 @@ public class User {
     sb.append("    dateOfBirth: ").append(toIndentedString(dateOfBirth)).append("\n");
     sb.append("    username: ").append(toIndentedString(username)).append("\n");
     sb.append("    password: ").append(toIndentedString(password)).append("\n");
-    sb.append("    accounts: ").append(toIndentedString(accounts)).append("\n");
+//    sb.append("    accounts: ").append(toIndentedString(accounts)).append("\n");
     sb.append("    accountStatus: ").append(toIndentedString(accountStatus)).append("\n");
     sb.append("    dayLimit: ").append(toIndentedString(dayLimit)).append("\n");
     sb.append("    transactionLimit: ").append(toIndentedString(transactionLimit)).append("\n");
@@ -389,7 +389,7 @@ public class User {
     return o.toString().replace("\n", "\n    ");
   }
 
-  public User(Long userId, String firstName, String lastName, String email, String dateOfBirth, String username, String password, List<Account> accounts, AccountStatusEnum accountStatus, Double dayLimit, Double transactionLimit, List<io.swagger.api.model.Role> roles) {
+  public User(Long userId, String firstName, String lastName, String email, String dateOfBirth, String username, String password, AccountStatusEnum accountStatus, Double dayLimit, Double transactionLimit, List<io.swagger.api.model.Role> roles) {
     this.userId = userId;
     this.firstName = firstName;
     this.lastName = lastName;
@@ -397,7 +397,7 @@ public class User {
     this.dateOfBirth = dateOfBirth;
     this.username = username;
     this.password = password;
-    this.accounts = accounts;
+//    this.accounts = accounts;
     this.accountStatus = accountStatus;
     this.dayLimit = dayLimit;
     this.transactionLimit = transactionLimit;
