@@ -3,15 +3,13 @@ package io.swagger.api.model.Entity;
 import java.util.List;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.hibernate.annotations.Cascade;
-import org.threeten.bp.LocalDate;
 import org.springframework.validation.annotation.Validated;
 
-import javax.management.relation.Role;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
@@ -24,10 +22,11 @@ import javax.validation.constraints.*;
 
 @Entity
 public class User {
+
   @Id
   @GeneratedValue
-  @JsonProperty("id")
-  private Long id;
+  @JsonProperty("userId")
+  private Long userId;
 
   @JsonProperty("firstName")
   private String firstName;
@@ -45,7 +44,7 @@ public class User {
   private String password = null;
 
   @JsonProperty("dateOfBirth")
-  private LocalDate dateOfBirth;
+  private String dateOfBirth;
 
 //  @JsonProperty("address")
 //  private String address;
@@ -57,6 +56,7 @@ public class User {
   private List<io.swagger.api.model.Role> roles;
 
   @JsonProperty("accounts")
+  @JsonManagedReference
   @OneToMany(mappedBy = "user")
   private List<Account> accounts;
 
@@ -99,24 +99,24 @@ public class User {
   @JsonProperty("transactionLimit")
   private Double transactionLimit = null;
 
-  public User id(Long id) {
-    this.id = id;
+  public User userId(Long userId) {
+    this.userId = userId;
     return this;
   }
 
   /**
-   * Get id
-   * @return id
+   * Get userId
+   * @return userId
    **/
   @Schema(example = "10", required = true, description = "")
       @NotNull
 
-    public Long getid() {
-    return id;
+    public Long getUserId() {
+    return userId;
   }
 
-  public void setid(Long id) {
-    this.id = id;
+  public void setUserId(Long userId) {
+    this.userId = userId;
   }
 
   public User firstName(String firstName) {
@@ -179,7 +179,7 @@ public class User {
     this.email = email;
   }
 
-  public User dateOfBirth(LocalDate dateOfBirth) {
+  public User dateOfBirth(String dateOfBirth) {
     this.dateOfBirth = dateOfBirth;
     return this;
   }
@@ -192,11 +192,11 @@ public class User {
       @NotNull
 
     @Valid
-    public LocalDate getDateOfBirth() {
+    public String getDateOfBirth() {
     return dateOfBirth;
   }
 
-  public void setDateOfBirth(LocalDate dateOfBirth) {
+  public void setDateOfBirth(String dateOfBirth) {
     this.dateOfBirth = dateOfBirth;
   }
 
@@ -340,7 +340,7 @@ public class User {
       return false;
     }
     User user = (User) o;
-    return Objects.equals(this.id, user.id) &&
+    return Objects.equals(this.userId, user.userId) &&
         Objects.equals(this.firstName, user.firstName) &&
         Objects.equals(this.lastName, user.lastName) &&
         Objects.equals(this.email, user.email) &&
@@ -355,7 +355,7 @@ public class User {
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, firstName, lastName, email, dateOfBirth, username, password, accounts, accountStatus, dayLimit, transactionLimit);
+    return Objects.hash(userId, firstName, lastName, email, dateOfBirth, username, password, accounts, accountStatus, dayLimit, transactionLimit);
   }
 
   @Override
@@ -363,7 +363,7 @@ public class User {
     StringBuilder sb = new StringBuilder();
     sb.append("class User {\n");
     
-    sb.append("    id: ").append(toIndentedString(id)).append("\n");
+    sb.append("    userId: ").append(toIndentedString(userId)).append("\n");
     sb.append("    firstName: ").append(toIndentedString(firstName)).append("\n");
     sb.append("    lastName: ").append(toIndentedString(lastName)).append("\n");
     sb.append("    email: ").append(toIndentedString(email)).append("\n");
@@ -389,8 +389,8 @@ public class User {
     return o.toString().replace("\n", "\n    ");
   }
 
-  public User(Long id, String firstName, String lastName, String email, LocalDate dateOfBirth, String username, String password, List<Account> accounts, AccountStatusEnum accountStatus, Double dayLimit, Double transactionLimit, List<io.swagger.api.model.Role> roles) {
-    this.id = id;
+  public User(Long userId, String firstName, String lastName, String email, String dateOfBirth, String username, String password, List<Account> accounts, AccountStatusEnum accountStatus, Double dayLimit, Double transactionLimit, List<io.swagger.api.model.Role> roles) {
+    this.userId = userId;
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;

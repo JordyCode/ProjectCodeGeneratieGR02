@@ -49,7 +49,7 @@ public class UserService {
         return token;
     }
 
-    public User add(User user) {
+    public User add(User user, boolean isEmployee) {
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
@@ -81,10 +81,10 @@ public class UserService {
         return userRepository.findByUsername(name);
     }
 
-    public User getSpecificUser(Long id) {
-        if (userRepository.getUserById(id) == null) {
+    public User getSpecificUser(Long userId) {
+        if (userRepository.getUserByUserId(userId) == null) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Id not found");
         }
-        return userRepository.getUserById(id);
+        return userRepository.getUserByUserId(userId);
     }
 }

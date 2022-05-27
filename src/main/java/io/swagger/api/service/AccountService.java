@@ -59,12 +59,12 @@ public class AccountService {
         return accountRepository.getAccountById(id);
     }
 
-    public boolean checkIfAccountIsOwner(Long id, User user) {
-        if(!accountRepository.existsByIdAndOwner(id, user))
+    public boolean checkIfAccountIsUser(Long id, User user) {
+        if(!accountRepository.existsByIdAndUser(id, user))
         {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Account does not belong to owner");
         }
-        return accountRepository.existsByIdAndOwner(id, user);
+        return accountRepository.existsByIdAndUser(id, user);
     }
 
     public Account save(Account users) {
@@ -75,7 +75,7 @@ public class AccountService {
     }
 
     public List<Account> getAccountsByUser(User user) {
-        return accountRepository.getAccountByOwner(user);
+        return accountRepository.getAccountByUser(user);
     }
     public boolean existByIBAN(String iban) {
         return accountRepository.existsByIBAN(iban);
