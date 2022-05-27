@@ -73,7 +73,7 @@ public class Transaction {
   private Integer performedBy = null;
 
   @JsonProperty("amount")
-  private BigDecimal amount = null;
+  private Double amount = null;
 
   public Transaction transactionId(Integer transactionId) {
     this.transactionId = transactionId;
@@ -195,7 +195,7 @@ public class Transaction {
     this.performedBy = performedBy;
   }
 
-  public Transaction amount(BigDecimal amount) {
+  public Transaction amount( Double amount) {
     this.amount = amount;
     return this;
   }
@@ -204,15 +204,15 @@ public class Transaction {
    * Get amount
    * @return amount
    **/
-  @Schema(example = "200", required = true, description = "")
+  @Schema(example = "200.00", required = true, description = "")
       @NotNull
 
     @Valid
-    public BigDecimal getAmount() {
+    public  Double getAmount() {
     return amount;
   }
 
-  public void setAmount(BigDecimal amount) {
+  public void setAmount(Double amount) {
     this.amount = amount;
   }
 

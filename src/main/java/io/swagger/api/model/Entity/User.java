@@ -406,4 +406,15 @@ public class User {
 
   public User() {
   }
+
+  public User(String name) {
+    this.firstName = firstName;
+  }
+
+  public User(String firstName, String lastName, String email) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.email = email;
+  }
+
 }

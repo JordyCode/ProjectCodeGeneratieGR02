@@ -278,4 +278,9 @@ public class Account {
 
   public Account() {
   }
+
+  public Account(AccountTypeEnum accountType, User user, Double absoluteLimit) {
+    this.user = user;
+    this.balance = absoluteLimit;
+  }
 }
