@@ -2,6 +2,7 @@ package io.swagger.api.model.Entity;
 
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -26,7 +27,9 @@ public class Account {
   private Long id = null;
   @JsonProperty("IBAN")
   private String IBAN = null;
-  @ManyToOne(cascade = CascadeType.ALL)
+  @JsonProperty("user")
+  @ManyToOne
+  @JsonBackReference
   private User user;
 
   /**
@@ -274,5 +277,10 @@ public class Account {
   }
 
   public Account() {
+  }
+
+  public Account(AccountTypeEnum accountType, User user, Double absoluteLimit) {
+    this.user = user;
+    this.balance = absoluteLimit;
   }
 }

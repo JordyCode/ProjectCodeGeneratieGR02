@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -50,12 +51,23 @@ public class UserService {
     }
 
     public User add(User user, boolean isEmployee) {
+        // Check if the user already exist
+        if (userRepository.findByUsername(user.getUsername()) == null) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+            if (isEmployee) {
+                user.setRoles(Arrays.asList(Role.ROLE_EMPLOYEE, Role.ROLE_USER));
+            } else {
+                user.setRoles(List.of(Role.ROLE_USER));
+            }
 
-        userRepository.save(user);
+            user.setAccountStatus(User.AccountStatusEnum.ACTIVE);
 
-        return user;
+            userRepository.save(user);
+            return user;
+        } else {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Username is already in use");
+        }
     }
 
     public User saveUser(User user) {

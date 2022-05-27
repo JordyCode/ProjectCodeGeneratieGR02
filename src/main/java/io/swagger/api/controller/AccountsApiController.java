@@ -86,7 +86,7 @@ public class AccountsApiController implements AccountsApi {
             Principal userSecurityInfo = request.getUserPrincipal();
             User user = userService.findByUsername(userSecurityInfo.getName());
 
-            // Check if the user is an employee or a normal user and check if the account owner is equal to the id of the user
+            // Check if the user is an employee or a normal user and check if the account user is equal to the id of the user
             if (request.isUserInRole("ROLE_EMPLOYEE") || accountService.checkIfAccountIsUser(id, user)) {
                 Account account = accountService.getAccountById(id);
                 if (account != null) {
