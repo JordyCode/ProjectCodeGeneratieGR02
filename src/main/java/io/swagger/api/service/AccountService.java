@@ -34,13 +34,13 @@ public class AccountService {
     }
 
     public String getIBAN() {
-        // Generate a new IBAN
-        Iban iban = new Iban.Builder().countryCode(CountryCode.NL).bankCode("CODE").buildRandom();
+        // Generate a new IBAN using dependency Iban4j
+        Iban iban = new Iban.Builder().countryCode(CountryCode.NL).bankCode("INHO").buildRandom();
 
         // Check if the IBAN is not in use already
         // If the IBAN is already in use, keep looping till there is a unique IBAN
         while (existByIBAN(iban.toString())) {
-            iban = new Iban.Builder().countryCode(CountryCode.NL).bankCode("CODE").buildRandom();
+            iban = new Iban.Builder().countryCode(CountryCode.NL).bankCode("INHO").buildRandom();
         }
         return iban.toString();
     }
