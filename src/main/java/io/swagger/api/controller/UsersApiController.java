@@ -125,6 +125,9 @@ public class UsersApiController implements UsersApi {
             user.setPassword(body.getPassword());
             user.setFirstName(body.getFirstName());
             user.setLastName(body.getLastName());
+            user.setAccountStatus(User.AccountStatusEnum.ACTIVE);
+            user.setDayLimit(body.getDayLimit());
+            user.setTransactionLimit(body.getTransactionLimit());
             user.setEmail(body.getEmail());
             user.dateOfBirth(body.getDateOfBirth());
 
