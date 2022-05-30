@@ -36,29 +36,29 @@ public class MyApplicationRunner implements ApplicationRunner {
         accountService.add(account1, false);
 
         User testUser = new User();
-        testUser.setUserId(55555555l);
-        testUser.setUsername("test1234");
-        testUser.setPassword("welkom10");
-        testUser.setFirstName("testy");
-        testUser.setLastName("test");
+        testUser.setUserId(55555555L);
+        testUser.setUsername("EmployeeBank");
+        testUser.setPassword("employee123");
+        testUser.setFirstName("Willem");
+        testUser.setLastName("Wiltenburg");
         testUser.setAccountStatus(User.AccountStatusEnum.ACTIVE);
         testUser.setDayLimit(200.00);
         testUser.setTransactionLimit(1000.00);
-        testUser.setEmail("test@tset.com");
-        testUser.setDateOfBirth("03/03/1995");
+        testUser.setEmail("willem.wiltenburg@test.com");
+        testUser.setDateOfBirth("03/03/19670");
 
         userService.add(testUser, true);
 
         // Create a new user
         User user2 = new User();
-        user2.setUsername("swagtron");
-        user2.setPassword("test");
-        user2.setFirstName("Dave");
-        user2.setLastName("Smit");
+        user2.setUsername("UserBank");
+        user2.setPassword("user123");
+        user2.setFirstName("Frank");
+        user2.setLastName("Dersjant");
         user2.setAccountStatus(User.AccountStatusEnum.ACTIVE);
         user2.setDayLimit(200.00);
         user2.setTransactionLimit(1000.00);
-        user2.setEmail("swagtron@example.com");
+        user2.setEmail("frank.dersjant@test.com");
         user2.setDateOfBirth("01/01/1970");
         userService.add(user2, false);
 
@@ -70,7 +70,5 @@ public class MyApplicationRunner implements ApplicationRunner {
         account2.setAccountStatus(Account.AccountStatusEnum.ACTIVE);
         account2.setAbsoluteLimit(100.00);
         accountService.add(account2, true);
-
-
     }
 }
