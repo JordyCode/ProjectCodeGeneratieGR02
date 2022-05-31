@@ -177,4 +177,24 @@ public class UsersApiController implements UsersApi {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
     }
+
+    @PreAuthorize("hasAnyRole('EMPLOYEE')")
+    public ResponseEntity<?> usersGetAccountsIsNull() {
+        try {
+            // Create a list for users without an account
+            List<User> userAccountIsNull = new ArrayList<>();
+
+            // If the user is an Employee then you can call the getAllUsers function
+            userAccountIsNull = userService.getUsersByAccountsIsNull();
+
+            // Check if user exist
+            if (userAccountIsNull != null) {
+                return ResponseEntity.status(HttpStatus.OK).body(userAccountIsNull);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        }
+    }
 }

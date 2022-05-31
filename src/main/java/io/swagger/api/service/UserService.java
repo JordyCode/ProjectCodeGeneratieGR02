@@ -94,4 +94,11 @@ public class UserService {
         }
         return userRepository.getUserByUserId(userId);
     }
+
+    public List<User> getUsersByAccountsIsNull() {
+        if (userRepository.getUsersByAccountsIsNull().size() == 0) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "No users without any account found");
+        }
+        return userRepository.getUsersByAccountsIsNull();
+    }
 }
