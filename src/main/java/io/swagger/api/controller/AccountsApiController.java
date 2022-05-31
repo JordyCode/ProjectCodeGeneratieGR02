@@ -140,7 +140,8 @@ public class AccountsApiController implements AccountsApi {
             account.setAccountType(body.getAccountTypeEnum());
             account.setUser(body.getUser());
             account.setAbsoluteLimit(body.getAbsoluteLimit());
-            account.setBalance(0.00);
+            account.setAccountStatus(body.getAccountStatusEnum());
+            account.setBalance(body.getBalance());
 
             // Add the new properties to the Account result
             Account result = accountService.add(account, true);
