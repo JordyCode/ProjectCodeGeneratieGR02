@@ -101,7 +101,7 @@ public class Account {
   private Double absoluteLimit;
 
   @JsonProperty("accountStatus")
-  private AccountStatusEnum accountStatus = null;
+  private AccountStatusEnum accountStatus;
 
   public Account IBAN(String IBAN) {
     this.IBAN = IBAN;
@@ -188,6 +188,7 @@ public class Account {
    * @return accountStatus
    **/
   @Schema(example = "active", description = "")
+  @NotNull
 
   public AccountStatusEnum getAccountStatus() {
     return accountStatus;

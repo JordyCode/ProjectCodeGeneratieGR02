@@ -1,9 +1,13 @@
 package io.swagger.api.controller;
 
 import io.swagger.api.UsersApi;
+import io.swagger.api.model.DTO.UserDetailsDTO;
+import io.swagger.api.model.Entity.Account;
 import io.swagger.api.model.Entity.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.api.model.DTO.UserDTO;
+import io.swagger.api.model.Role;
+import io.swagger.api.service.AccountService;
 import io.swagger.api.service.UserService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -21,6 +25,8 @@ import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-04T11:53:18.205Z[GMT]")
@@ -35,6 +41,9 @@ public class UsersApiController implements UsersApi {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private AccountService accountService;
 
     @Autowired
     public UsersApiController(ObjectMapper objectMapper, HttpServletRequest request) {
@@ -65,7 +74,20 @@ public class UsersApiController implements UsersApi {
                         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
                     }
                 } else {
-                    return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+                    Account account = accountService.getAccountById(userId);
+
+                    UserDetailsDTO userDetailsDTO = new UserDetailsDTO();
+                    userDetailsDTO.setFirstname(user.getFirstName());
+                    userDetailsDTO.setLastname(user.getLastName());
+                    userDetailsDTO.setIBAN(account.getIBAN());
+
+                    // Check if user exist
+                    if (user != null && account != null) {
+                        return ResponseEntity.status(HttpStatus.OK).body(userDetailsDTO);
+                    } else {
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                    }
                 }
             }
         } catch(Exception ex) {
@@ -107,7 +129,17 @@ public class UsersApiController implements UsersApi {
     public ResponseEntity<?> usersIdPut(@Parameter(in = ParameterIn.PATH, description = "ID of the user to update", required=true, schema=@Schema()) @PathVariable("userId") Long userId,  @Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody User body) {
 
         try {
-            body.setUserId(userId);
+            if (userId == 1) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            } else {
+                body.setUserId(userId);
+            }
+
+            if (request.isUserInRole("ROLE_EMPLOYEE")) {
+                body.setRoles(Arrays.asList(Role.ROLE_EMPLOYEE));
+            } else {
+                body.setRoles(Arrays.asList(Role.ROLE_USER));
+            }
             User result = userService.saveUser(body);
 
             return ResponseEntity.status(200).body(result);

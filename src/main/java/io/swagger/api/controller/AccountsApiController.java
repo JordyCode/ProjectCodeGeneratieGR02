@@ -5,6 +5,7 @@ import io.swagger.api.model.DTO.AccountDTO;
 import io.swagger.api.model.Entity.Account;
 import io.swagger.api.model.Entity.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.api.model.Role;
 import io.swagger.api.service.AccountService;
 import io.swagger.api.service.UserService;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -13,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,6 +25,7 @@ import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-04T11:53:18.205Z[GMT]")
@@ -40,6 +43,9 @@ public class AccountsApiController implements AccountsApi {
 
     @Autowired
     private UserService userService;
+
+    @Value("${bank.iban}")
+    private String bankIban;
 
     @Autowired
     public AccountsApiController(ObjectMapper objectMapper, HttpServletRequest request) {
@@ -89,6 +95,9 @@ public class AccountsApiController implements AccountsApi {
             // Check if the user is an employee or a normal user and check if the account user is equal to the id of the user
             if (request.isUserInRole("ROLE_EMPLOYEE") || accountService.checkIfAccountIsUser(id, user)) {
                 Account account = accountService.getAccountById(id);
+                if (account.getId() == 1) {
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+                }
                 if (account != null) {
                     return ResponseEntity.status(HttpStatus.OK).body(account);
                 } else {
@@ -106,7 +115,12 @@ public class AccountsApiController implements AccountsApi {
     @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<?> accountsIDPut(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("id") Long id, @Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody Account body) {
         try {
-            body.setId(id);
+            if (id == 1) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            } else {
+                body.setId(id);
+            }
+
             Account result = accountService.save(body);
 
             return ResponseEntity.status(200).body(result);
