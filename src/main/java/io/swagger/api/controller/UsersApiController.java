@@ -21,6 +21,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+
 import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
@@ -52,22 +53,20 @@ public class UsersApiController implements UsersApi {
     }
 
     @PreAuthorize("hasAnyRole('USER','EMPLOYEE')")
-    public ResponseEntity<?> getSpecificUser(@Parameter(in = ParameterIn.PATH, description = "ID from the user", required=true, schema=@Schema()) @PathVariable("userId") Long userId) {
+    public ResponseEntity<?> getSpecificUser(@Parameter(in = ParameterIn.PATH, description = "ID from the user", required = true, schema = @Schema()) @PathVariable("userId") Long userId) {
         try {
             // Get the information of the user
             Principal userSecurityInfo = request.getUserPrincipal();
             User user = userService.findByUsername(userSecurityInfo.getName());
-
+            User getSpecificUser = new User();
 
             // Check if userId is the same as the current user
             if (user.getUserId() == userId) {
                 return ResponseEntity.status(HttpStatus.OK).body(user);
             } else {
+                // Call service layer for function getSpecificUser
+                getSpecificUser = userService.getSpecificUser(userId);
                 if (request.isUserInRole("ROLE_EMPLOYEE")) {
-
-                    // Call service layer for function getSpecificUser
-                    User getSpecificUser = userService.getSpecificUser(userId);
-
                     // Check if user exist
                     if (user != null) {
                         return ResponseEntity.status(HttpStatus.OK).body(getSpecificUser);
@@ -76,13 +75,16 @@ public class UsersApiController implements UsersApi {
                     }
                 } else {
 
-                    // Check of accountList.get(1) de IBAN geeft of dat het get(0) is of dat het uberhaupt werkt.
-                    List<Account> accountList = user.getAccounts();
-
                     UserDetailsDTO userDetailsDTO = new UserDetailsDTO();
-                    userDetailsDTO.setFirstname(user.getFirstName());
-                    userDetailsDTO.setLastname(user.getLastName());
-                    userDetailsDTO.setIBAN(String.valueOf(accountList.get(1)));
+                    List<Account> accountList = getSpecificUser.getAccounts();
+                    if (accountList.size() > 0) {
+                        userDetailsDTO.setFirstname(user.getFirstName());
+                        userDetailsDTO.setLastname(user.getLastName());
+                        userDetailsDTO.setIBAN(String.valueOf(accountList.get(0).getIBAN()));
+                    } else {
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                    }
+
 
                     // Check if user exist
                     if (user != null) {
@@ -92,10 +94,11 @@ public class UsersApiController implements UsersApi {
                     }
                 }
             }
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
     }
+
     @PreAuthorize("hasAnyRole('USER','EMPLOYEE')")
     public ResponseEntity<?> usersGet() {
         try {
@@ -127,8 +130,9 @@ public class UsersApiController implements UsersApi {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
     }
+
     @PreAuthorize("hasRole('EMPLOYEE')")
-    public ResponseEntity<?> usersIdPut(@Parameter(in = ParameterIn.PATH, description = "ID of the user to update", required=true, schema=@Schema()) @PathVariable("userId") Long userId,  @Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody User body) {
+    public ResponseEntity<?> usersIdPut(@Parameter(in = ParameterIn.PATH, description = "ID of the user to update", required = true, schema = @Schema()) @PathVariable("userId") Long userId, @Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody User body) {
 
         try {
             if (userId == 1) {
@@ -150,8 +154,9 @@ public class UsersApiController implements UsersApi {
         }
 
     }
+
     @PreAuthorize("hasRole('EMPLOYEE')")
-    public ResponseEntity<?> usersPost(@Parameter(in = ParameterIn.DEFAULT, description = "Creates a new user account", required=true, schema=@Schema()) @Valid @RequestBody UserDTO body) {
+    public ResponseEntity<?> usersPost(@Parameter(in = ParameterIn.DEFAULT, description = "Creates a new user account", required = true, schema = @Schema()) @Valid @RequestBody UserDTO body) {
 
         try {
             User user = new User();
