@@ -253,10 +253,10 @@ public class User {
 //  @Schema(required = true, description = "")
 //      @NotNull
 //
-//    @Valid
-//    public List<Account> getAccounts() {
-//    return accounts;
-//  }
+    @Valid
+    public List<Account> getAccounts() {
+    return accounts;
+  }
 //
 //  public void setAccounts(List<Account> accounts) {
 //    this.accounts = accounts;

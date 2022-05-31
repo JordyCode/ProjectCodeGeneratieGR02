@@ -58,6 +58,7 @@ public class UsersApiController implements UsersApi {
             Principal userSecurityInfo = request.getUserPrincipal();
             User user = userService.findByUsername(userSecurityInfo.getName());
 
+
             // Check if userId is the same as the current user
             if (user.getUserId() == userId) {
                 return ResponseEntity.status(HttpStatus.OK).body(user);
@@ -75,15 +76,16 @@ public class UsersApiController implements UsersApi {
                     }
                 } else {
 
-                    Account account = accountService.getAccountById(userId);
+                    // Check of accountList.get(1) de IBAN geeft of dat het get(0) is of dat het uberhaupt werkt.
+                    List<Account> accountList = user.getAccounts();
 
                     UserDetailsDTO userDetailsDTO = new UserDetailsDTO();
                     userDetailsDTO.setFirstname(user.getFirstName());
                     userDetailsDTO.setLastname(user.getLastName());
-                    userDetailsDTO.setIBAN(account.getIBAN());
+                    userDetailsDTO.setIBAN(String.valueOf(accountList.get(1)));
 
                     // Check if user exist
-                    if (user != null && account != null) {
+                    if (user != null) {
                         return ResponseEntity.status(HttpStatus.OK).body(userDetailsDTO);
                     } else {
                         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
