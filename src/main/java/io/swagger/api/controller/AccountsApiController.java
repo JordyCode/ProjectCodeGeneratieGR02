@@ -84,7 +84,7 @@ public class AccountsApiController implements AccountsApi {
         }
     }
 
-    @PreAuthorize("hasAnyRole('EMPLOYEE','USER')")
+    @PreAuthorize("hasAnyRole('EMPLOYEE')")
     public ResponseEntity<?> accountsIDGet(@Parameter(in = ParameterIn.PATH, description = "Account id", required=true, schema=@Schema()) @PathVariable("id") Long id) {
         try
         {

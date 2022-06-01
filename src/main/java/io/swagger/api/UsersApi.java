@@ -84,5 +84,16 @@ public interface UsersApi {
         method = RequestMethod.POST)
     ResponseEntity<?> usersPost(@Parameter(in = ParameterIn.DEFAULT, description = "Creates a new user account", required=true, schema=@Schema()) @Valid @RequestBody UserDTO body);
 
+    @Operation(summary = "Gets list of users where list is null", description = "Employee can see all users", security = {
+            @SecurityRequirement(name = "bearerAuth")    }, tags={ "employees" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Succesfully retrieved users!", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = User.class)))),
+
+            @ApiResponse(responseCode = "400", description = "BadRequest") })
+    @RequestMapping(value = "/usersWhenNull",
+            produces = { "application/json" },
+            method = RequestMethod.GET)
+    ResponseEntity<?> usersGetAccountsIsNull();
+
 }
 

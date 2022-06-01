@@ -74,7 +74,7 @@ public class UsersApiController implements UsersApi {
                         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
                     }
                 } else {
-
+                    // If user then you will see the firstname, lastname and IBAN from the user you search for
                     UserDetailsDTO userDetailsDTO = new UserDetailsDTO();
                     List<Account> accountList = getSpecificUser.getAccounts();
                     if (accountList.size() > 0) {
@@ -84,7 +84,6 @@ public class UsersApiController implements UsersApi {
                     } else {
                         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
                     }
-
 
                     // Check if user exist
                     if (user != null) {
