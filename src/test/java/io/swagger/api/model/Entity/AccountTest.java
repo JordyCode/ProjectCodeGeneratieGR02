@@ -7,11 +7,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-
 import java.util.Arrays;
-
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -22,7 +22,6 @@ class AccountTest {
 
     private Account account;
     private User user1;
-
 
     @BeforeEach
     public void setup() {
@@ -37,14 +36,15 @@ class AccountTest {
 
         account = new Account();
     }
-
     @Test
-    void newAccountShouldNotBeNull(){
+    @WithMockUser(username = "Frank",password = "test", roles = "EMPLOYEE")
+    void newAccountShouldNotBeNull() {
         Assertions.assertNotNull(account);
     }
 
     @Test
-    void AccountContainsData(){
+    @WithMockUser(username = "Frank",password = "test", roles = "EMPLOYEE")
+    void accountContainsData() {
         account.setIBAN("NL00INHO0000000002");
         account.setUser(user1);
         account.setAccountType(Account.AccountTypeEnum.CURRENT);
@@ -52,8 +52,43 @@ class AccountTest {
         account.setAbsoluteLimit(-500.00);
 
         assertNotNull(account);
-        assertEquals(account.getIBAN(), "NL00INHO0000000002");
-        assertEquals(account.getUser().getUsername(), "test");
+        assertEquals("NL00INHO0000000002", account.getIBAN());
+        assertEquals(user1, account.getUser());
+        assertEquals(Account.AccountTypeEnum.CURRENT, account.getAccountType());
+        assertEquals((Double)1000.00, account.getBalance());
+        assertEquals((Double)(-500.00), account.getAbsoluteLimit());
     }
 
+    @Test
+    @WithMockUser(username = "Frank",password = "test", roles = "EMPLOYEE")
+    void setBalanceToPositiveNumberShouldSetThatBalance() {
+        Double newBalance = 1000.00;
+        account.setBalance(newBalance);
+        assertEquals(newBalance, account.getBalance());
+    }
+
+    @Test
+    @WithMockUser(username = "Frank",password = "test", roles = "EMPLOYEE")
+    void setBalanceToNegativeShouldThrowException() {
+        assertThrows(IllegalArgumentException.class, () -> account.setBalance(-1.00));
+    }
+    @Test
+    @WithMockUser(username = "Frank",password = "test", roles = "EMPLOYEE")
+    void setAccountStatusToActive() {
+        account.setAccountStatus(Account.AccountStatusEnum.ACTIVE);
+        assertEquals(Account.AccountStatusEnum.ACTIVE, account.getAccountStatus());
+    }
+
+    @Test
+    @WithMockUser(username = "Frank",password = "test", roles = "EMPLOYEE")
+    void setAccountStatusToInactive() {
+        account.setAccountStatus(Account.AccountStatusEnum.INACTIVE);
+        assertEquals(Account.AccountStatusEnum.INACTIVE, account.getAccountStatus());
+    }
+
+    @Test
+    @WithMockUser(username = "Frank",password = "test", roles = "EMPLOYEE")
+    void setAbsoluteLimitToPositiveShouldThrowException() {
+        assertThrows(IllegalArgumentException.class, () -> account.setAbsoluteLimit(1.00));
+    }
 }

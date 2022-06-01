@@ -79,7 +79,7 @@ public interface AccountsApi {
         method = RequestMethod.POST)
     ResponseEntity<?> accountsPost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody AccountDTO body);
 
-    @Operation(summary = "This GET returns accounts", description = "List of all bank accounts if you're an employee. List of your own accounts if you're a regular user", security = {
+    @Operation(summary = "This GET returns total balance", description = "List with the total balance of all the user's bank accounts combined", security = {
             @SecurityRequirement(name = "bearerAuth")    }, tags={ "BalanceDTO" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "List with all accounts", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = User.class)))),
