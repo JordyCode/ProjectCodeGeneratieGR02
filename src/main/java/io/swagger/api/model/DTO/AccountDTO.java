@@ -5,10 +5,16 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.api.model.Entity.Account;
 import io.swagger.api.model.Entity.User;
 
-public class AccountDTO {
+import javax.validation.constraints.NotNull;
 
+public class AccountDTO {
+    @NotNull
     private Account.AccountTypeEnum accountTypeEnum;
 
+    @NotNull
+    private Account.AccountStatusEnum accountStatusEnum;
+
+    @NotNull
     private User user;
 
     private String IBAN;
@@ -16,6 +22,14 @@ public class AccountDTO {
     private double balance;
 
     private double absoluteLimit;
+
+    public Account.AccountStatusEnum getAccountStatusEnum() {
+        return accountStatusEnum;
+    }
+
+    public void setAccountStatusEnum(Account.AccountStatusEnum accountStatusEnum) {
+        this.accountStatusEnum = accountStatusEnum;
+    }
 
     public Account.AccountTypeEnum getAccountTypeEnum() {
         return accountTypeEnum;

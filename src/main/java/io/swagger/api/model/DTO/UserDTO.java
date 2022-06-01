@@ -14,6 +14,26 @@ public class UserDTO {
 
     private String dateOfBirth;
 
+    private Double dayLimit;
+
+    private Double transactionLimit;
+
+    public Double getDayLimit() {
+        return dayLimit;
+    }
+
+    public void setDayLimit(Double dayLimit) {
+        this.dayLimit = dayLimit;
+    }
+
+    public Double getTransactionLimit() {
+        return transactionLimit;
+    }
+
+    public void setTransactionLimit(Double transactionLimit) {
+        this.transactionLimit = transactionLimit;
+    }
+
     public String getUsername() {
         return username;
     }

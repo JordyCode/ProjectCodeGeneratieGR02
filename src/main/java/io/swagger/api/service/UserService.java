@@ -1,7 +1,6 @@
 package io.swagger.api.service;
 
 import io.swagger.api.jwt.JwtTokenProvider;
-import io.swagger.api.model.DTO.UserDTO;
 import io.swagger.api.model.Entity.User;
 import io.swagger.api.model.Role;
 import io.swagger.api.repository.UserRepository;
@@ -10,9 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -69,7 +65,6 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Username is already in use");
         }
     }
-
     public User saveUser(User user) {
         if (userRepository.findByUsername(user.getUsername()) != null) {
             return userRepository.save(user);
@@ -98,5 +93,12 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Id not found");
         }
         return userRepository.getUserByUserId(userId);
+    }
+
+    public List<User> getUsersByAccountsIsNull() {
+        if (userRepository.getUsersByAccountsIsNull().size() == 0) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "No users without any account found");
+        }
+        return userRepository.getUsersByAccountsIsNull();
     }
 }

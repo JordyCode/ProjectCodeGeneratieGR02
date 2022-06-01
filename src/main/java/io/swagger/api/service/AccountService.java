@@ -34,7 +34,7 @@ public class AccountService {
     }
 
     public String getIBAN() {
-        // Generate a new IBAN
+        // Generate a new IBAN using dependency Iban4j
         Iban iban = new Iban.Builder().countryCode(CountryCode.NL).bankCode("INHO").buildRandom();
 
         // Check if the IBAN is not in use already

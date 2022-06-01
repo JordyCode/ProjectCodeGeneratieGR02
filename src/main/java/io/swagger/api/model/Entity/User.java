@@ -241,26 +241,25 @@ public class User {
     this.password = password;
   }
 
-//  public User accounts(List<Account> accounts) {
-//    this.accounts = accounts;
-//    return this;
-//  }
-//
-//  /**
-//   * Get accounts
-//   * @return accounts
-//   **/
-//  @Schema(required = true, description = "")
-//      @NotNull
-//
-//    @Valid
-//    public List<Account> getAccounts() {
-//    return accounts;
-//  }
-//
-//  public void setAccounts(List<Account> accounts) {
-//    this.accounts = accounts;
-//  }
+  public User accounts(List<Account> accounts) {
+    this.accounts = accounts;
+    return this;
+  }
+
+  /**
+   * Get accounts
+   * @return accounts
+   **/
+  @Schema(required = true, description = "")
+
+    @Valid
+    public List<Account> getAccounts() {
+    return accounts;
+  }
+
+  public void setAccounts(List<Account> accounts) {
+    this.accounts = accounts;
+  }
 
   public User accountStatus(AccountStatusEnum accountStatus) {
     this.accountStatus = accountStatus;
@@ -397,7 +396,7 @@ public class User {
     this.dateOfBirth = dateOfBirth;
     this.username = username;
     this.password = password;
-//    this.accounts = accounts;
+    this.accounts = accounts;
     this.accountStatus = accountStatus;
     this.dayLimit = dayLimit;
     this.transactionLimit = transactionLimit;
