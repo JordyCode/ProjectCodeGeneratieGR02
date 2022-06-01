@@ -91,6 +91,5 @@ public interface AccountsApi {
             produces = { "application/json" },
             method = RequestMethod.GET)
     ResponseEntity<?> accountsGetTotalBalance();
-    //////
 }
 
