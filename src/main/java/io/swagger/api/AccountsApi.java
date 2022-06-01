@@ -79,5 +79,17 @@ public interface AccountsApi {
         method = RequestMethod.POST)
     ResponseEntity<?> accountsPost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody AccountDTO body);
 
+    @Operation(summary = "This GET returns accounts", description = "List of all bank accounts if you're an employee. List of your own accounts if you're a regular user", security = {
+            @SecurityRequirement(name = "bearerAuth")    }, tags={ "BalanceDTO" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "List with all accounts", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = User.class)))),
+
+            @ApiResponse(responseCode = "400", description = "Input not correct"),
+
+            @ApiResponse(responseCode = "404", description = "There was no list found, try again later") })
+    @RequestMapping(value = "/accounts/totalBalance",
+            produces = { "application/json" },
+            method = RequestMethod.GET)
+    ResponseEntity<?> accountsGetTotalBalance();
 }
 

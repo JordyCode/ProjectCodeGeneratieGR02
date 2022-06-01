@@ -2,6 +2,7 @@ package io.swagger.api.controller;
 
 import io.swagger.api.AccountsApi;
 import io.swagger.api.model.DTO.AccountDTO;
+import io.swagger.api.model.DTO.BalanceDTO;
 import io.swagger.api.model.Entity.Account;
 import io.swagger.api.model.Entity.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -147,6 +148,46 @@ public class AccountsApiController implements AccountsApi {
             Account result = accountService.add(account, true);
 
             return ResponseEntity.status(HttpStatus.OK).body(result);
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        }
+    }
+
+    @PreAuthorize("hasAnyRole('EMPLOYEE','USER')")
+    public ResponseEntity<?> accountsGetTotalBalance() {
+        try {
+            // create total balance variable
+            Double totalBalance = 0.00;
+            // Create a list to save the accounts
+            List<Account> accounts = new ArrayList<>();
+
+            // Get the security information of the user
+            Principal userSecurityInfo = request.getUserPrincipal();
+
+            // Get the current user
+            User user = userService.findByUsername(userSecurityInfo.getName());
+
+            // Fill list with all the accounts of the user
+            accounts = accountService.getAccountsByUser(user);
+
+            // Create BalanceDTO
+            BalanceDTO balanceDTO = new BalanceDTO();
+
+            if (accounts.size() > 0) {
+                for (Account a : accounts) {
+                    totalBalance += a.getBalance();
+                }
+                balanceDTO.setTotalBalance(totalBalance);
+            }
+            else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+
+            if (balanceDTO != null) {
+                return ResponseEntity.status(HttpStatus.OK).body(balanceDTO);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
