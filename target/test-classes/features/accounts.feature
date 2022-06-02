@@ -3,7 +3,7 @@ Feature: Accounts
   # Scenario's for getting all accounts
   Scenario: Get all accounts without login
     When I request /accounts without login token
-    Then I get a response of 400 bad request
+    Then I get a response of 403
 
   Scenario: Get all accounts as an employee
     Given I have a valid "employee" bearer token
