@@ -31,7 +31,7 @@ import java.util.List;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-04T11:53:18.205Z[GMT]")
 @RestController
-@RequestMapping(value = "/accounts", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/accounts")
 public class AccountsApiController implements AccountsApi {
 
     private static final Logger log = LoggerFactory.getLogger(AccountsApiController.class);
@@ -47,7 +47,6 @@ public class AccountsApiController implements AccountsApi {
     @Value("${bank.iban}")
     private String bankIban;
 
-    @Autowired
     public AccountsApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
         this.request = request;
@@ -86,7 +85,7 @@ public class AccountsApiController implements AccountsApi {
     }
 
     @PreAuthorize("hasAnyRole('EMPLOYEE')")
-    @GetMapping
+    @GetMapping("accounts/{id}")
     public ResponseEntity<?> accountsIDGet(@Parameter(in = ParameterIn.PATH, description = "Account id", required=true, schema=@Schema()) @PathVariable("id") Long id) {
         try
         {
