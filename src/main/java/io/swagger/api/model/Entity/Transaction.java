@@ -1,15 +1,20 @@
 package io.swagger.api.model.Entity;
 
 import java.util.Objects;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import io.swagger.api.model.DTO.TransactionDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 
@@ -21,18 +26,32 @@ import javax.validation.constraints.*;
 
 @Entity
 public class Transaction {
-  @JsonProperty("transactionId")
+  @GeneratedValue
   @Id
+  @JsonProperty("transactionId")
   private Integer transactionId = null;
+
+  @JsonProperty("user")
+  @ManyToOne
+  @JsonBackReference
+  private User user;
+
+//  @ManyToOne
+//  @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+//  private Account account_from;
+//
+//  @ManyToOne
+//  @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+//  private Account account_to;
 
   /**
    * Gets or Sets type
    */
   public enum TypeEnum {
-    TRANSACTION("TransactionDTO"),
-    
+    TRANSACTION("Transaction"),
+
     DEPOSIT("Deposit"),
-    
+
     WITHDRAW("Withdraw");
 
     private String value;
@@ -63,10 +82,10 @@ public class Transaction {
   @JsonProperty("timestamp")
   private String timestamp = null;
 
-  @JsonProperty("account_from")
+  @JsonProperty("accountfrom")
   private String accountFrom = null;
 
-  @JsonProperty("account_to")
+  @JsonProperty("accountto")
   private String accountTo = null;
 
   @JsonProperty("performed_by")
@@ -79,15 +98,33 @@ public class Transaction {
     this.transactionId = transactionId;
     return this;
   }
+//
+//  public Account getAccount_from() {
+//    return account_from;
+//  }
+//
+//  public void setAccount_from(Account accountFrom) {
+//    this.account_from = accountFrom;
+//  }
+//
+//  public Account getAccount_to() {
+//    return account_to;
+//  }
+//
+//  public void setAccount_to(Account accountTo) {
+//    this.account_to = accountTo;
+//  }
+
+
 
   /**
    * Get transactionId
    * @return transactionId
    **/
   @Schema(example = "1", required = true, description = "")
-      @NotNull
+  @NotNull
 
-    public Integer getTransactionId() {
+  public Integer getTransactionId() {
     return transactionId;
   }
 
@@ -105,9 +142,9 @@ public class Transaction {
    * @return type
    **/
   @Schema(example = "Deposit", required = true, description = "")
-      @NotNull
+  @NotNull
 
-    public TypeEnum getType() {
+  public TypeEnum getType() {
     return type;
   }
 
@@ -125,9 +162,9 @@ public class Transaction {
    * @return timestamp
    **/
   @Schema(example = "29/04/2021", required = true, description = "")
-      @NotNull
+  @NotNull
 
-    public String getTimestamp() {
+  public String getTimestamp() {
     return timestamp;
   }
 
@@ -145,9 +182,9 @@ public class Transaction {
    * @return accountFrom
    **/
   @Schema(example = "NL20INHO0032076001", required = true, description = "")
-      @NotNull
+  @NotNull
 
-    public String getAccountFrom() {
+  public String getAccountFrom() {
     return accountFrom;
   }
 
@@ -165,9 +202,9 @@ public class Transaction {
    * @return accountTo
    **/
   @Schema(example = "NL20INHO0032070023", required = true, description = "")
-      @NotNull
+  @NotNull
 
-    public String getAccountTo() {
+  public String getAccountTo() {
     return accountTo;
   }
 
@@ -185,9 +222,9 @@ public class Transaction {
    * @return performedBy
    **/
   @Schema(example = "151", required = true, description = "")
-      @NotNull
+  @NotNull
 
-    public Integer getPerformedBy() {
+  public Integer getPerformedBy() {
     return performedBy;
   }
 
@@ -205,10 +242,10 @@ public class Transaction {
    * @return amount
    **/
   @Schema(example = "200.00", required = true, description = "")
-      @NotNull
+  @NotNull
 
-    @Valid
-    public  Double getAmount() {
+  @Valid
+  public  Double getAmount() {
     return amount;
   }
 
@@ -227,12 +264,12 @@ public class Transaction {
     }
     Transaction transaction = (Transaction) o;
     return Objects.equals(this.transactionId, transaction.transactionId) &&
-        Objects.equals(this.type, transaction.type) &&
-        Objects.equals(this.timestamp, transaction.timestamp) &&
-        Objects.equals(this.accountFrom, transaction.accountFrom) &&
-        Objects.equals(this.accountTo, transaction.accountTo) &&
-        Objects.equals(this.performedBy, transaction.performedBy) &&
-        Objects.equals(this.amount, transaction.amount);
+            Objects.equals(this.type, transaction.type) &&
+            Objects.equals(this.timestamp, transaction.timestamp) &&
+            Objects.equals(this.accountFrom, transaction.accountFrom) &&
+            Objects.equals(this.accountTo, transaction.accountTo) &&
+            Objects.equals(this.performedBy, transaction.performedBy) &&
+            Objects.equals(this.amount, transaction.amount);
   }
 
   @Override
@@ -244,7 +281,7 @@ public class Transaction {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class Transaction {\n");
-    
+
     sb.append("    transactionId: ").append(toIndentedString(transactionId)).append("\n");
     sb.append("    type: ").append(toIndentedString(type)).append("\n");
     sb.append("    timestamp: ").append(toIndentedString(timestamp)).append("\n");
@@ -265,5 +302,18 @@ public class Transaction {
       return "null";
     }
     return o.toString().replace("\n", "\n    ");
+  }
+
+  public Transaction() {
+  }
+
+  public Transaction(Integer transactionId, Transaction.TypeEnum type, String timestamp, String accountFrom, String accountTo, Integer performedBy, Double amount) {
+    this.transactionId = transactionId;
+    this.type = type;
+    this.timestamp = timestamp;
+    this.accountFrom = accountFrom;
+    this.accountTo = accountTo;
+    this.performedBy = performedBy;
+    this.amount = amount;
   }
 }

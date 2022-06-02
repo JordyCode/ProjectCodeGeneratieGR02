@@ -250,7 +250,7 @@ public class User {
    * Get accounts
    * @return accounts
    **/
-  @Schema(required = true, description = "")
+  @Schema(required = false, description = "")
 
     @Valid
     public List<Account> getAccounts() {
@@ -346,7 +346,7 @@ public class User {
         Objects.equals(this.dateOfBirth, user.dateOfBirth) &&
         Objects.equals(this.username, user.username) &&
         Objects.equals(this.password, user.password) &&
-//        Objects.equals(this.accounts, user.accounts) &&
+        Objects.equals(this.accounts, user.accounts) &&
         Objects.equals(this.accountStatus, user.accountStatus) &&
         Objects.equals(this.dayLimit, user.dayLimit) &&
         Objects.equals(this.transactionLimit, user.transactionLimit);
@@ -369,7 +369,7 @@ public class User {
     sb.append("    dateOfBirth: ").append(toIndentedString(dateOfBirth)).append("\n");
     sb.append("    username: ").append(toIndentedString(username)).append("\n");
     sb.append("    password: ").append(toIndentedString(password)).append("\n");
-//    sb.append("    accounts: ").append(toIndentedString(accounts)).append("\n");
+    sb.append("    accounts: ").append(toIndentedString(accounts)).append("\n");
     sb.append("    accountStatus: ").append(toIndentedString(accountStatus)).append("\n");
     sb.append("    dayLimit: ").append(toIndentedString(dayLimit)).append("\n");
     sb.append("    transactionLimit: ").append(toIndentedString(transactionLimit)).append("\n");
