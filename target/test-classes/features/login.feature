@@ -9,4 +9,4 @@ Feature: Login
   Scenario: Post request to /login with invalid user object
     Given I have an invalid user object
     When I call the login endpoint
-    Then I receive a status of 422
+    Then I receive a status of 400

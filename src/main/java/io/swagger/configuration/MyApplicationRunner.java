@@ -36,7 +36,6 @@ public class MyApplicationRunner implements ApplicationRunner {
         accountService.add(account1, false);
 
         User testUser = new User();
-        testUser.setUserId(55555555L);
         testUser.setUsername("EmployeeBank");
         testUser.setPassword("employee123");
         testUser.setFirstName("Willem");
