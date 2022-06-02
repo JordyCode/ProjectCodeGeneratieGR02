@@ -78,8 +78,8 @@ public class UsersApiController implements UsersApi {
                     UserDetailsDTO userDetailsDTO = new UserDetailsDTO();
                     List<Account> accountList = getSpecificUser.getAccounts();
                     if (accountList.size() > 0) {
-                        userDetailsDTO.setFirstname(user.getFirstName());
-                        userDetailsDTO.setLastname(user.getLastName());
+                        userDetailsDTO.setFirstname(getSpecificUser.getFirstName());
+                        userDetailsDTO.setLastname(getSpecificUser.getLastName());
                         userDetailsDTO.setIBAN(String.valueOf(accountList.get(0).getIBAN()));
                     } else {
                         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
