@@ -15,8 +15,11 @@ import java.util.List;
 @Service
 public class AccountService {
 
-    @Autowired
     private AccountRepository accountRepository;
+
+    public AccountService(AccountRepository accountRepository){
+        this.accountRepository = accountRepository;
+    }
 
     public Account add(Account account, boolean randomIBAN) {
         try{
@@ -29,6 +32,16 @@ public class AccountService {
             return account;
         }
         catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Incorrect iban given");
+        }
+    }
+
+    // Create an account for testing purposes. No random IBAN generated.
+    public Account addTest(Account account) {
+        try {
+            accountRepository.save(account);
+            return account;
+        } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Incorrect iban given");
         }
     }

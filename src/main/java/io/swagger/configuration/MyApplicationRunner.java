@@ -70,5 +70,14 @@ public class MyApplicationRunner implements ApplicationRunner {
         account2.setAccountStatus(Account.AccountStatusEnum.ACTIVE);
         account2.setAbsoluteLimit(100.00);
         accountService.add(account2, true);
+
+        Account account3 = new Account();
+        account3.setIBAN("NL00INHO000000003");
+        account3.setAccountType(Account.AccountTypeEnum.SAVINGS);
+        account3.setUser(user2);
+        account3.setBalance(20000.00);
+        account3.setAccountStatus(Account.AccountStatusEnum.ACTIVE);
+        account3.setAbsoluteLimit(100.00);
+        accountService.add(account3, false);
     }
 }

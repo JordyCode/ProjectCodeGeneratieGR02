@@ -169,6 +169,9 @@ public class Account {
   }
 
   public void setBalance(Double balance) {
+    if (balance < 0) {
+      throw new IllegalArgumentException("Balance cannot be below zero");
+    }
     this.balance = balance;
   }
 
@@ -210,6 +213,9 @@ public class Account {
   }
 
   public void setAbsoluteLimit(Double absoluteLimit) {
+    if (absoluteLimit > 100) {
+      throw new IllegalArgumentException("Absolute limit cannot be above 100");
+    }
     this.absoluteLimit = absoluteLimit;
   }
 
@@ -268,9 +274,9 @@ public class Account {
     this.user = user;
   }
 
-  public Account(String IBAN, User user, AccountTypeEnum accountType, Double balance, Double absoluteLimit, AccountStatusEnum accountStatus) {
+  public Account(String IBAN,  AccountTypeEnum accountType, Double balance, Double absoluteLimit, AccountStatusEnum accountStatus) {
     this.IBAN = IBAN;
-    this.user = user;
+
     this.accountType = accountType;
     this.balance = balance;
     this.absoluteLimit = absoluteLimit;
@@ -283,5 +289,9 @@ public class Account {
   public Account(AccountTypeEnum accountType, User user, Double absoluteLimit) {
     this.user = user;
     this.balance = absoluteLimit;
+  }
+
+  public Account(Double balance){
+    this.balance = balance;
   }
 }
