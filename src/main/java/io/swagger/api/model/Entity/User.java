@@ -241,26 +241,26 @@ public class User {
     this.password = password;
   }
 
-//  public User accounts(List<Account> accounts) {
-//    this.accounts = accounts;
-//    return this;
-//  }
-//
-//  /**
-//   * Get accounts
-//   * @return accounts
-//   **/
-//  @Schema(required = true, description = "")
-//      @NotNull
-//
-//    @Valid
-//    public List<Account> getAccounts() {
-//    return accounts;
-//  }
-//
-//  public void setAccounts(List<Account> accounts) {
-//    this.accounts = accounts;
-//  }
+  public User accounts(List<Account> accounts) {
+    this.accounts = accounts;
+    return this;
+  }
+
+  /**
+   * Get accounts
+   * @return accounts
+   **/
+  @Schema(required = false, description = "")
+
+
+    @Valid
+    public List<Account> getAccounts() {
+    return accounts;
+  }
+
+  public void setAccounts(List<Account> accounts) {
+    this.accounts = accounts;
+  }
 
   public User accountStatus(AccountStatusEnum accountStatus) {
     this.accountStatus = accountStatus;
@@ -370,7 +370,7 @@ public class User {
     sb.append("    dateOfBirth: ").append(toIndentedString(dateOfBirth)).append("\n");
     sb.append("    username: ").append(toIndentedString(username)).append("\n");
     sb.append("    password: ").append(toIndentedString(password)).append("\n");
-//    sb.append("    accounts: ").append(toIndentedString(accounts)).append("\n");
+    sb.append("    accounts: ").append(toIndentedString(accounts)).append("\n");
     sb.append("    accountStatus: ").append(toIndentedString(accountStatus)).append("\n");
     sb.append("    dayLimit: ").append(toIndentedString(dayLimit)).append("\n");
     sb.append("    transactionLimit: ").append(toIndentedString(transactionLimit)).append("\n");
@@ -397,7 +397,7 @@ public class User {
     this.dateOfBirth = dateOfBirth;
     this.username = username;
     this.password = password;
-//    this.accounts = accounts;
+    this.accounts = accounts;
     this.accountStatus = accountStatus;
     this.dayLimit = dayLimit;
     this.transactionLimit = transactionLimit;

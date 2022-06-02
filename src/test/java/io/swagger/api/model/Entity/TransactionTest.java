@@ -93,6 +93,7 @@ class TransactionTest {
     public void userDataIsSet() {
 
         Transaction transaction = new Transaction();
+        transaction.setTransactionId(8);
         transaction.setAccountFrom("NL00INHO0000000002");
         transaction.setAccountTo("NL00INHO0000000003");
         transaction.setAmount(100.00);

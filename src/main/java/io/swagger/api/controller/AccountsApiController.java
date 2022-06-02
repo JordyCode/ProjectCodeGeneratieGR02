@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -40,6 +41,9 @@ public class AccountsApiController implements AccountsApi {
 
     @Autowired
     private UserService userService;
+
+    @Value("${bank.iban}")
+    private String bankIban;
 
     @Autowired
     public AccountsApiController(ObjectMapper objectMapper, HttpServletRequest request) {
@@ -69,7 +73,8 @@ public class AccountsApiController implements AccountsApi {
 
             if (accounts != null) {
                 return ResponseEntity.status(HttpStatus.OK).body(accounts);
-            } else {
+            }
+            else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
         }
@@ -91,6 +96,9 @@ public class AccountsApiController implements AccountsApi {
                 Account account = accountService.getAccountById(id);
                 if (account != null) {
                     return ResponseEntity.status(HttpStatus.OK).body(account);
+                }
+                if(account.getIBAN() == bankIban){
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
                 } else {
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
                 }

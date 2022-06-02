@@ -1,15 +1,20 @@
 package io.swagger.api.model.Entity;
 
 import java.util.Objects;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import io.swagger.api.model.DTO.TransactionDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 
@@ -21,15 +26,29 @@ import javax.validation.constraints.*;
 
 @Entity
 public class Transaction {
-  @JsonProperty("transactionId")
+  @GeneratedValue
   @Id
+  @JsonProperty("transactionId")
   private Integer transactionId = null;
+
+  @JsonProperty("user")
+  @ManyToOne
+  @JsonBackReference
+  private User user;
+
+//  @ManyToOne
+//  @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+//  private Account account_from;
+//
+//  @ManyToOne
+//  @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+//  private Account account_to;
 
   /**
    * Gets or Sets type
    */
   public enum TypeEnum {
-    TRANSACTION("TransactionDTO"),
+    TRANSACTION("Transaction"),
     
     DEPOSIT("Deposit"),
     
@@ -63,10 +82,10 @@ public class Transaction {
   @JsonProperty("timestamp")
   private String timestamp = null;
 
-  @JsonProperty("account_from")
+  @JsonProperty("accountfrom")
   private String accountFrom = null;
 
-  @JsonProperty("account_to")
+  @JsonProperty("accountto")
   private String accountTo = null;
 
   @JsonProperty("performed_by")
@@ -79,6 +98,24 @@ public class Transaction {
     this.transactionId = transactionId;
     return this;
   }
+//
+//  public Account getAccount_from() {
+//    return account_from;
+//  }
+//
+//  public void setAccount_from(Account accountFrom) {
+//    this.account_from = accountFrom;
+//  }
+//
+//  public Account getAccount_to() {
+//    return account_to;
+//  }
+//
+//  public void setAccount_to(Account accountTo) {
+//    this.account_to = accountTo;
+//  }
+
+
 
   /**
    * Get transactionId
@@ -265,5 +302,18 @@ public class Transaction {
       return "null";
     }
     return o.toString().replace("\n", "\n    ");
+  }
+
+  public Transaction() {
+  }
+
+  public Transaction(Integer transactionId, Transaction.TypeEnum type, String timestamp, String accountFrom, String accountTo, Integer performedBy, Double amount) {
+    this.transactionId = transactionId;
+    this.type = type;
+    this.timestamp = timestamp;
+    this.accountFrom = accountFrom;
+    this.accountTo = accountTo;
+    this.performedBy = performedBy;
+    this.amount = amount;
   }
 }

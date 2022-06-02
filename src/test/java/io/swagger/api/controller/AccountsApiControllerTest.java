@@ -62,7 +62,6 @@ class AccountsApiControllerTest extends ControllerTest{
 
         mockMvc.perform(get("/accounts").contentType("application/json").header("Authorization", "Bearer " + getEmployeeToken()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(accounts.size())))
-                .andExpect(jsonPath("$[0].iban").value("NL89INHO0749725281"));
+                .andExpect(jsonPath("$", hasSize(accounts.size())));
     }
 }
