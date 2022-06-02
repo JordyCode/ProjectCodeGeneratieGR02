@@ -48,8 +48,8 @@ public class MyApplicationRunner implements ApplicationRunner {
         Account account1 = new Account();
         account1.setAccountType(Account.AccountTypeEnum.CURRENT);
         account1.setIBAN("NL00INHO000000001");
-        account1.setBalance(150.00);
-        account1.setAbsoluteLimit(100.00);
+        account1.setBalance(150000000.00);
+        account1.setAbsoluteLimit(-100000000.00);
         account1.setAccountStatus(Account.AccountStatusEnum.ACTIVE);
 
         accountService.add(account1, false);
@@ -93,28 +93,38 @@ public class MyApplicationRunner implements ApplicationRunner {
         testUser3.setDateOfBirth("01/01/2001");
         userService.add(testUser3, false);
 
+
         // Create a new account
         Account account2 = new Account();
         account2.setAccountType(Account.AccountTypeEnum.CURRENT);
         account2.setUser(testUser2);
         account2.setBalance(500.00);
         account2.setAccountStatus(Account.AccountStatusEnum.ACTIVE);
-        account2.setAbsoluteLimit(100.00);
+        account2.setAbsoluteLimit(-100.00);
         accountService.add(account2, true);
 
-        //This account is a saving account and belongs to user2 FreddyUser
+        // Create a new account
         Account account3 = new Account();
-        account3.setAccountType(Account.AccountTypeEnum.SAVINGS);
+        account3.setAccountType(Account.AccountTypeEnum.CURRENT);
         account3.setUser(testUser3);
-        account3.setBalance(1000.00);
-        account3.setIBAN("NL53INHO4715545127");
+        account3.setBalance(500.00);
         account3.setAccountStatus(Account.AccountStatusEnum.ACTIVE);
         account3.setAbsoluteLimit(-100.00);
-        accountService.add(account3, false);
+        accountService.add(account3, true);
+
+        //This account is a saving account and belongs to user2 FreddyUser
+        Account account4 = new Account();
+        account4.setAccountType(Account.AccountTypeEnum.CURRENT);
+        account4.setUser(testUser3);
+        account4.setBalance(1000.00);
+        account4.setIBAN("NL53INHO4715545127");
+        account4.setAccountStatus(Account.AccountStatusEnum.ACTIVE);
+        account4.setAbsoluteLimit(-100.00);
+        accountService.add(account4, false);
 
         Transaction transaction1 = new Transaction();
-        transaction1.setAccountTo(account2.getIBAN());
-        transaction1.setAccountFrom(account1.getIBAN());
+        transaction1.setAccountTo(account1.getIBAN());
+        transaction1.setAccountFrom(account2.getIBAN());
         transaction1.performedBy(testUser2.getUserId().intValue());
         transaction1.timestamp(LocalDateTime.now().toString());
         transaction1.type(Transaction.TypeEnum.TRANSACTION);
@@ -122,12 +132,12 @@ public class MyApplicationRunner implements ApplicationRunner {
         transactionService.addTransaction(transaction1);
 
         Transaction transaction2 = new Transaction();
-        transaction2.setAccountTo(account2.getIBAN());
+        transaction2.setAccountTo(account4.getIBAN());
         transaction2.setAccountFrom(account3.getIBAN());
         transaction2.performedBy(testUser3.getUserId().intValue());
         transaction2.timestamp(LocalDateTime.now().toString());
         transaction2.type(Transaction.TypeEnum.TRANSACTION);
-        transaction2.setAmount(500.00);
+        transaction2.setAmount(50.00);
         transactionService.addTransaction(transaction2);
     }
 }
