@@ -45,15 +45,30 @@ public class MyApplicationRunner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
 
+        //Create a user for the Bank's account, because according to the user story every account must have a user. (It was not stated that the bank's own account should not have a user attached)
+        User bankUser = new User();
+        bankUser.setUsername("BANK");
+        bankUser.setPassword("welkom10");
+        bankUser.setFirstName("BANK");
+        bankUser.setLastName("ACCOUNT");
+        bankUser.setAccountStatus(User.AccountStatusEnum.ACTIVE);
+        bankUser.setDayLimit(100000000.00);
+        bankUser.setTransactionLimit(100000000.00);
+        bankUser.setEmail("Bank");
+        bankUser.setDateOfBirth("01/01/1900");
+        userService.add(bankUser, true);
+
+        //Create an account for the bank, this account will be hidden for all employees.
         Account account1 = new Account();
         account1.setAccountType(Account.AccountTypeEnum.CURRENT);
         account1.setIBAN("NL00INHO000000001");
+        account1.setUser(bankUser);
         account1.setBalance(150000000.00);
         account1.setAbsoluteLimit(-100000000.00);
         account1.setAccountStatus(Account.AccountStatusEnum.ACTIVE);
-
         accountService.add(account1, false);
 
+        // Create a new employee
         User testUser1 = new User();
         testUser1.setUsername("EmployeeBank");
         testUser1.setPassword("employee123");
@@ -64,7 +79,6 @@ public class MyApplicationRunner implements ApplicationRunner {
         testUser1.setTransactionLimit(1000.00);
         testUser1.setEmail("willem.wiltenburg@test.com");
         testUser1.setDateOfBirth("03/03/19670");
-
         userService.add(testUser1, true);
 
         // Create a new user
@@ -112,9 +126,9 @@ public class MyApplicationRunner implements ApplicationRunner {
         account3.setAbsoluteLimit(-100.00);
         accountService.add(account3, true);
 
-        //This account is a saving account and belongs to user2 FreddyUser
+        //This account is a saving's account and belongs to user3 FreddyUser
         Account account4 = new Account();
-        account4.setAccountType(Account.AccountTypeEnum.CURRENT);
+        account4.setAccountType(Account.AccountTypeEnum.SAVINGS);
         account4.setUser(testUser3);
         account4.setBalance(1000.00);
         account4.setIBAN("NL53INHO4715545127");
@@ -122,8 +136,9 @@ public class MyApplicationRunner implements ApplicationRunner {
         account4.setAbsoluteLimit(-100.00);
         accountService.add(account4, false);
 
+        //A transaction from testuser2 to testuser3 both current account and performed by testuser2
         Transaction transaction1 = new Transaction();
-        transaction1.setAccountTo(account1.getIBAN());
+        transaction1.setAccountTo(account3.getIBAN());
         transaction1.setAccountFrom(account2.getIBAN());
         transaction1.performedBy(testUser2.getUserId().intValue());
         transaction1.timestamp(LocalDateTime.now().toString());
@@ -131,14 +146,25 @@ public class MyApplicationRunner implements ApplicationRunner {
         transaction1.setAmount(30.00);
         transactionService.addTransaction(transaction1);
 
+        //A transaction from saving account to current account both belonging to testuser3 and performed by testuser3
         Transaction transaction2 = new Transaction();
-        transaction2.setAccountTo(account4.getIBAN());
-        transaction2.setAccountFrom(account3.getIBAN());
+        transaction2.setAccountTo(account3.getIBAN());
+        transaction2.setAccountFrom(account4.getIBAN());
         transaction2.performedBy(testUser3.getUserId().intValue());
         transaction2.timestamp(LocalDateTime.now().toString());
         transaction2.type(Transaction.TypeEnum.TRANSACTION);
         transaction2.setAmount(50.00);
         transactionService.addTransaction(transaction2);
+
+        //A transaction from testuser3 to testuser2 both current account and performed by testuser1 (which is an employee)
+        Transaction transaction3 = new Transaction();
+        transaction3.setAccountTo(account2.getIBAN());
+        transaction3.setAccountFrom(account3.getIBAN());
+        transaction3.performedBy(testUser1.getUserId().intValue());
+        transaction3.timestamp(LocalDateTime.now().toString());
+        transaction3.type(Transaction.TypeEnum.TRANSACTION);
+        transaction3.setAmount(50.00);
+        transactionService.addTransaction(transaction3);
     }
 }
 

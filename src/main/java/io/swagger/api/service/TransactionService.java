@@ -4,6 +4,7 @@ import io.swagger.api.controller.LoginApiController;
 import io.swagger.api.model.Entity.Account;
 import io.swagger.api.model.Entity.Transaction;
 import io.swagger.api.model.Entity.User;
+import io.swagger.api.model.Role;
 import io.swagger.api.repository.AccountRepository;
 import io.swagger.api.repository.TransactionRepository;
 import io.swagger.api.repository.UserRepository;
@@ -69,7 +70,7 @@ public class TransactionService {
     public Transaction addTransaction(Transaction transaction) {
         Account sender = accountRepository.findByIBAN(transaction.getAccountFrom());
         Account receiver = accountRepository.findByIBAN(transaction.getAccountTo());
-//        User senderLimit = userRepository.getUserByUserId(sender.getUser().getUserId());
+        User senderLimit = userRepository.getUserByUserId(transaction.getPerformedBy().longValue());
 
         //check if the sender and receiver IBANs exist and the accounts haven't been closed
         if (sender == null || sender.getAccountStatus() == Account.AccountStatusEnum.INACTIVE) {
@@ -78,8 +79,13 @@ public class TransactionService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The receiver IBAN does not exist or the account has been closed!");
         }
 
+        if(Objects.equals(sender.getIBAN(), receiver.getIBAN()))
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot transfer money to the same bank account");
+        }
+
         //Savings accounts are not allowed to send transactions to accounts that don't belong to the same user. Users are not allowed to send transactions to savings accounts that don't belong to them.
-        if(!(Objects.equals(sender.getUser(), receiver.getUser()))) {
+        if(!(Objects.equals(sender.getUser().getUserId().intValue(), receiver.getUser().getUserId().intValue()))) {
             if (sender.getAccountType() == Account.AccountTypeEnum.SAVINGS) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Savings accounts can only send transactions to accounts that belong to the same user!");
             } else if (receiver.getAccountType() == Account.AccountTypeEnum.SAVINGS) {
@@ -88,21 +94,11 @@ public class TransactionService {
 
         }
 
-        if(Objects.equals(sender.getIBAN(), receiver.getIBAN()))
+        //Checks if user performing the transaction is the one sending and if the user performing the transaction is an employee
+        if (!(senderLimit.getRoles().contains(Role.ROLE_EMPLOYEE)) && !(Objects.equals(transaction.getPerformedBy(), sender.getUser().getUserId().intValue())) )
         {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot transfer money to the same bank account");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User is not allowed to transfer money from another user's account");
         }
-
-//        if( !(Objects.equals(transaction.getPerformedBy(), sender.getUser().getUserId().intValue())))
-//        {
-//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error: User is not allowed to transfer money from another user's account");
-//        }
-
-//        if( !(Objects.equals(transaction.getPerformedBy(), sender.getUser().getUserId().intValue())) && sender.getUser().getRoles().equals(Role.ROLE_USER) )
-//        {
-//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error: User is not allowed to transfer money from another user's account");
-//        }
-
 
         //check if the sender isn't attempting an illegal transaction and doesn't have insufficient funds to complete the transaction, register this transaction to the database
         if (!(transaction.getAmount() <= 0.00)) {
