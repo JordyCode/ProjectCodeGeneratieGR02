@@ -36,16 +36,6 @@ public class AccountService {
         }
     }
 
-    // Create an account for testing purposes. No random IBAN generated.
-    public Account addTest(Account account) {
-        try {
-            accountRepository.save(account);
-            return account;
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Incorrect iban given");
-        }
-    }
-
     public String getIBAN() {
         // Generate a new IBAN using dependency Iban4j
         Iban iban = new Iban.Builder().countryCode(CountryCode.NL).bankCode("INHO").buildRandom();
@@ -80,11 +70,11 @@ public class AccountService {
         return accountRepository.existsByIdAndUser(id, user);
     }
 
-    public Account save(Account users) {
-        if (accountRepository.getAccountById(users.getId()) == null) {
+    public Account save(Account account) {
+        if (accountRepository.getAccountById(account.getId()) == null) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "No accounts found");
         }
-        return accountRepository.save(users);
+        return accountRepository.save(account);
     }
 
     public List<Account> getAccountsByUser(User user) {

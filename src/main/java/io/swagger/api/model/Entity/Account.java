@@ -245,7 +245,8 @@ public class Account {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class Account {\n");
-    
+
+    sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    IBAN: ").append(toIndentedString(IBAN)).append("\n");
     sb.append("    accountType: ").append(toIndentedString(accountType)).append("\n");
     sb.append("    balance: ").append(toIndentedString(balance)).append("\n");
@@ -274,14 +275,24 @@ public class Account {
     this.user = user;
   }
 
-  public Account(String IBAN,  AccountTypeEnum accountType, Double balance, Double absoluteLimit, AccountStatusEnum accountStatus) {
+  public Account(Long id, String IBAN, User user, AccountTypeEnum accountType, Double balance, Double absoluteLimit, AccountStatusEnum accountStatus) {
+    this.id = id;
     this.IBAN = IBAN;
-
+    this.user = user;
     this.accountType = accountType;
     this.balance = balance;
     this.absoluteLimit = absoluteLimit;
     this.accountStatus = accountStatus;
   }
+
+  public Account(String IBAN, AccountTypeEnum accountType, Double balance, Double absoluteLimit, AccountStatusEnum accountStatus) {
+    this.IBAN = IBAN;
+    this.accountType = accountType;
+    this.balance = balance;
+    this.absoluteLimit = absoluteLimit;
+    this.accountStatus = accountStatus;
+  }
+
 
   public Account() {
   }

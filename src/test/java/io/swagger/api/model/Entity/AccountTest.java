@@ -73,6 +73,7 @@ class AccountTest {
     void setBalanceToNegativeShouldThrowException() {
         assertThrows(IllegalArgumentException.class, () -> account.setBalance(-1.00));
     }
+
     @Test
     @WithMockUser(username = "Frank",password = "test", roles = "EMPLOYEE")
     void setAccountStatusToActive() {
