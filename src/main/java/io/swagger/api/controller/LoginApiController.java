@@ -4,6 +4,7 @@ import io.swagger.api.LoginApi;
 import io.swagger.api.model.AuthenticationToken;
 import io.swagger.api.model.DTO.LoginDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.api.model.Entity.User;
 import io.swagger.api.service.UserService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -48,5 +49,15 @@ public class LoginApiController implements LoginApi {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
+    }
+
+    protected User user;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
