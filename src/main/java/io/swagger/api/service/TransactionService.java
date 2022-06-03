@@ -53,6 +53,15 @@ public class TransactionService {
         return transactionRepository.getTransactionByUser(user);
     }
 
+    public List<Transaction> getAllUserTransactionsToday(User user) {
+        if (transactionRepository.findAll().size() == 0) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "No user transactions found");
+        }
+        return transactionRepository.getTransactionByUser(user);
+    }
+
+
+
     public Transaction getTransactionsById(Integer transactionId) {
         if (transactionRepository.findTransactionByTransactionId(transactionId) == null) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "No transactions found");
@@ -70,7 +79,14 @@ public class TransactionService {
     public Transaction addTransaction(Transaction transaction) {
         Account sender = accountRepository.findByIBAN(transaction.getAccountFrom());
         Account receiver = accountRepository.findByIBAN(transaction.getAccountTo());
-        User senderLimit = userRepository.getUserByUserId(transaction.getPerformedBy().longValue());
+        User senderLimit = userRepository.getUserByUserId(sender.getUser().getUserId());
+        User performedBy = userRepository.getUserByUserId(transaction.getPerformedBy().longValue());
+        Long total = transactionRepository.getTransactionsTotalByUser(sender.getUser().getUserId());
+        if (total == null){
+            total = 0L;
+        }
+
+
 
         //check if the sender and receiver IBANs exist and the accounts haven't been closed
         if (sender == null || sender.getAccountStatus() == Account.AccountStatusEnum.INACTIVE) {
@@ -95,19 +111,33 @@ public class TransactionService {
         }
 
         //Checks if user performing the transaction is the one sending and if the user performing the transaction is an employee
-        if (!(senderLimit.getRoles().contains(Role.ROLE_EMPLOYEE)) && !(Objects.equals(transaction.getPerformedBy(), sender.getUser().getUserId().intValue())) )
+        if (!(performedBy.getRoles().contains(Role.ROLE_EMPLOYEE)) && !(Objects.equals(transaction.getPerformedBy(), sender.getUser().getUserId().intValue())) )
         {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User is not allowed to transfer money from another user's account");
         }
 
+        if (!(transaction.getAmount() <= sender.getUser().getTransactionLimit())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Transaction amount exceeds transaction limit for user!");
+        }
+
+        if (!(total + transaction.getAmount() <= sender.getUser().getDayLimit())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Transaction exceeds the daily limit.");
+        }
+
+//        if (!(transaction.getAmount() <= senderLimit.getDayLimit())){
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Transaction amount exceeds total day limit for user!");
+//        }
+
         //check if the sender isn't attempting an illegal transaction and doesn't have insufficient funds to complete the transaction, register this transaction to the database
         if (!(transaction.getAmount() <= 0.00)) {
-            if (!((sender.getBalance() - transaction.getAmount()) < sender.getAbsoluteLimit())) {
+           if (!((sender.getBalance() - transaction.getAmount()) < sender.getAbsoluteLimit())) {
                 sender.setBalance(sender.getBalance() - transaction.getAmount());
-                receiver.setBalance(receiver.getBalance() + transaction.getAmount());
+//                receiver.setBalance(receiver.getBalance() + transaction.getAmount());
+//                senderLimit.setDayLimit(senderLimit.getDayLimit() - transaction.getAmount());
                 transactionRepository.save(transaction);
                 accountRepository.save(sender);
                 accountRepository.save(receiver);
+//                userRepository.save(senderLimit);
             }
             else {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insufficient funds!");
@@ -115,6 +145,12 @@ public class TransactionService {
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Zero or negative amounts are not allowed!");
         }
+//                    if(transaction.getAmount() <= senderLimit.getTransactionLimit()){
+//
+//            }
+//            else {
+//                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error: exceeding transaction limit !");
+//            }
         return transaction;
     }
 
@@ -131,9 +167,3 @@ public class TransactionService {
 
 }
 
-//            if(transaction.getAmount() <= senderLimit.getTransactionLimit()){
-//
-//            }
-//            else {
-//                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error: exceeding transaction limit !");
-//            }

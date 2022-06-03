@@ -75,7 +75,7 @@ public class MyApplicationRunner implements ApplicationRunner {
         testUser1.setFirstName("Willem");
         testUser1.setLastName("Wiltenburg");
         testUser1.setAccountStatus(User.AccountStatusEnum.ACTIVE);
-        testUser1.setDayLimit(200.00);
+        testUser1.setDayLimit(100.00);
         testUser1.setTransactionLimit(1000.00);
         testUser1.setEmail("willem.wiltenburg@test.com");
         testUser1.setDateOfBirth("03/03/19670");
@@ -88,8 +88,8 @@ public class MyApplicationRunner implements ApplicationRunner {
         testUser2.setFirstName("Frank");
         testUser2.setLastName("Dersjant");
         testUser2.setAccountStatus(User.AccountStatusEnum.ACTIVE);
-        testUser2.setDayLimit(200.00);
-        testUser2.setTransactionLimit(1000.00);
+        testUser2.setDayLimit(1000.00);
+        testUser2.setTransactionLimit(500.00);
         testUser2.setEmail("frank.dersjant@test.com");
         testUser2.setDateOfBirth("01/01/1970");
         userService.add(testUser2, false);
@@ -101,8 +101,8 @@ public class MyApplicationRunner implements ApplicationRunner {
         testUser3.setFirstName("Freddy");
         testUser3.setLastName("User");
         testUser3.setAccountStatus(User.AccountStatusEnum.ACTIVE);
-        testUser3.setDayLimit(200.00);
-        testUser3.setTransactionLimit(1000.00);
+        testUser3.setDayLimit(1000.00);
+        testUser3.setTransactionLimit(500.00);
         testUser3.setEmail("test@mail.ml");;
         testUser3.setDateOfBirth("01/01/2001");
         userService.add(testUser3, false);
@@ -143,8 +143,17 @@ public class MyApplicationRunner implements ApplicationRunner {
         transaction1.performedBy(testUser2.getUserId().intValue());
         transaction1.timestamp(LocalDateTime.now().toString());
         transaction1.type(Transaction.TypeEnum.TRANSACTION);
-        transaction1.setAmount(30.00);
+        transaction1.setAmount(25.00);
         transactionService.addTransaction(transaction1);
+
+        Transaction transactiontest = new Transaction();
+        transactiontest.setAccountTo(account3.getIBAN());
+        transactiontest.setAccountFrom(account2.getIBAN());
+        transactiontest.performedBy(testUser2.getUserId().intValue());
+        transactiontest.timestamp(LocalDateTime.now().toString());
+        transactiontest.type(Transaction.TypeEnum.TRANSACTION);
+        transactiontest.setAmount(170.00);
+        transactionService.addTransaction(transactiontest);
 
         //A transaction from saving account to current account both belonging to testuser3 and performed by testuser3
         Transaction transaction2 = new Transaction();
@@ -156,14 +165,14 @@ public class MyApplicationRunner implements ApplicationRunner {
         transaction2.setAmount(50.00);
         transactionService.addTransaction(transaction2);
 
-        //A transaction from testuser3 to testuser2 both current account and performed by testuser1 (which is an employee)
+        // A transaction from testuser3 to testuser2 both current account and performed by testuser1 (which is an employee)
         Transaction transaction3 = new Transaction();
         transaction3.setAccountTo(account2.getIBAN());
         transaction3.setAccountFrom(account3.getIBAN());
         transaction3.performedBy(testUser1.getUserId().intValue());
         transaction3.timestamp(LocalDateTime.now().toString());
         transaction3.type(Transaction.TypeEnum.TRANSACTION);
-        transaction3.setAmount(50.00);
+        transaction3.setAmount(33.00);
         transactionService.addTransaction(transaction3);
     }
 }
