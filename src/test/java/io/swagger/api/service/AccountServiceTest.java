@@ -85,18 +85,14 @@ public class AccountServiceTest {
     @Test
     void getAllAccountsGivesSize2(){
         doReturn(Arrays.asList(account1, account2)).when(accountRepository).findAll();
-
         List<Account> accounts = accountService.getAllAccounts();
-
         Assertions.assertEquals(2, accounts.size(), "The sizes should be the same");
     }
 
     @Test
     void getAccountById(){
         doReturn(account1).when(accountRepository).getAccountById(1L);
-
         Account account = accountService.getAccountById(1L);
-
         Assertions.assertEquals(account.getId(), account1.getId(), "The id's should be the same");
         Assertions.assertEquals(account.getIBAN(), account1.getIBAN(), "The IBAN's should be the same");
     }
@@ -104,37 +100,28 @@ public class AccountServiceTest {
     @Test
     void checkIfAccountIsUser(){
         doReturn(true).when(accountRepository).existsByIdAndUser(1L, user1);
-
         boolean isAccount = accountService.checkIfAccountIsUser(1L, user1);
-
         Assertions.assertTrue(isAccount, "Account should belong to user");
     }
 
     @Test
     void getAccountsByUser(){
         doReturn(Arrays.asList(account2, account3)).when(accountRepository).getAccountByUser(user1);
-
         List<Account> accounts = accountService.getAccountsByUser(user1);
-
         Assertions.assertEquals(2, accounts.size(), "The sizes should be the same");
     }
 
     @Test
     void existByIBAN(){
         doReturn(true).when(accountRepository).existsByIBAN("NL00INHO0000000002");
-
         boolean isAccount = accountService.existByIBAN("NL00INHO0000000002");
-
         Assertions.assertTrue(isAccount, "Account should exist");
     }
 
     @Test
     void addAccount(){
-
         doReturn(account2).when(accountRepository).save(account2);
-
         Account account = accountService.add(account2, false);
-
         Assertions.assertNotNull(account, "Account can not be null");
     }
 

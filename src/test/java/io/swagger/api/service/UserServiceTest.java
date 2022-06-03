@@ -84,18 +84,14 @@ public class UserServiceTest {
     @Test
     void getAllUsersGivesSize2(){
         doReturn(Arrays.asList(user1, user2)).when(userRepository).findAll();
-
         List<User> users = userService.getAllUsers();
-
         Assertions.assertEquals(2, users.size(), "The sizes should be the same");
     }
 
     @Test
     void getSpecificUser(){
         doReturn(user1).when(userRepository).getUserByUserId(1L);
-
         User user = userService.getSpecificUser(1L);
-
         Assertions.assertEquals(user.getUserId(), user1.getUserId(), "The id's should be the same");
         Assertions.assertEquals(user.getFirstName(), user1.getFirstName(), "The firstname should be the same");
     }
@@ -103,27 +99,21 @@ public class UserServiceTest {
     @Test
     void findByUsername(){
         doReturn(user1).when(userRepository).findByUsername("Frank");
-
         User user = userService.findByUsername("Frank");
-
         Assertions.assertEquals(user.getFirstName(), user1.getFirstName(), "The firstname should be the same");
     }
 
     @Test
     void getUsersByAccountsIsNull(){
         doReturn(Arrays.asList(user2, user3)).when(userRepository).getUsersByAccountsIsNull();
-
         List<User> usersWithoutAccount = userService.getUsersByAccountsIsNull();
-
         Assertions.assertEquals(2, usersWithoutAccount.size(), "The sizes should be the same");
     }
 
     @Test
     void addUser(){
         doReturn(user1).when(userRepository).save(user1);
-
         User user = userService.add(user1, false);
-
         Assertions.assertNotNull(user, "User can not be null");
     }
 
