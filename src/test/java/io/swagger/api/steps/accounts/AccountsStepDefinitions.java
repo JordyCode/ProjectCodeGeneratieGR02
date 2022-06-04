@@ -5,6 +5,7 @@ import com.jayway.jsonpath.JsonPath;
 import io.cucumber.java8.En;
 import io.swagger.api.model.DTO.AccountDTO;
 import io.swagger.api.model.Entity.Account;
+import io.swagger.api.model.Entity.User;
 import io.swagger.api.steps.BaseStepDefinitions;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -15,17 +16,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Map;
-
 public class AccountsStepDefinitions extends BaseStepDefinitions implements En {
 
     //Might have to re-assign a token to user and employee
     private static final String EXPIRED_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJFbXBsb3llZUJhbmsiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn0seyJhdXRob3JpdHkiOiJST0xFX1VTRVIifV0sImlhdCI6MTY1NDE2NTM2MCwiZXhwIjoxNjU0MTY4OTYwfQ.j8dj-6HtG9uA0Oo---iJhUfNyHQh_GQWlk8a_AO-H-Y";
     private static final String INVALID_TOKEN = "this-token-doesnt-work";
-    private static final String VALID_USER_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJVc2VyQmFuayIsImF1dGgiOlt7ImF1dGhvcml0eSI6IlJPTEVfVVNFUiJ9XSwiaWF0IjoxNjU0MzUwMjY1LCJleHAiOjE2NTQzNTM4NjV9.qpf4MG6i6TiDcAGKbdi8eU9550QD0JxEmEqkIHD3Y5c";
-    private static final String VALID_EMPLOYEE_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJFbXBsb3llZUJhbmsiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn0seyJhdXRob3JpdHkiOiJST0xFX1VTRVIifV0sImlhdCI6MTY1NDM1MTY1NywiZXhwIjoxNjU0MzU1MjU3fQ.bojjBjzKRm5RSke1yKMNF7ailJkg3MQwjnkGvuBt2Mk";
+    private static final String VALID_USER_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJVc2VyQmFuayIsImF1dGgiOlt7ImF1dGhvcml0eSI6IlJPTEVfVVNFUiJ9XSwiaWF0IjoxNjU0Mzc4MzAwLCJleHAiOjE2NTQzODE5MDB9.FzEjb2DZBfd5pkpZcL0nlRfe7tSDjxV3GdxkVikoaa4";
+    private static final String VALID_EMPLOYEE_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJFbXBsb3llZUJhbmsiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn0seyJhdXRob3JpdHkiOiJST0xFX1VTRVIifV0sImlhdCI6MTY1NDM3ODMyMiwiZXhwIjoxNjU0MzgxOTIyfQ.WHxWvrJ6iK_tD-3_hgCOYqk6ZikynQUOuPK9TKlaHws";
 
     private final TestRestTemplate restTemplate = new TestRestTemplate();
     private final ObjectMapper mapper = new ObjectMapper();
@@ -33,6 +30,7 @@ public class AccountsStepDefinitions extends BaseStepDefinitions implements En {
     private AccountDTO accountDTO;
     private final HttpHeaders httpHeaders = new HttpHeaders();
     private String token;
+    private Integer status;
     private HttpEntity<String> request;
 
     public AccountsStepDefinitions() {
@@ -76,17 +74,31 @@ public class AccountsStepDefinitions extends BaseStepDefinitions implements En {
             response = restTemplate.exchange(getBaseUrl() + "/accounts/id", HttpMethod.PUT, request, String.class);
         });
 
-        When("^I make a PUT request on the /accounts/id with id of (\\d+)$", (Integer id) -> {
+        When("^I make a PUT request on the /accounts/id with id", () -> {
             httpHeaders.add("Content-Type", "application/json");
             httpHeaders.add("Authorization", "Bearer " + token);
 
-            JSONObject jsonObject = new JSONObject();
+            request = new HttpEntity<>(mapper.writeValueAsString(accountDTO), httpHeaders);
 
-            jsonObject.put("absoluteLimit", 100.0);
+            response = restTemplate.exchange(getBaseUrl() + "/accounts/5", HttpMethod.PUT ,request, String.class);
+            status = response.getStatusCodeValue();
+        });
 
-            HttpEntity<String> entity = new HttpEntity<>(jsonObject.getString("absoluteLimit"), httpHeaders);
+        When("^I make a POST request on the /accounts endpoint without login token$", () -> {
+            httpHeaders.add("Content-Type", "application/json");
 
-            response = restTemplate.exchange(getBaseUrl() + "/accounts/" + id, HttpMethod.PUT, entity, String.class);
+            request = new HttpEntity<>(null, httpHeaders);
+            response = restTemplate.exchange(getBaseUrl() + "/accounts", HttpMethod.POST, request, String.class);
+        });
+
+        When("^I make a POST request on the /accounts endpoint$", () -> {
+            httpHeaders.add("Content-Type", "application/json");
+            httpHeaders.add("Authorization", "Bearer " + token);
+
+            request = new HttpEntity<>(mapper.writeValueAsString(accountDTO), httpHeaders);
+
+            response = restTemplate.postForEntity(getBaseUrl() + "/accounts", request, String.class);
+            status = response.getStatusCodeValue();
         });
 
         Given("^I have an \"([^\"]*)\" bearer token", (String tokenType) -> {
@@ -133,6 +145,30 @@ public class AccountsStepDefinitions extends BaseStepDefinitions implements En {
             }
 
             Assertions.assertEquals(expectedArray, ibanName);
+        });
+        And("^I have all the account objects$", () -> {
+
+            accountDTO = new AccountDTO();
+            User user = new User();
+
+            accountDTO.setAccountStatusEnum(Account.AccountStatusEnum.ACTIVE);
+            accountDTO.setAccountTypeEnum(Account.AccountTypeEnum.CURRENT);
+            accountDTO.setAbsoluteLimit(100.0);
+            accountDTO.setBalance(200.0);
+            accountDTO.setUser(user.userId(2L));
+        });
+
+        And("^I have all the account objects to update$", () -> {
+
+            accountDTO = new AccountDTO();
+            User user = new User();
+
+            accountDTO.setIBAN("NL53INHO4715545127");
+            accountDTO.setAccountTypeEnum(Account.AccountTypeEnum.CURRENT);
+            accountDTO.setBalance(500.0);
+            accountDTO.setAbsoluteLimit(100.0);
+            accountDTO.setAccountStatusEnum(Account.AccountStatusEnum.ACTIVE);
+            accountDTO.setUser(user.userId(5L));
         });
     }
 }

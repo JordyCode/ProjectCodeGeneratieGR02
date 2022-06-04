@@ -66,10 +66,29 @@ Feature: Accounts
 
   Scenario: Update account as an user
     Given I have an "user" bearer token
-    When I make a PUT request on the /accounts/id endpoint
+    And I have all the account objects to update
+    When I make a PUT request on the /accounts/id with id
     Then I get a response of 403
 
-  Scenario: Update the balance from an account as an employee
+  Scenario: Update account as an employee
     Given I have an "employee" bearer token
-    When I make a PUT request on the /accounts/id with id of 5
+    And I have all the account objects to update
+    When I make a PUT request on the /accounts/id with id
+    Then I get a response of 200
+
+  # Scenario's to post accounts
+  Scenario: Create account without login token
+    When I make a POST request on the /accounts endpoint without login token
+    Then I get a response of 403
+
+  Scenario: Create account as an user
+    Given I have an "user" bearer token
+    And I have all the account objects
+    When I make a POST request on the /accounts endpoint
+    Then I get a response of 403
+
+  Scenario: Create account as an employee
+    Given I have an "employee" bearer token
+    And I have all the account objects
+    When I make a POST request on the /accounts endpoint
     Then I get a response of 200
