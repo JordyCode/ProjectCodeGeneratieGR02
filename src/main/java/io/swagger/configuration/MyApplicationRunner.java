@@ -3,22 +3,13 @@ package io.swagger.configuration;
 import io.swagger.api.model.Entity.Account;
 import io.swagger.api.model.Entity.Transaction;
 import io.swagger.api.model.Entity.User;
-import io.swagger.api.model.Role;
-import io.swagger.api.repository.AccountRepository;
-import io.swagger.api.repository.TransactionRepository;
-import io.swagger.api.repository.UserRepository;
 import io.swagger.api.service.AccountService;
 import io.swagger.api.service.TransactionService;
 import io.swagger.api.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
-
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @Component
 public class MyApplicationRunner implements ApplicationRunner {
@@ -26,15 +17,6 @@ public class MyApplicationRunner implements ApplicationRunner {
     private UserService userService;
     private AccountService accountService;
     private TransactionService transactionService;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private AccountRepository accountRepository;
-
-    @Autowired
-    private TransactionRepository transactionRepository;
 
     public MyApplicationRunner(UserService userService, AccountService accountService, TransactionService transactionService) {
         this.userService = userService;
@@ -89,19 +71,19 @@ public class MyApplicationRunner implements ApplicationRunner {
         testUser3.setAccountStatus(User.AccountStatusEnum.ACTIVE);
         testUser3.setDayLimit(200.00);
         testUser3.setTransactionLimit(1000.00);
-        testUser3.setEmail("test@mail.ml");;
+        testUser3.setEmail("test@mail.ml");
         testUser3.setDateOfBirth("01/01/2001");
         userService.add(testUser3, false);
-
 
         // Create a new account
         Account account2 = new Account();
         account2.setAccountType(Account.AccountTypeEnum.CURRENT);
         account2.setUser(testUser2);
         account2.setBalance(500.00);
+        account2.setIBAN("NL00INHO000000002");
         account2.setAccountStatus(Account.AccountStatusEnum.ACTIVE);
         account2.setAbsoluteLimit(-100.00);
-        accountService.add(account2, true);
+        accountService.add(account2, false);
 
         // Create a new account
         Account account3 = new Account();
