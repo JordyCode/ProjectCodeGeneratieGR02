@@ -88,7 +88,7 @@ public class Transaction {
   @JsonProperty("accountto")
   private String accountTo = null;
 
-  @JsonProperty("performed_by")
+  @JsonProperty("performedBy")
   private Integer performedBy = null;
 
   @JsonProperty("amount")

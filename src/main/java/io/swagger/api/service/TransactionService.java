@@ -47,20 +47,12 @@ public class TransactionService {
     }
 
     public List<Transaction> getAllUserTransactions(User user) {
-        if (transactionRepository.findAll().size() == 0) {
+        if (transactionRepository.getTransactionByUser(user).isEmpty()) {
+//            if (transactionRepository.findAll().size() == 0) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "No user transactions found");
         }
         return transactionRepository.getTransactionByUser(user);
     }
-
-    public List<Transaction> getAllUserTransactionsToday(User user) {
-        if (transactionRepository.findAll().size() == 0) {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "No user transactions found");
-        }
-        return transactionRepository.getTransactionByUser(user);
-    }
-
-
 
     public Transaction getTransactionsById(Integer transactionId) {
         if (transactionRepository.findTransactionByTransactionId(transactionId) == null) {
@@ -68,6 +60,7 @@ public class TransactionService {
         }
         return transactionRepository.findTransactionByTransactionId(transactionId);
     }
+
     public boolean checkIfTransactionBelongsToUser(User user, Integer transactionId) {
         if(!transactionRepository.existsByUserAndTransactionId(user, transactionId))
         {
@@ -79,20 +72,20 @@ public class TransactionService {
     public Transaction addTransaction(Transaction transaction) {
         Account sender = accountRepository.findByIBAN(transaction.getAccountFrom());
         Account receiver = accountRepository.findByIBAN(transaction.getAccountTo());
-        User senderLimit = userRepository.getUserByUserId(sender.getUser().getUserId());
+//        User senderLimit = userRepository.getUserByUserId(sender.getUser().getUserId());
         User performedBy = userRepository.getUserByUserId(transaction.getPerformedBy().longValue());
-        Long total = transactionRepository.getTransactionsTotalByUser(sender.getUser().getUserId());
-        if (total == null){
-            total = 0L;
-        }
-
-
 
         //check if the sender and receiver IBANs exist and the accounts haven't been closed
-        if (sender == null || sender.getAccountStatus() == Account.AccountStatusEnum.INACTIVE) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The sender IBAN does not exist or the account has been closed!");
-        } else if (receiver == null || receiver.getAccountStatus() == Account.AccountStatusEnum.INACTIVE) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The receiver IBAN does not exist or the account has been closed!");
+        if (sender == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The sender IBAN does not exist!");
+        } else if (receiver == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The receiver IBAN does not exist!");
+        }
+
+        if (sender.getAccountStatus() == Account.AccountStatusEnum.INACTIVE) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The receiver's account has been closed!");
+        } else if (receiver.getAccountStatus() == Account.AccountStatusEnum.INACTIVE) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The sender's account has been closed!");
         }
 
         if(Objects.equals(sender.getIBAN(), receiver.getIBAN()))
@@ -109,7 +102,6 @@ public class TransactionService {
             }
 
         }
-
         //Checks if user performing the transaction is the one sending and if the user performing the transaction is an employee
         if (!(performedBy.getRoles().contains(Role.ROLE_EMPLOYEE)) && !(Objects.equals(transaction.getPerformedBy(), sender.getUser().getUserId().intValue())) )
         {
@@ -118,6 +110,11 @@ public class TransactionService {
 
         if (!(transaction.getAmount() <= sender.getUser().getTransactionLimit())){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Transaction amount exceeds transaction limit for user!");
+        }
+
+        Long total = transactionRepository.getTransactionsTotalByUser(sender.getUser().getUserId());
+        if (total == null){
+            total = 0L;
         }
 
         if (!(total + transaction.getAmount() <= sender.getUser().getDayLimit())) {
@@ -132,12 +129,12 @@ public class TransactionService {
         if (!(transaction.getAmount() <= 0.00)) {
            if (!((sender.getBalance() - transaction.getAmount()) < sender.getAbsoluteLimit())) {
                 sender.setBalance(sender.getBalance() - transaction.getAmount());
-//                receiver.setBalance(receiver.getBalance() + transaction.getAmount());
+                receiver.setBalance(receiver.getBalance() + transaction.getAmount());
 //                senderLimit.setDayLimit(senderLimit.getDayLimit() - transaction.getAmount());
-                transactionRepository.save(transaction);
+//                userRepository.save(senderLimit);
+               transactionRepository.save(transaction);
                 accountRepository.save(sender);
                 accountRepository.save(receiver);
-//                userRepository.save(senderLimit);
             }
             else {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insufficient funds!");
@@ -145,24 +142,84 @@ public class TransactionService {
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Zero or negative amounts are not allowed!");
         }
-//                    if(transaction.getAmount() <= senderLimit.getTransactionLimit()){
-//
-//            }
-//            else {
-//                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error: exceeding transaction limit !");
-//            }
         return transaction;
     }
 
-    public Transaction addTransactionTEST(Transaction transaction) {
-        transactionRepository.save(transaction);
-        return transaction;
-    }
 
-    public Transaction addDeposit(Transaction transaction)
+    public Transaction addWithdrawTransaction(Transaction withdraw)
     {
-        transactionRepository.save(transaction);
-        return transaction;
+        Account user = accountRepository.findByIBAN(withdraw.getAccountFrom());
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The sender IBAN does not exist!");
+        }
+
+        if (user.getAccountStatus() == Account.AccountStatusEnum.INACTIVE) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot withdraw from an inactive account");
+        }
+
+        if (user.getAccountType() == Account.AccountTypeEnum.SAVINGS) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot withdraw from a saving's account");
+        }
+
+        if (!(Objects.equals(withdraw.getPerformedBy(), user.getUser().getUserId().intValue())) )
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Only the user who the account belongs to is allowed to withdraw");
+        }
+
+        if (!(withdraw.getAmount() <= user.getUser().getTransactionLimit())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Withdraw amount exceeds transaction limit for user!");
+        }
+//        Long total = transactionRepository.getTransactionsTotalByUser(user.getUser().getUserId());
+//        if (total == null){
+//            total = 0L;
+//        }
+//
+//        if (!(total + withdraw.getAmount() <= user.getUser().getDayLimit())) {
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Withdraw exceeds the daily limit.");
+//        }
+        if (!(withdraw.getAmount() <= 0.00)) {
+            if (!((user.getBalance() - withdraw.getAmount()) < user.getAbsoluteLimit())) {
+                user.setBalance(user.getBalance() - withdraw.getAmount());
+                transactionRepository.save(withdraw);
+                accountRepository.save(user);
+            }
+            else {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insufficient funds!");
+            }
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Zero or negative amounts are not allowed!");
+        }
+        return withdraw;
+    }
+
+    public Transaction addDepositTransaction(Transaction deposit)
+    {
+        Account user = accountRepository.findByIBAN(deposit.getAccountTo());
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The sender IBAN does not exist!");
+        }
+
+        if (user.getAccountStatus() == Account.AccountStatusEnum.INACTIVE) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot deposit into an inactive account");
+        }
+
+        if (user.getAccountType() == Account.AccountTypeEnum.SAVINGS) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot deposit into a saving's account");
+        }
+
+        if (!(Objects.equals(deposit.getPerformedBy(), user.getUser().getUserId().intValue())))
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Only the user who the account belongs to is allowed to deposit");
+        }
+
+        if (!(deposit.getAmount() <= 0.00)) {
+            user.setBalance(user.getBalance() + deposit.getAmount());
+            transactionRepository.save(deposit);
+            accountRepository.save(user);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Zero or negative amounts are not allowed!");
+        }
+        return deposit;
     }
 
 }

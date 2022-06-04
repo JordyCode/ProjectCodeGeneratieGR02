@@ -29,22 +29,22 @@ public class AccountsStepDefinitions extends BaseStepDefinitions implements En {
 
     public AccountsStepDefinitions() {
 
-        When("^I request /accounts without login token$", () -> {
-            httpHeaders.add("Content-Type", "application/json");
-
-            request = new HttpEntity<String>(mapper.writeValueAsString(dto), httpHeaders);
-            response = restTemplate.postForEntity(getBaseUrl() + "/accounts", request, String.class);
-        });
-
-        Then("^I get a response of (\\d+)$", (Integer status) -> {
-            Assertions.assertEquals(status, (Integer) response.getStatusCodeValue());
-        });
-
-        When("^I request the accounts endpoint$", () -> {
-            httpHeaders.add("Authorization", "Bearer " + token);
-            request = new HttpEntity<>(null, httpHeaders);
-            response = restTemplate.exchange(getBaseUrl() + "/accounts", HttpMethod.GET,
-                    new HttpEntity<>(null, httpHeaders), String.class);
-        });
+//        When("^I request /accounts without login token$", () -> {
+//            httpHeaders.add("Content-Type", "application/json");
+//
+//            request = new HttpEntity<String>(mapper.writeValueAsString(dto), httpHeaders);
+//            response = restTemplate.postForEntity(getBaseUrl() + "/accounts", request, String.class);
+//        });
+//
+//        Then("^I get a response of (\\d+)$", (Integer status) -> {
+//            Assertions.assertEquals(status, (Integer) response.getStatusCodeValue());
+//        });
+//
+//        When("^I request the accounts endpoint$", () -> {
+//            httpHeaders.add("Authorization", "Bearer " + token);
+//            request = new HttpEntity<>(null, httpHeaders);
+//            response = restTemplate.exchange(getBaseUrl() + "/accounts", HttpMethod.GET,
+//                    new HttpEntity<>(null, httpHeaders), String.class);
+//        });
     }
 }

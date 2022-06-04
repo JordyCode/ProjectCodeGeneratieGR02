@@ -19,6 +19,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -58,6 +59,9 @@ public class TransactionsApiController implements TransactionsApi {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @Value("${bank.iban}")
+    private String bankIban;
 
     @org.springframework.beans.factory.annotation.Autowired
     public TransactionsApiController(ObjectMapper objectMapper, HttpServletRequest request) {
@@ -123,9 +127,6 @@ public class TransactionsApiController implements TransactionsApi {
     public ResponseEntity<?> postTransactions(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema = @Schema()) @Valid @RequestBody TransactionDTO body) {
         try {
             Transaction transaction = new Transaction();
-//            Account from = accountRepository.findByIBAN(transaction.getAccountFrom());
-//            Account to = accountRepository.findByIBAN(transaction.getAccountFrom());
-            // Set the properties
             transaction.setAccountFrom(body.getAccountFrom());
             transaction.setAccountTo(body.getAccountTo());
             transaction.setType(Transaction.TypeEnum.TRANSACTION);
@@ -139,80 +140,39 @@ public class TransactionsApiController implements TransactionsApi {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
     }
-//
-//        try {
-//            Principal principal = request.getUserPrincipal();
-//            User user = userService.findByUsername(principal.getName());
-//            //System.out.println(user.toString());
-//
-//            Transaction transaction = new Transaction();
-//
-//            //check if the user owns an account by the given IBAN, if not, check if the user is an employee
-//            for (Account account : user.getAccounts()) {
-//                if ((account.getIBAN().equals(body.getAccountFrom())) || (user.getRoles().contains(Role.ROLE_EMPLOYEE))){
-//                    transaction.setType(Transaction.TypeEnum.TRANSACTION);
-//                    transaction.setTimestamp(OffsetDateTime.now().toString());
-//                    transaction.setAccountFrom(body.getAccountFrom());
-//                    transaction.setAccountTo(body.getAccountTo());
-//                    transaction.setPerformedBy(body.getPerformedBy());
-//                    transaction.setAmount(body.getAmount());
-//                    transaction = transactionService.addTransaction(transaction);
-//                    break;
-//                   } else return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-//            }
-//            return new ResponseEntity<Transaction>(HttpStatus.OK).ok().body(transaction);
-//
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-//        }
-//    }
 
-    public ResponseEntity<?> postTransactionsTEST(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema = @Schema()) @Valid @RequestBody TransactionDTO body) {
+    public ResponseEntity<?> postTransactionDeposit(@Parameter(in = ParameterIn.DEFAULT, description = "JSON data for the transaction that has to be created.", required=true, schema=@Schema()) @Valid @RequestBody DepositTransactionDTO body) {
         try {
             Transaction transaction = new Transaction();
-            transaction.setAccountFrom(body.getAccountFrom());
-            transaction.setAccountTo(body.getAccountTo());
-            transaction.setType(Transaction.TypeEnum.TRANSACTION);
-            transaction.setTimestamp(OffsetDateTime.now().toString());;
-            transaction.setPerformedBy(body.getPerformedBy());
-            transaction.setAmount(body.getAmount());
-
-            Transaction result = transactionService.addTransactionTEST(transaction);
-            return ResponseEntity.status(HttpStatus.OK).body(result);
-        } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
-        }
-    }
-
-    public ResponseEntity<?> postTransactionDeposit(@Parameter(in = ParameterIn.DEFAULT, description = "JSON data for the transaction that has to be created (a specified Id, Timestamp or AccountFrom are not allowed!).", required=true, schema=@Schema()) @Valid @RequestBody DepositTransactionDTO body) {
-        try {
-            Transaction transaction = new Transaction();
-            transaction.setAccountFrom(body.getAccountTo());
+            transaction.setAccountFrom(bankIban);
             transaction.setAccountTo(body.getAccountTo());
             transaction.setType(Transaction.TypeEnum.DEPOSIT);
             transaction.setTimestamp(OffsetDateTime.now().toString());
-
+            transaction.setPerformedBy(body.getPerformedBy());
             transaction.setAmount(body.getAmount());
 
-            Transaction result = transactionService.addDeposit(transaction);
+            Transaction result = transactionService.addDepositTransaction(transaction);
             return ResponseEntity.status(HttpStatus.OK).body(result);
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
     }
 
-    public ResponseEntity<TransactionDTO> postTransactionWithdraw(@Parameter(in = ParameterIn.DEFAULT, description = "JSON data for the transaction that has to be created (a specified Id, Timestamp or AccountTo are not allowed!).", required=true, schema=@Schema()) @Valid @RequestBody WithdrawTransactionDTO body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<TransactionDTO>(objectMapper.readValue("{\n  \"amount\" : 200,\n  \"account_to\" : \"NL20INHO0032070023\",\n  \"performed_by\" : 151,\n  \"account_from\" : \"NL20INHO0032076001\",\n  \"type\" : \"Deposit\",\n  \"transactionId\" : 1,\n  \"timestamp\" : \"29/04/2021\"\n}", TransactionDTO.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<TransactionDTO>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
+    public ResponseEntity<?> postTransactionWithdraw(@Parameter(in = ParameterIn.DEFAULT, description = "JSON data for the transaction that has to be created.", required=true, schema=@Schema()) @Valid @RequestBody WithdrawTransactionDTO body) {
+        try {
+            Transaction transaction = new Transaction();
+            transaction.setAccountFrom(body.getAccountFrom());
+            transaction.setAccountTo(bankIban);
+            transaction.setType(Transaction.TypeEnum.WITHDRAW);
+            transaction.setTimestamp(OffsetDateTime.now().toString());
+            transaction.setPerformedBy(body.getPerformedBy());
+            transaction.setAmount(body.getAmount());
 
-        return new ResponseEntity<TransactionDTO>(HttpStatus.NOT_IMPLEMENTED);
+            Transaction result = transactionService.addWithdrawTransaction(transaction);
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        }
     }
 
 }
