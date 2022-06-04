@@ -192,6 +192,7 @@ public class MyApplicationRunner implements ApplicationRunner {
         transaction3.setAmount(33.00);
         transactionService.addTransaction(transaction3);
 
+        // A deposit to testUser3's current account and performed by testUser3 (which is the only one who can make a deposit to this account)
         Transaction depositTransaction = new Transaction();
         depositTransaction.setAccountTo(account3.getIBAN());
         depositTransaction.setAccountFrom(bankIban);
@@ -201,6 +202,7 @@ public class MyApplicationRunner implements ApplicationRunner {
         depositTransaction.setAmount(20.00);
         transactionService.addDepositTransaction(depositTransaction);
 
+        // A withdraw from testUser3's current account and performed by testUser3 (which is the only one who can make a withdraw from this account)
         Transaction withdrawTransaction = new Transaction();
         withdrawTransaction.setAccountTo(bankIban);
         withdrawTransaction.setAccountFrom(account3.getIBAN());

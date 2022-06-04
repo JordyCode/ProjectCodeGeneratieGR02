@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.api.model.Entity.User;
 import io.swagger.api.model.Role;
 import io.swagger.api.repository.AccountRepository;
+import io.swagger.api.repository.TransactionRepository;
 import io.swagger.api.service.AccountService;
 import io.swagger.api.service.TransactionService;
 import io.swagger.api.service.UserService;
@@ -37,6 +38,7 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-04T11:53:18.205Z[GMT]")
 @RestController
@@ -59,6 +61,9 @@ public class TransactionsApiController implements TransactionsApi {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private TransactionRepository transactionRepository;
 
     @Value("${bank.iban}")
     private String bankIban;
@@ -133,9 +138,22 @@ public class TransactionsApiController implements TransactionsApi {
             transaction.setTimestamp(OffsetDateTime.now().toString());;
             transaction.setPerformedBy(body.getPerformedBy());
             transaction.setAmount(body.getAmount());
-
+            Account sender = accountRepository.findByIBAN(transaction.getAccountFrom());
             Transaction result = transactionService.addTransaction(transaction);
-            return ResponseEntity.status(HttpStatus.OK).body(result);
+            User user = userService.getSpecificUser(sender.getUser().getUserId());
+            Long total = transactionRepository.getTransactionsTotalByUser(sender.getUser().getUserId());
+            if (total == null){
+                total = 0L;
+            }
+            Double dailyLimitLeft = sender.getUser().getDayLimit() - total.doubleValue();
+
+            if (Objects.equals(result.getPerformedBy(), sender.getUser().getUserId().intValue())) {
+                return ResponseEntity.status(HttpStatus.OK).body(result + dailyLimitLeft.toString() + " is left of your daily limit!");
+            } else {
+
+                return ResponseEntity.status(HttpStatus.OK).body(result);
+            }
+
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }

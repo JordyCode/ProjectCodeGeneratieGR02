@@ -41,7 +41,7 @@ public class TransactionService {
 
     public List<Transaction> getAllTransactions() {
         if (transactionRepository.findAll().size() == 0) {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "No transactions found");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No transactions found");
         }
         return transactionRepository.findAll();
     }
@@ -49,14 +49,14 @@ public class TransactionService {
     public List<Transaction> getAllUserTransactions(User user) {
         if (transactionRepository.getTransactionByUser(user).isEmpty()) {
 //            if (transactionRepository.findAll().size() == 0) {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "No user transactions found");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No user transactions found");
         }
         return transactionRepository.getTransactionByUser(user);
     }
 
     public Transaction getTransactionsById(Integer transactionId) {
         if (transactionRepository.findTransactionByTransactionId(transactionId) == null) {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "No transactions found");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No transactions found");
         }
         return transactionRepository.findTransactionByTransactionId(transactionId);
     }
@@ -64,7 +64,7 @@ public class TransactionService {
     public boolean checkIfTransactionBelongsToUser(User user, Integer transactionId) {
         if(!transactionRepository.existsByUserAndTransactionId(user, transactionId))
         {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Transactions does not belong to user");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Transactions does not belong to user");
         }
         return transactionRepository.existsByUserAndTransactionId(user, transactionId);
     }
@@ -135,7 +135,7 @@ public class TransactionService {
                transactionRepository.save(transaction);
                 accountRepository.save(sender);
                 accountRepository.save(receiver);
-            }
+           }
             else {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insufficient funds!");
             }
@@ -169,14 +169,7 @@ public class TransactionService {
         if (!(withdraw.getAmount() <= user.getUser().getTransactionLimit())){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Withdraw amount exceeds transaction limit for user!");
         }
-//        Long total = transactionRepository.getTransactionsTotalByUser(user.getUser().getUserId());
-//        if (total == null){
-//            total = 0L;
-//        }
-//
-//        if (!(total + withdraw.getAmount() <= user.getUser().getDayLimit())) {
-//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Withdraw exceeds the daily limit.");
-//        }
+
         if (!(withdraw.getAmount() <= 0.00)) {
             if (!((user.getBalance() - withdraw.getAmount()) < user.getAbsoluteLimit())) {
                 user.setBalance(user.getBalance() - withdraw.getAmount());
