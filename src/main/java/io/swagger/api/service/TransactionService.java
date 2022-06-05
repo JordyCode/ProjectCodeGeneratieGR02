@@ -33,10 +33,8 @@ public class TransactionService {
 
     private LoginApiController loginApiController;
 
-    public TransactionService(TransactionRepository transactionRepository, AccountRepository accountRepository, LoginApiController loginApiController) {
+    public TransactionService(TransactionRepository transactionRepository){
         this.transactionRepository = transactionRepository;
-        this.accountRepository = accountRepository;
-        this.loginApiController = loginApiController;
     }
 
     public List<Transaction> getAllTransactions() {

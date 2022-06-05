@@ -30,10 +30,9 @@ public class LoginApiController implements LoginApi {
 
     private final HttpServletRequest request;
 
-    @Autowired
     private UserService userService;
 
-    @org.springframework.beans.factory.annotation.Autowired
+    @Autowired
     public LoginApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
         this.request = request;

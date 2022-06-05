@@ -169,6 +169,9 @@ public class Account {
   }
 
   public void setBalance(Double balance) {
+    if (balance < 0) {
+      throw new IllegalArgumentException("Balance cannot be below zero");
+    }
     this.balance = balance;
   }
 
@@ -210,6 +213,9 @@ public class Account {
   }
 
   public void setAbsoluteLimit(Double absoluteLimit) {
+    if (absoluteLimit > 100) {
+      throw new IllegalArgumentException("Absolute limit cannot be above 100");
+    }
     this.absoluteLimit = absoluteLimit;
   }
 
@@ -239,7 +245,8 @@ public class Account {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class Account {\n");
-    
+
+    sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    IBAN: ").append(toIndentedString(IBAN)).append("\n");
     sb.append("    accountType: ").append(toIndentedString(accountType)).append("\n");
     sb.append("    balance: ").append(toIndentedString(balance)).append("\n");
@@ -268,7 +275,8 @@ public class Account {
     this.user = user;
   }
 
-  public Account(String IBAN, User user, AccountTypeEnum accountType, Double balance, Double absoluteLimit, AccountStatusEnum accountStatus) {
+  public Account(Long id, String IBAN, User user, AccountTypeEnum accountType, Double balance, Double absoluteLimit, AccountStatusEnum accountStatus) {
+    this.id = id;
     this.IBAN = IBAN;
     this.user = user;
     this.accountType = accountType;
@@ -277,11 +285,24 @@ public class Account {
     this.accountStatus = accountStatus;
   }
 
+  public Account(String IBAN, AccountTypeEnum accountType, Double balance, Double absoluteLimit, AccountStatusEnum accountStatus) {
+    this.IBAN = IBAN;
+    this.accountType = accountType;
+    this.balance = balance;
+    this.absoluteLimit = absoluteLimit;
+    this.accountStatus = accountStatus;
+  }
+
+
   public Account() {
   }
 
   public Account(AccountTypeEnum accountType, User user, Double absoluteLimit) {
     this.user = user;
     this.balance = absoluteLimit;
+  }
+
+  public Account(Double balance){
+    this.balance = balance;
   }
 }

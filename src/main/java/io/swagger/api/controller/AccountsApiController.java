@@ -17,11 +17,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
+
 import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
@@ -31,6 +31,7 @@ import java.util.List;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-04T11:53:18.205Z[GMT]")
 @RestController
+@RequestMapping(value = "/accounts")
 public class AccountsApiController implements AccountsApi {
 
     private static final Logger log = LoggerFactory.getLogger(AccountsApiController.class);
@@ -39,22 +40,20 @@ public class AccountsApiController implements AccountsApi {
 
     private final HttpServletRequest request;
 
-    @Autowired
     private AccountService accountService;
 
-    @Autowired
     private UserService userService;
 
     @Value("${bank.iban}")
     private String bankIban;
 
-    @Autowired
     public AccountsApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
         this.request = request;
     }
 
     @PreAuthorize("hasAnyRole('EMPLOYEE','USER')")
+    @GetMapping
     public ResponseEntity<?> accountsGet() {
         try {
             // Create a list to save the accounts
@@ -86,6 +85,7 @@ public class AccountsApiController implements AccountsApi {
     }
 
     @PreAuthorize("hasAnyRole('EMPLOYEE')")
+    @GetMapping("accounts/{id}")
     public ResponseEntity<?> accountsIDGet(@Parameter(in = ParameterIn.PATH, description = "Account id", required=true, schema=@Schema()) @PathVariable("id") Long id) {
         try
         {

@@ -15,8 +15,11 @@ import java.util.List;
 @Service
 public class AccountService {
 
-    @Autowired
     private AccountRepository accountRepository;
+
+    public AccountService(AccountRepository accountRepository){
+        this.accountRepository = accountRepository;
+    }
 
     public Account add(Account account, boolean randomIBAN) {
         try{
@@ -67,11 +70,11 @@ public class AccountService {
         return accountRepository.existsByIdAndUser(id, user);
     }
 
-    public Account save(Account users) {
-        if (accountRepository.getAccountById(users.getId()) == null) {
+    public Account save(Account account) {
+        if (accountRepository.getAccountById(account.getId()) == null) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "No accounts found");
         }
-        return accountRepository.save(users);
+        return accountRepository.save(account);
     }
 
     public List<Account> getAccountsByUser(User user) {

@@ -28,8 +28,13 @@ public class UserService {
     @Autowired
     JwtTokenProvider jwtTokenProvider;
 
-    @Autowired
+
     private UserRepository userRepository;
+
+    public UserService(UserRepository userRepository){
+        this.userRepository = userRepository;
+    }
+
 
     public String login(String username, String password) {
 

@@ -40,10 +40,8 @@ public class UsersApiController implements UsersApi {
 
     private final HttpServletRequest request;
 
-    @Autowired
     private UserService userService;
 
-    @Autowired
     private AccountService accountService;
 
     @Autowired
