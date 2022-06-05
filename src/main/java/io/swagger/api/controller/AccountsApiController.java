@@ -87,7 +87,7 @@ public class AccountsApiController implements AccountsApi {
     }
 
     @PreAuthorize("hasAnyRole('EMPLOYEE')")
-    @GetMapping("accounts/{id}")
+    @GetMapping(value = "/accounts/{id}")
     public ResponseEntity<?> accountsIDGet(@Parameter(in = ParameterIn.PATH, description = "Account id", required=true, schema=@Schema()) @PathVariable("id") Long id) {
         try
         {
@@ -133,6 +133,7 @@ public class AccountsApiController implements AccountsApi {
         }
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<?> accountsPost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody AccountDTO body) {
         try {
@@ -155,6 +156,7 @@ public class AccountsApiController implements AccountsApi {
         }
     }
 
+    @GetMapping(value = "/accounts/totalBalance")
     @PreAuthorize("hasAnyRole('EMPLOYEE','USER')")
     public ResponseEntity<?> accountsGetTotalBalance() {
         try {

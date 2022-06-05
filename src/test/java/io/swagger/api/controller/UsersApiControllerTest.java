@@ -1,12 +1,10 @@
 package io.swagger.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import io.swagger.api.model.Entity.Account;
 import io.swagger.api.model.Entity.User;
 import io.swagger.api.model.Role;
-import io.swagger.api.repository.AccountRepository;
-import io.swagger.api.service.AccountService;
+import io.swagger.api.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,35 +20,38 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.Matchers.hasSize;
+import static io.swagger.api.controller.AccountsApiControllerTest.asJsonString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class AccountsApiControllerTest {
+public class UsersApiControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    AccountService accountService;
+    UserService userService;
 
     User user1 = new User();
+    User user2 = new User();
     Account account1 = new Account();
     Account account2 = new Account();
     Account account3 = new Account();
-    List<Account> accounts =  new ArrayList<>();
-    List<Account> usersAccountList =  new ArrayList<>();
+
+    List<User> users = new ArrayList<>();
+    List<User> userList = new ArrayList<>();
+    List<Account> accounts = new ArrayList<>();
+    List<Account> usersAccountList = new ArrayList<>();
 
 
     @BeforeEach
     public void setup() {
+
+        user1.setUserId(2L);
         user1.setUsername("testuser1");
         user1.setPassword("welkom10");
         user1.setEmail("testuser1@mail.com");
@@ -81,6 +82,9 @@ public class AccountsApiControllerTest {
         account3.setAbsoluteLimit(20.00);
         account3.setAccountStatus(Account.AccountStatusEnum.ACTIVE);
 
+        users.add(user1);
+        users.add(user2);
+        userList.add(user1);
         accounts.add(account1);
         accounts.add(account2);
         usersAccountList.add(account1);
@@ -89,63 +93,51 @@ public class AccountsApiControllerTest {
 
     @Test
     @WithMockUser(username = "Frank", password = "test", roles = "EMPLOYEE")
-    public void getAccountsAsEmployeeShouldReturnAllAccountsAndOk() throws Exception {
-        given(accountService.getAllAccounts()).willReturn(accounts);
-        this.mockMvc.perform(get("/accounts").contentType("application/json")).andExpect(status().isOk());
+    public void getUsersAsEmployeeShouldReturnAllUsersAndOk() throws Exception {
+        given(userService.getAllUsers()).willReturn(users);
+        this.mockMvc.perform(get("/users").contentType("application/json")).andExpect(status().isOk());
     }
 
     @Test
     @WithMockUser(username = "Frank", password = "test", roles = "USER")
-    public void getAccountsAsUserShouldReturnOnlyUsersAccountAndOk() throws Exception {
-        given(accountService.getAllAccounts()).willReturn(usersAccountList);
-        this.mockMvc.perform(get("/accounts").contentType("application/json")).andExpect(status().isOk());
+    public void getUsersAsUserShouldReturnOnlyTheUserAndOk() throws Exception {
+        given(userService.getAllUsers()).willReturn(userList);
+        this.mockMvc.perform(get("/users").contentType("application/json")).andExpect(status().isOk());
     }
 
-    /// Werkt nog niet
     @Test
     @WithMockUser(username = "Frank", password = "test", roles = "EMPLOYEE")
-    public void getSpecificAccountAsEmployeeShouldReturnOk() throws Exception {
-        given(accountService.getAccountById(2L)).willReturn(account1);
-        this.mockMvc.perform(get("/accounts/2").contentType("application/json")).andExpect(status().isOk());
+    public void getSpecificUserAsEmployeeShouldFullDetailsAndReturnOk() throws Exception {
+        given(userService.getSpecificUser(2L)).willReturn(user1);
+        this.mockMvc.perform(get("/users/2").contentType("application/json")).andExpect(status().isOk());
     }
 
     @Test
     @WithMockUser(username = "Frank", password = "test", roles = "USER")
-    public void getSpecificAccountAsUserShouldReturnForbidden() throws Exception {
-        given(accountService.getAccountById(2L)).willReturn(account1);
-        this.mockMvc.perform(get("/accounts/2").contentType("application/json")).andExpect(status().isForbidden());
+    public void getSpecificUserAsUserShouldFewDetailsAndReturnOk() throws Exception {
+        given(userService.getSpecificUser(2L)).willReturn(user1);
+        this.mockMvc.perform(get("/users/2").contentType("application/json")).andExpect(status().isOk());
     }
 
     @Test
     @WithMockUser(username = "Frank", password = "test", roles = "EMPLOYEE")
-    public void getSpecificAccountWithIDIs1ShouldReturnForbidden() throws Exception {
-        given(accountService.getAccountById(2L)).willReturn(account1);
-        this.mockMvc.perform(get("/accounts/1").contentType("application/json")).andExpect(status().isForbidden());
-    }
-
-
-
-    @Test
-    @WithMockUser(username = "Frank",password = "test", roles = "EMPLOYEE")
-    public void createAccountAsEmployeeShouldReturnOk() throws Exception
-    {
-        given(accountService.add(account1, false)).willReturn(account1);
-        this.mockMvc.perform( MockMvcRequestBuilders
-                        .post("/accounts")
-                        .content(asJsonString(account1))
+    public void createUserAsEmployeeShouldReturnOk() throws Exception {
+        given(userService.add(user1, false)).willReturn(user1);
+        this.mockMvc.perform(MockMvcRequestBuilders
+                        .post("/users")
+                        .content(asJsonString(user1))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
     @Test
-    @WithMockUser(username = "Frank",password = "test", roles = "USER")
-    public void createAccountAsUserShouldReturnBadRequest() throws Exception
-    {
-        given(accountService.add(account1, false)).willReturn(account1);
-        this.mockMvc.perform( MockMvcRequestBuilders
-                        .post("/accounts")
-                        .content(asJsonString(account1))
+    @WithMockUser(username = "Frank", password = "test", roles = "USER")
+    public void createUserAsUserShouldReturnBadRequest() throws Exception {
+        given(userService.add(user1, false)).willReturn(user1);
+        this.mockMvc.perform(MockMvcRequestBuilders
+                        .post("/users")
+                        .content(asJsonString(user1))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
@@ -154,15 +146,17 @@ public class AccountsApiControllerTest {
     @Test
     @WithMockUser(username = "Frank",password = "test", roles = "EMPLOYEE")
     void changeAccountDetailsAsEmployeeShouldReturnOK() throws Exception{
-        given(accountService.save(account1)).willReturn(account1);
-        this.mockMvc.perform(put("/accounts/2").contentType("application/json")).andExpect(status().isOk());
+        given(userService.saveUser(user1)).willReturn(user1);
+        this.mockMvc.perform(put("/users/2").contentType("application/json")).andExpect(status().isOk());
     }
 
+
+    // Toestaan dat User bepaalde properties mag changen? Zoals Email
     @Test
     @WithMockUser(username = "Frank",password = "test", roles = "EMPLOYEE")
     void changeAccountDetailsAsUserShouldReturnForbidden() throws Exception{
-        given(accountService.save(account1)).willReturn(account1);
-        this.mockMvc.perform(put("/accounts/2").contentType("application/json")).andExpect(status().isForbidden());
+        given(userService.saveUser(user1)).willReturn(user1);
+        this.mockMvc.perform(put("/users/2").contentType("application/json")).andExpect(status().isForbidden());
     }
 
     public static String asJsonString(final Object obj) {
@@ -171,9 +165,5 @@ public class AccountsApiControllerTest {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
-
-
-        //////// Put, TotalBalance methods nog maken
     }
 }
