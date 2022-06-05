@@ -63,14 +63,14 @@ public class MyApplicationRunner implements ApplicationRunner {
         userService.add(bankUser, true);
 
         //Create an account for the bank, this account will be hidden for all employees.
-        Account account1 = new Account();
-        account1.setAccountType(Account.AccountTypeEnum.CURRENT);
-        account1.setIBAN(bankIban);
-        account1.setUser(bankUser);
-        account1.setBalance(150000000.00);
-        account1.setAbsoluteLimit(-100000000.00);
-        account1.setAccountStatus(Account.AccountStatusEnum.ACTIVE);
-        accountService.add(account1, false);
+        Account bankAccount = new Account();
+        bankAccount.setAccountType(Account.AccountTypeEnum.CURRENT);
+        bankAccount.setIBAN(bankIban);
+        bankAccount.setUser(bankUser);
+        bankAccount.setBalance(150000000.00);
+        bankAccount.setAbsoluteLimit(-100000000.00);
+        bankAccount.setAccountStatus(Account.AccountStatusEnum.ACTIVE);
+        accountService.add(bankAccount, false);
 
         // Create a new employee
         User testUser1 = new User();

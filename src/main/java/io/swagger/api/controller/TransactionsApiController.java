@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -30,15 +31,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 import org.threeten.bp.OffsetDateTime;
+import springfox.documentation.builders.ResponseBuilder;
 
 import javax.validation.constraints.*;
 import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.net.URI;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-04T11:53:18.205Z[GMT]")
 @RestController
@@ -68,6 +69,7 @@ public class TransactionsApiController implements TransactionsApi {
     @Value("${bank.iban}")
     private String bankIban;
 
+
     @org.springframework.beans.factory.annotation.Autowired
     public TransactionsApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
@@ -96,7 +98,7 @@ public class TransactionsApiController implements TransactionsApi {
             }
 
             if (transactions != null) {
-                return ResponseEntity.status(HttpStatus.OK).body(transactions);
+                return ResponseEntity.status(HttpStatus.FOUND).body(transactions);
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
@@ -115,7 +117,7 @@ public class TransactionsApiController implements TransactionsApi {
             if (transaction != null) {
                 if (request.isUserInRole("ROLE_EMPLOYEE") || transactionService.checkIfTransactionBelongsToUser(user, transactionId)) {
 
-                    return ResponseEntity.status(HttpStatus.OK).body(transaction);
+                    return ResponseEntity.status(HttpStatus.FOUND).body(transaction);
                 } else {
 
                     return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -139,7 +141,7 @@ public class TransactionsApiController implements TransactionsApi {
             transaction.setPerformedBy(body.getPerformedBy());
             transaction.setAmount(body.getAmount());
             Account sender = accountRepository.findByIBAN(transaction.getAccountFrom());
-            Transaction result = transactionService.addTransaction(transaction);
+            Transaction created = transactionService.addTransaction(transaction);
             User user = userService.getSpecificUser(sender.getUser().getUserId());
             Long total = transactionRepository.getTransactionsTotalByUser(sender.getUser().getUserId());
             if (total == null){
@@ -147,13 +149,17 @@ public class TransactionsApiController implements TransactionsApi {
             }
             Double dailyLimitLeft = sender.getUser().getDayLimit() - total.doubleValue();
 
-            if (Objects.equals(result.getPerformedBy(), sender.getUser().getUserId().intValue())) {
-                return ResponseEntity.status(HttpStatus.OK).body(result + dailyLimitLeft.toString() + " is left of your daily limit!");
+            if (Objects.equals(created.getPerformedBy(), sender.getUser().getUserId().intValue())) {
+                Map<String, Object> result = new HashMap<String,Object>();
+                result.put("Total amount left of daily limit",dailyLimitLeft.doubleValue());
+                result.put("Transaction", created);
+                return new ResponseEntity<Map<String, Object>>(result, HttpStatus.CREATED);
+
+                //return ResponseEntity.status(HttpStatus.MULTI_STATUS).body(result + dailyLimitLeft.toString() + " is left of your daily limit!");
             } else {
 
-                return ResponseEntity.status(HttpStatus.OK).body(result);
+                return ResponseEntity.status(HttpStatus.CREATED).body(created);
             }
-
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
