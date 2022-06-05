@@ -67,13 +67,13 @@ Feature: Accounts
   Scenario: Update account as an user
     Given I have an "user" bearer token
     And I have all the account objects to update
-    When I make a PUT request on the /accounts/id with id
+    When I make a PUT request on the /accounts/id with id of 5
     Then I get a response of 403
 
   Scenario: Update account as an employee
     Given I have an "employee" bearer token
     And I have all the account objects to update
-    When I make a PUT request on the /accounts/id with id
+    When I make a PUT request on the /accounts/id with id of 5
     Then I get a response of 200
 
   # Scenario's to post accounts

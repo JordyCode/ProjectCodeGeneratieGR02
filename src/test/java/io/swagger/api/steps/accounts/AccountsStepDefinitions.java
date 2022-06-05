@@ -16,13 +16,17 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
 public class AccountsStepDefinitions extends BaseStepDefinitions implements En {
 
     //Might have to re-assign a token to user and employee
     private static final String EXPIRED_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJFbXBsb3llZUJhbmsiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn0seyJhdXRob3JpdHkiOiJST0xFX1VTRVIifV0sImlhdCI6MTY1NDE2NTM2MCwiZXhwIjoxNjU0MTY4OTYwfQ.j8dj-6HtG9uA0Oo---iJhUfNyHQh_GQWlk8a_AO-H-Y";
     private static final String INVALID_TOKEN = "this-token-doesnt-work";
-    private static final String VALID_USER_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJVc2VyQmFuayIsImF1dGgiOlt7ImF1dGhvcml0eSI6IlJPTEVfVVNFUiJ9XSwiaWF0IjoxNjU0Mzc4MzAwLCJleHAiOjE2NTQzODE5MDB9.FzEjb2DZBfd5pkpZcL0nlRfe7tSDjxV3GdxkVikoaa4";
-    private static final String VALID_EMPLOYEE_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJFbXBsb3llZUJhbmsiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn0seyJhdXRob3JpdHkiOiJST0xFX1VTRVIifV0sImlhdCI6MTY1NDM3ODMyMiwiZXhwIjoxNjU0MzgxOTIyfQ.WHxWvrJ6iK_tD-3_hgCOYqk6ZikynQUOuPK9TKlaHws";
+    private static final String VALID_USER_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJVc2VyQmFuayIsImF1dGgiOlt7ImF1dGhvcml0eSI6IlJPTEVfVVNFUiJ9XSwiaWF0IjoxNjU0NDE1OTI3LCJleHAiOjE2NTQ0MTk1Mjd9.759KSJFUZpzJX1cod_S_C--ywp7H85EWWYGrrvzPaa8";
+    private static final String VALID_EMPLOYEE_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJFbXBsb3llZUJhbmsiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn0seyJhdXRob3JpdHkiOiJST0xFX1VTRVIifV0sImlhdCI6MTY1NDQxNTk0NCwiZXhwIjoxNjU0NDE5NTQ0fQ.saRuuPAyVNLACk6H-cPmrgXrVrB14vK5857Q2ovhKVk";
 
     private final TestRestTemplate restTemplate = new TestRestTemplate();
     private final ObjectMapper mapper = new ObjectMapper();
@@ -31,6 +35,7 @@ public class AccountsStepDefinitions extends BaseStepDefinitions implements En {
     private final HttpHeaders httpHeaders = new HttpHeaders();
     private String token;
     private Integer status;
+    private Map<String, Serializable> data;
     private HttpEntity<String> request;
 
     public AccountsStepDefinitions() {
@@ -71,16 +76,19 @@ public class AccountsStepDefinitions extends BaseStepDefinitions implements En {
             httpHeaders.add("Content-Type", "application/json");
 
             request = new HttpEntity<String>(mapper.writeValueAsString(accountDTO), httpHeaders);
+
             response = restTemplate.exchange(getBaseUrl() + "/accounts/id", HttpMethod.PUT, request, String.class);
+            status = response.getStatusCodeValue();
+
         });
 
-        When("^I make a PUT request on the /accounts/id with id", () -> {
+        When("^I make a PUT request on the /accounts/id with id of (\\d+)$", (Integer id) -> {
             httpHeaders.add("Content-Type", "application/json");
             httpHeaders.add("Authorization", "Bearer " + token);
 
-            request = new HttpEntity<>(mapper.writeValueAsString(accountDTO), httpHeaders);
+            request = new HttpEntity<>(mapper.writeValueAsString(data), httpHeaders);
 
-            response = restTemplate.exchange(getBaseUrl() + "/accounts/5", HttpMethod.PUT ,request, String.class);
+            response = restTemplate.exchange(getBaseUrl() + "/accounts/" + id, HttpMethod.PUT ,request, String.class);
             status = response.getStatusCodeValue();
         });
 
@@ -159,16 +167,13 @@ public class AccountsStepDefinitions extends BaseStepDefinitions implements En {
         });
 
         And("^I have all the account objects to update$", () -> {
+            data = new HashMap<>();
 
-            accountDTO = new AccountDTO();
-            User user = new User();
-
-            accountDTO.setIBAN("NL53INHO4715545127");
-            accountDTO.setAccountTypeEnum(Account.AccountTypeEnum.CURRENT);
-            accountDTO.setBalance(500.0);
-            accountDTO.setAbsoluteLimit(100.0);
-            accountDTO.setAccountStatusEnum(Account.AccountStatusEnum.ACTIVE);
-            accountDTO.setUser(user.userId(5L));
+            data.put("IBAN", "NL53INHO4715545127");
+            data.put("accountType", Account.AccountTypeEnum.CURRENT);
+            data.put("balance", 500.0);
+            data.put("absoluteLimit", 100.0);
+            data.put("accountStatus", Account.AccountStatusEnum.ACTIVE);
         });
     }
 }
