@@ -125,6 +125,4 @@ public class UserServiceTest {
         User user = userService.add(user1, false);
         Assertions.assertNotNull(user, "User can not be null");
     }
-
-
 }

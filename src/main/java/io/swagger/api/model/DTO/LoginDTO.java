@@ -101,4 +101,9 @@ public class LoginDTO {
     }
     return o.toString().replace("\n", "\n    ");
   }
+
+  public LoginDTO(String username, String password) {
+    this.username = username;
+    this.password = password;
+  }
 }

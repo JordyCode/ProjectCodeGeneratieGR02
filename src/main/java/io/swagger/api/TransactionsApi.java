@@ -5,7 +5,11 @@
  */
 package io.swagger.api;
 
+import io.swagger.api.model.DTO.DepositTransactionDTO;
+import io.swagger.api.model.DTO.TransactionDTO;
+import io.swagger.api.model.DTO.WithdrawTransactionDTO;
 import io.swagger.api.model.Entity.Transaction;
+import io.swagger.models.auth.In;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -32,45 +36,68 @@ import java.util.List;
 public interface TransactionsApi {
 
     @Operation(summary = "Get a specific transaction", description = "When you are an admin you are able to see all transactions. When you are a user you can only see your own transactions.", security = {
-        @SecurityRequirement(name = "bearerAuth")    }, tags={ "users", "employees" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Getting transaction successful", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Transaction.class))),
-        
-        @ApiResponse(responseCode = "400", description = "bad input parameter"),
-        
-        @ApiResponse(responseCode = "404", description = "TransactionDTO not found") })
-    @RequestMapping(value = "/transactions/{id}",
-        produces = { "application/json" }, 
-        method = RequestMethod.GET)
-    ResponseEntity<Transaction> getSpecificTransaction(@Parameter(in = ParameterIn.PATH, description = "ID from the transaction", required=true, schema=@Schema()) @PathVariable("id") Integer id);
+            @SecurityRequirement(name = "bearerAuth")    }, tags={ "users", "employees" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Getting transaction successful", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Transaction.class))),
+
+            @ApiResponse(responseCode = "400", description = "bad input parameter"),
+
+            @ApiResponse(responseCode = "404", description = "TransactionDTO not found") })
+    @RequestMapping(value = "/transactions/{transactionId}",
+            produces = { "application/json" },
+            method = RequestMethod.GET)
+    ResponseEntity<?> getSpecificTransaction(@Parameter(in = ParameterIn.PATH, description = "The transaction ID", required=true, schema=@Schema()) @PathVariable("transactionId") Integer transactionId);
 
 
     @Operation(summary = "Gets transactions", description = "Employee can see all transactions, regular user can see only their own transactions", security = {
-        @SecurityRequirement(name = "bearerAuth")    }, tags={ "users", "employees" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Succesfully retrieved transactions!", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Transaction.class)))),
-        
-        @ApiResponse(responseCode = "400", description = "BadRequest") })
+            @SecurityRequirement(name = "bearerAuth")    }, tags={ "users", "employees" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Succesfully retrieved transactions!", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Transaction.class)))),
+
+            @ApiResponse(responseCode = "400", description = "BadRequest") })
     @RequestMapping(value = "/transactions",
-        produces = { "application/json" }, 
-        method = RequestMethod.GET)
-    ResponseEntity<List<Transaction>> transactionsGet(@Min(1) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "The numbers of transactions to return." ,schema=@Schema(allowableValues={  }, minimum="1", maximum="50"
-, defaultValue="20")) @Valid @RequestParam(value = "limit", required = false, defaultValue="20") Integer limit);
+            produces = { "application/json" },
+            method = RequestMethod.GET)
+    ResponseEntity<?> transactionsGet();
 
 
     @Operation(summary = "Create a new transaction", description = "", security = {
-        @SecurityRequirement(name = "bearerAuth")    }, tags={ "users", "employees" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Created a new transaction", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Transaction.class)))),
-        
-        @ApiResponse(responseCode = "400", description = "bad input parameter"),
-        
-        @ApiResponse(responseCode = "409", description = "Conflict with given amount of money. Exceeds balance.") })
+            @SecurityRequirement(name = "bearerAuth")    }, tags={ "users", "employees" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Created a new transaction", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Transaction.class)))),
+
+            @ApiResponse(responseCode = "400", description = "bad input parameter"),
+
+            @ApiResponse(responseCode = "409", description = "Conflict with given amount of money. Exceeds balance.") })
     @RequestMapping(value = "/transactions",
-        produces = { "application/json" }, 
-        consumes = { "application/json" }, 
-        method = RequestMethod.POST)
-    ResponseEntity<List<Transaction>> transactionsPost(@Parameter(in = ParameterIn.DEFAULT, description = "Create transactions", schema=@Schema()) @Valid @RequestBody Transaction body);
+            produces = { "application/json" },
+            consumes = { "application/json" },
+            method = RequestMethod.POST)
+    ResponseEntity<?> postTransactions(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody TransactionDTO body);
+
+    @Operation(summary = "Create a new depository transaction.", description = "Creates a deposit type (of) transaction that/which allows a user to add the given amount to the balance of their specified bank account.", security = {
+            @SecurityRequirement(name = "bearerAuth")    }, tags={ "transactions" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "A JSON object of the newly created transaction.", content = @Content(schema = @Schema(implementation = Transaction.class))),
+
+            @ApiResponse(responseCode = "500", description = "Internal server error message response (check request body or parameters).") })
+    @RequestMapping(value = "/transactions/deposit",
+            produces = { "application/json" },
+            consumes = { "application/json" },
+            method = RequestMethod.POST)
+    ResponseEntity<?> postTransactionDeposit(@Parameter(in = ParameterIn.DEFAULT, description = "JSON data for the transaction that has to be created.", required=true, schema=@Schema()) @Valid @RequestBody DepositTransactionDTO body);
+
+
+    @Operation(summary = "Create a new withdrawal transaction.", description = "Creates a withdraw type transaction which allows a user to subtract the given amount from the balance of their specified bank account.", security = {
+            @SecurityRequirement(name = "bearerAuth")    }, tags={ "transactions" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "A JSON object of the newly created transaction.", content = @Content(schema = @Schema(implementation = Transaction.class))),
+
+            @ApiResponse(responseCode = "500", description = "Internal server error message response (check request body or parameters).") })
+    @RequestMapping(value = "/transactions/withdraw",
+            produces = { "application/json" },
+            consumes = { "application/json" },
+            method = RequestMethod.POST)
+    ResponseEntity<?> postTransactionWithdraw(@Parameter(in = ParameterIn.DEFAULT, description = "JSON data for the transaction that has to be created.", required=true, schema=@Schema()) @Valid @RequestBody WithdrawTransactionDTO body);
 
 }
-

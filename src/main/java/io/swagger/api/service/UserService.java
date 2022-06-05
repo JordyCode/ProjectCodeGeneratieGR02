@@ -72,9 +72,9 @@ public class UserService {
     }
     public User saveUser(User user) {
         if (userRepository.findByUsername(user.getUsername()) != null) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
             return userRepository.save(user);
-        }
-        else {
+        } else {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Username not found");
         }
     }
