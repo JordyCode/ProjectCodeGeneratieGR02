@@ -75,45 +75,29 @@ public interface TransactionsApi {
             method = RequestMethod.POST)
     ResponseEntity<?> postTransactions(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody TransactionDTO body);
 
-
-    @Operation(summary = "Create a new transaction", description = "", security = {
-            @SecurityRequirement(name = "bearerAuth")    }, tags={ "users", "employees" })
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Created a new transaction", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Transaction.class)))),
-
-            @ApiResponse(responseCode = "400", description = "bad input parameter"),
-
-            @ApiResponse(responseCode = "409", description = "Conflict with given amount of money. Exceeds balance.") })
-    @RequestMapping(value = "/transactionsTEST",
-            produces = { "application/json" },
-            consumes = { "application/json" },
-            method = RequestMethod.POST)
-
-    ResponseEntity<?> postTransactionsTEST(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody TransactionDTO body);
-
-    @Operation(summary = "Create a new depository transaction.", description = "Creates a deposit type (of) transaction that/which allows a logged in customer to add the given amount to the balance of their specified bank account.", security = {
+    @Operation(summary = "Create a new depository transaction.", description = "Creates a deposit type (of) transaction that/which allows a user to add the given amount to the balance of their specified bank account.", security = {
             @SecurityRequirement(name = "bearerAuth")    }, tags={ "transactions" })
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "A JSON object of the newly created transaction.", content = @Content(schema = @Schema(implementation = TransactionDTO.class))),
+            @ApiResponse(responseCode = "200", description = "A JSON object of the newly created transaction.", content = @Content(schema = @Schema(implementation = Transaction.class))),
 
             @ApiResponse(responseCode = "500", description = "Internal server error message response (check request body or parameters).") })
     @RequestMapping(value = "/transactions/deposit",
             produces = { "application/json" },
             consumes = { "application/json" },
             method = RequestMethod.POST)
-    ResponseEntity<?> postTransactionDeposit(@Parameter(in = ParameterIn.DEFAULT, description = "JSON data for the transaction that has to be created (a specified Id, Timestamp or AccountFrom are not allowed!).", required=true, schema=@Schema()) @Valid @RequestBody DepositTransactionDTO body);
+    ResponseEntity<?> postTransactionDeposit(@Parameter(in = ParameterIn.DEFAULT, description = "JSON data for the transaction that has to be created.", required=true, schema=@Schema()) @Valid @RequestBody DepositTransactionDTO body);
 
 
-    @Operation(summary = "Create a new withdrawal transaction.", description = "Creates a withdraw type transaction which allows a logged in customer to subtract the given amount from the balance of their specified bank account.", security = {
+    @Operation(summary = "Create a new withdrawal transaction.", description = "Creates a withdraw type transaction which allows a user to subtract the given amount from the balance of their specified bank account.", security = {
             @SecurityRequirement(name = "bearerAuth")    }, tags={ "transactions" })
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "A JSON object of the newly created transaction.", content = @Content(schema = @Schema(implementation = TransactionDTO.class))),
+            @ApiResponse(responseCode = "200", description = "A JSON object of the newly created transaction.", content = @Content(schema = @Schema(implementation = Transaction.class))),
 
             @ApiResponse(responseCode = "500", description = "Internal server error message response (check request body or parameters).") })
     @RequestMapping(value = "/transactions/withdraw",
             produces = { "application/json" },
             consumes = { "application/json" },
             method = RequestMethod.POST)
-    ResponseEntity<TransactionDTO> postTransactionWithdraw(@Parameter(in = ParameterIn.DEFAULT, description = "JSON data for the transaction that has to be created (a specified Id, Timestamp or AccountTo are not allowed!).", required=true, schema=@Schema()) @Valid @RequestBody WithdrawTransactionDTO body);
+    ResponseEntity<?> postTransactionWithdraw(@Parameter(in = ParameterIn.DEFAULT, description = "JSON data for the transaction that has to be created.", required=true, schema=@Schema()) @Valid @RequestBody WithdrawTransactionDTO body);
 
 }

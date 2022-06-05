@@ -16,14 +16,14 @@ import javax.validation.constraints.*;
 
 
 public class WithdrawTransactionDTO   {
-    @JsonProperty("AccountFrom")
+    @JsonProperty("accountFrom")
     private String accountFrom = null;
 
-    @JsonProperty("Amount")
-    private Integer amount = null;
+    @JsonProperty("amount")
+    private Double amount = null;
 
-    @JsonProperty("UserId")
-    private Long userId = null;
+    @JsonProperty("performedBy")
+    private Integer performedBy = null;
 
     public WithdrawTransactionDTO accountFrom(String accountFrom) {
         this.accountFrom = accountFrom;
@@ -44,7 +44,7 @@ public class WithdrawTransactionDTO   {
         this.accountFrom = accountFrom;
     }
 
-    public WithdrawTransactionDTO amount(Integer amount) {
+    public WithdrawTransactionDTO amount(Double amount) {
         this.amount = amount;
         return this;
     }
@@ -53,33 +53,32 @@ public class WithdrawTransactionDTO   {
      * Get amount
      * @return amount
      **/
-    @Schema(description = "")
-
-    public Integer getAmount() {
+    public Double getAmount() {
         return amount;
     }
 
-    public void setAmount(Integer amount) {
+    public void setAmount(Double amount) {
         this.amount = amount;
     }
 
-    public WithdrawTransactionDTO userId(Long userId) {
-        this.userId = userId;
+    public WithdrawTransactionDTO performedBy(Integer performedBy) {
+        this.performedBy = performedBy;
         return this;
     }
 
     /**
-     * Get userId
-     * @return userId
+     * Get performedBy
+     * @return performedBy
      **/
-    @Schema(description = "")
+    @Schema(example = "151", required = true, description = "")
+    @NotNull
 
-    public Long getUserId() {
-        return userId;
+    public Integer getPerformedBy() {
+        return performedBy;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setPerformedBy(Integer performedBy) {
+        this.performedBy = performedBy;
     }
 
 
@@ -94,12 +93,12 @@ public class WithdrawTransactionDTO   {
         WithdrawTransactionDTO withdrawTransactionDTO = (WithdrawTransactionDTO) o;
         return Objects.equals(this.accountFrom, withdrawTransactionDTO.accountFrom) &&
                 Objects.equals(this.amount, withdrawTransactionDTO.amount) &&
-                Objects.equals(this.userId, withdrawTransactionDTO.userId);
+                Objects.equals(this.performedBy, withdrawTransactionDTO.performedBy);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(accountFrom, amount, userId);
+        return Objects.hash(accountFrom, amount, performedBy);
     }
 
     @Override
@@ -109,7 +108,7 @@ public class WithdrawTransactionDTO   {
 
         sb.append("    accountFrom: ").append(toIndentedString(accountFrom)).append("\n");
         sb.append("    amount: ").append(toIndentedString(amount)).append("\n");
-        sb.append("    userId: ").append(toIndentedString(userId)).append("\n");
+        sb.append("    performedBy: ").append(toIndentedString(performedBy)).append("\n");
         sb.append("}");
         return sb.toString();
     }

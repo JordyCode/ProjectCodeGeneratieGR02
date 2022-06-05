@@ -2,8 +2,11 @@ package io.swagger.api.model.DTO;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.api.model.Entity.Transaction;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * DepositTransactionDTO
@@ -13,14 +16,14 @@ import org.springframework.validation.annotation.Validated;
 
 
 public class DepositTransactionDTO   {
-    @JsonProperty("AccountTo")
+    @JsonProperty("accountTo")
     private String accountTo = null;
 
-    @JsonProperty("Amount")
+    @JsonProperty("amount")
     private Double amount = null;
 
-    @JsonProperty("UserId")
-    private Long userId = null;
+    @JsonProperty("performedBy")
+    private Integer performedBy = null;
 
     public DepositTransactionDTO accountTo(String accountTo) {
         this.accountTo = accountTo;
@@ -50,8 +53,6 @@ public class DepositTransactionDTO   {
      * Get amount
      * @return amount
      **/
-    @Schema(description = "")
-
     public Double getAmount() {
         return amount;
     }
@@ -60,23 +61,24 @@ public class DepositTransactionDTO   {
         this.amount = amount;
     }
 
-    public DepositTransactionDTO userId(Long userId) {
-        this.userId = userId;
+    public DepositTransactionDTO performedBy(Integer performedBy) {
+        this.performedBy = performedBy;
         return this;
     }
 
     /**
-     * Get userId
-     * @return userId
+     * Get performedBy
+     * @return performedBy
      **/
-    @Schema(description = "")
+    @Schema(example = "151", required = true, description = "")
+    @NotNull
 
-    public Long getUserId() {
-        return userId;
+    public Integer getPerformedBy() {
+        return performedBy;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setPerformedBy(Integer performedBy) {
+        this.performedBy = performedBy;
     }
 
 
@@ -91,12 +93,12 @@ public class DepositTransactionDTO   {
         DepositTransactionDTO depositTransactionDTO = (DepositTransactionDTO) o;
         return Objects.equals(this.accountTo, depositTransactionDTO.accountTo) &&
                 Objects.equals(this.amount, depositTransactionDTO.amount) &&
-                Objects.equals(this.userId, depositTransactionDTO.userId);
+                Objects.equals(this.performedBy, depositTransactionDTO.performedBy);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(accountTo, amount, userId);
+        return Objects.hash(accountTo, amount, performedBy);
     }
 
     @Override
@@ -106,7 +108,7 @@ public class DepositTransactionDTO   {
 
         sb.append("    accountTo: ").append(toIndentedString(accountTo)).append("\n");
         sb.append("    amount: ").append(toIndentedString(amount)).append("\n");
-        sb.append("    userId: ").append(toIndentedString(userId)).append("\n");
+        sb.append("    performedBy: ").append(toIndentedString(performedBy)).append("\n");
         sb.append("}");
         return sb.toString();
     }
