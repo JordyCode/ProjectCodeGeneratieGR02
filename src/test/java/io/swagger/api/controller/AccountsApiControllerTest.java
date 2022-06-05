@@ -13,17 +13,21 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import javax.servlet.http.HttpServletRequest;
+import static org.mockito.ArgumentMatchers.any;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(AccountsApiController.class)
@@ -104,24 +108,24 @@ class AccountsApiControllerTest {
 //    }
 
 
-//    @Test
-//    @WithMockUser(username = "Frank",password = "test", roles = "EMPLOYEE")
-//    void createAccountShouldReturnStatusCreatedAndOneObject() throws Exception {
-//        Account account = new Account();
-//        account.setIBAN("NL00INHO000000001");
-//        account.setAccountType(Account.AccountTypeEnum.SAVINGS);
-//        account.setId(4L);
-//        account.setAbsoluteLimit(100.00);
-//        account.setAccountStatus(Account.AccountStatusEnum.ACTIVE);
-//        account.setBalance(1500.00);
-//        //AccountDTO dto = new AccountDTO();
-//        when(accountService.addTest(any(Account.class))).thenReturn(account);
-//        mockMvc.perform(post("/accounts")
-//                        .content(mapper.writeValueAsString(account))
-//                        .characterEncoding("utf-8")
-//                        .contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isCreated())
-//                .andExpect(jsonPath("$.user.name").value("Frank"));
-//
-//    }
+    @Test
+    @WithMockUser(username = "Frank",password = "test", roles = "EMPLOYEE")
+    void createAccountShouldReturnStatusCreatedAndOneObject() throws Exception {
+        Account account = new Account();
+        account.setIBAN("NL00INHO000000001");
+        account.setAccountType(Account.AccountTypeEnum.SAVINGS);
+        account.setId(4L);
+        account.setAbsoluteLimit(100.00);
+        account.setAccountStatus(Account.AccountStatusEnum.ACTIVE);
+        account.setBalance(1500.00);
+        //AccountDTO dto = new AccountDTO();
+        when(accountService.add(account, false)).thenReturn(account);
+        mockMvc.perform(post("/accounts")
+                        .content(mapper.writeValueAsString(account))
+                        .characterEncoding("utf-8")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.user.name").value("Frank"));
+
+    }
 }
