@@ -31,7 +31,7 @@ import java.util.List;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-04T11:53:18.205Z[GMT]")
 @RestController
-@RequestMapping(value = "/accounts")
+@RequestMapping(value = "/accounts", method = RequestMethod.POST)
 public class AccountsApiController implements AccountsApi {
 
     private static final Logger log = LoggerFactory.getLogger(AccountsApiController.class);
@@ -40,8 +40,10 @@ public class AccountsApiController implements AccountsApi {
 
     private final HttpServletRequest request;
 
+    @Autowired
     private AccountService accountService;
 
+    @Autowired
     private UserService userService;
 
     @Value("${bank.iban}")
