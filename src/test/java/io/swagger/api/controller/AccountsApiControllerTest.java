@@ -48,7 +48,7 @@ class AccountsApiControllerTest {
 
 
     @Test
-    void getAllGuitarsShouldReturnJsonArrayOfSizeOne() throws Exception {
+    void getAllAccountsShouldReturnJsonArrayOfSizeOne() throws Exception {
         when(accountService.getAllAccounts()).thenReturn(List.of(new Account(1500.00)));
         mockMvc.perform(get("/accounts"))
                 .andExpect(status().isOk());

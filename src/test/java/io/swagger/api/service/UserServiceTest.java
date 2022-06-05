@@ -3,7 +3,10 @@ package io.swagger.api.service;
 import io.swagger.api.model.Entity.Account;
 import io.swagger.api.model.Entity.User;
 import io.swagger.api.model.Role;
+import io.swagger.api.repository.AccountRepository;
 import io.swagger.api.repository.UserRepository;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,8 +25,14 @@ public class UserServiceTest {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private AccountService accountService;
+
     @MockBean
     private UserRepository userRepository;
+
+    @MockBean
+    private AccountRepository accountRepository;
 
     User user1 =  new User();
     User user2 =  new User();
