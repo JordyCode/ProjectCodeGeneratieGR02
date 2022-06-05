@@ -3,10 +3,6 @@ package io.swagger.configuration;
 import io.swagger.api.model.Entity.Account;
 import io.swagger.api.model.Entity.Transaction;
 import io.swagger.api.model.Entity.User;
-import io.swagger.api.model.Role;
-import io.swagger.api.repository.AccountRepository;
-import io.swagger.api.repository.TransactionRepository;
-import io.swagger.api.repository.UserRepository;
 import io.swagger.api.service.AccountService;
 import io.swagger.api.service.TransactionService;
 import io.swagger.api.service.UserService;
@@ -15,27 +11,19 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
-
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @Component
 public class MyApplicationRunner implements ApplicationRunner {
 
+    @Autowired
     private UserService userService;
+  
+    @Autowired
     private AccountService accountService;
+  
+    @Autowired
     private TransactionService transactionService;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private AccountRepository accountRepository;
-
-    @Autowired
-    private TransactionRepository transactionRepository;
 
     @Value("${bank.iban}")
     private String bankIban;
