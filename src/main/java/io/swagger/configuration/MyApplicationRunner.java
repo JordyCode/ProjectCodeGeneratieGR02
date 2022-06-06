@@ -93,7 +93,7 @@ public class MyApplicationRunner implements ApplicationRunner {
         testUser2.setFirstName("Frank");
         testUser2.setLastName("Dersjant");
         testUser2.setAccountStatus(User.AccountStatusEnum.ACTIVE);
-        testUser2.setDayLimit(1000.00);
+        testUser2.setDayLimit(7000.00);
         testUser2.setTransactionLimit(500.00);
         testUser2.setEmail("frank.dersjant@test.com");
         testUser2.setDateOfBirth("01/01/1970");
@@ -179,7 +179,7 @@ public class MyApplicationRunner implements ApplicationRunner {
         transaction3.performedBy(testUser1.getUserId().intValue());
         transaction3.timestamp(LocalDateTime.now().toString());
         transaction3.type(Transaction.TypeEnum.TRANSACTION);
-        transaction3.setAmount(33.00);
+        transaction3.setAmount(330.00);
         transaction3.setUser(account3.getUser());
         transactionService.addTransaction(transaction3);
 
