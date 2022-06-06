@@ -34,10 +34,12 @@ public class UserService {
     public String login(String username, String password) {
 
         String token = "";
-
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
             User user = userRepository.findByUsername(username);
+            if(user.getAccountStatus() == User.AccountStatusEnum.INACTIVE){
+                throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "An inactive user cannot login");
+            }
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
             token = jwtTokenProvider.createToken(username, user.getRoles());
         } catch (AuthenticationException ex) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Invalid username/password");
@@ -56,8 +58,6 @@ public class UserService {
             } else {
                 user.setRoles(List.of(Role.ROLE_USER));
             }
-
-            user.setAccountStatus(User.AccountStatusEnum.ACTIVE);
 
             userRepository.save(user);
             return user;
