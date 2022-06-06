@@ -15,7 +15,7 @@ Feature: Transactions
     Given I have a valid token for user
     When I request the /transactions endpoint
     Then I get a response of 302 for transactions
-    Then I get a list of 4 transactions
+    Then I get a list of 5 transactions
 
   Scenario: Get all transactions as user with no transactions
     Given I have a valid user token for empty users
