@@ -26,8 +26,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -40,121 +39,109 @@ public class AccountsApiControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    AccountService accountService;
-
+    private AccountService accountService;
     @MockBean
     private TransactionService transactionService;
 
     User user1 = new User();
+    User user2 = new User();
     Account account1 = new Account();
     Account account2 = new Account();
     Account account3 = new Account();
-    List<Account> accounts =  new ArrayList<>();
-    List<Account> usersAccountList =  new ArrayList<>();
+    User testUser1 = new User();
+    User testUser2 = new User();
+
+
+    List<User> users = new ArrayList<>();
+    List<User> userList = new ArrayList<>();
+    List<User> usersNoAccountList = new ArrayList<>();
 
 
     @BeforeEach
     public void setup() {
-        user1.setUsername("testuser1");
-        user1.setPassword("welkom10");
-        user1.setEmail("testuser1@mail.com");
-        user1.setTransactionLimit(1000.00);
-        user1.setDayLimit(10000.00);
-        user1.setAccountStatus(User.AccountStatusEnum.ACTIVE);
-        user1.setRoles(Arrays.asList(Role.ROLE_USER));
+        testUser1.setUserId(2L);
+        testUser1.setUsername("EmployeeBank123");
+        testUser1.setPassword("employee123");
+        testUser1.setFirstName("Willem");
+        testUser1.setLastName("Wiltenburg");
+        testUser1.setAccountStatus(User.AccountStatusEnum.ACTIVE);
+        testUser1.setDayLimit(100.00);
+        testUser1.setTransactionLimit(1000.00);
+        testUser1.setEmail("willem.wiltenburg@test.com");
+        testUser1.setDateOfBirth("03/03/19670");
+
+        testUser2.setUserId(4L);
+        testUser2.setUsername("UserBank123");
+        testUser2.setPassword("user123");
+        testUser2.setFirstName("Frank");
+        testUser2.setLastName("Dersjant");
+        testUser2.setAccountStatus(User.AccountStatusEnum.ACTIVE);
+        testUser2.setDayLimit(1000.00);
+        testUser2.setTransactionLimit(500.00);
+        testUser2.setEmail("frank.dersjant@test.com");
+        testUser2.setDateOfBirth("01/01/1970");
 
 
-        account1.setId(2L);
         account1.setAccountType(Account.AccountTypeEnum.CURRENT);
+        account1.setUser(testUser1);
         account1.setIBAN("NL00INHO000000002");
         account1.setBalance(150.00);
         account1.setAbsoluteLimit(100.00);
         account1.setAccountStatus(Account.AccountStatusEnum.ACTIVE);
 
-        account2.setId(3L);
-        account2.setAccountType(Account.AccountTypeEnum.CURRENT);
+
+        account2.setAccountType(Account.AccountTypeEnum.SAVINGS);
+        account2.setUser(testUser2);
         account2.setIBAN("NL00INHO000000003");
         account2.setBalance(320.00);
         account2.setAbsoluteLimit(50.00);
         account2.setAccountStatus(Account.AccountStatusEnum.ACTIVE);
 
-        account3.setId(4L);
-        account3.setAccountType(Account.AccountTypeEnum.SAVINGS);
-        account3.setIBAN("NL00INHO000000004");
-        account3.setBalance(1500.00);
-        account3.setAbsoluteLimit(20.00);
-        account3.setAccountStatus(Account.AccountStatusEnum.ACTIVE);
-
-        accounts.add(account1);
-        accounts.add(account2);
-        usersAccountList.add(account1);
-        usersAccountList.add(account3);
+        users.add(user1);
+        users.add(user2);
+        userList.add(user1);
+        usersNoAccountList.add(user2);
     }
 
     @Test
-    @WithMockUser(username = "Frank", password = "test", roles = "EMPLOYEE")
+    @WithMockUser(username = "EmployeeBank", password = "employee123", roles = "EMPLOYEE")
     public void getAccountsAsEmployeeShouldReturnAllAccountsAndOk() throws Exception {
-        given(accountService.getAllAccounts()).willReturn(accounts);
         this.mockMvc.perform(get("/accounts").contentType("application/json")).andExpect(status().isOk());
     }
 
     @Test
-    @WithMockUser(username = "FreddyUser", password = "welkom10", roles = "USER")
+    @WithMockUser(username = "UserBank", password = "user123", roles = "USER")
     public void getAccountsAsUserShouldReturnOnlyUsersAccountAndOk() throws Exception {
-        this.mockMvc.perform(get("/accounts/10").contentType("application/json")).andExpect(status().isFound());
+        this.mockMvc.perform(get("/accounts").contentType("application/json")).andExpect(status().isOk());
     }
 
     @Test
-    @WithMockUser(username = "FreddyUser",password = "welkom10", roles = "USER")
-    public void getSpecificTransactionWhenUserShouldReturnFound() throws Exception {
-        this.mockMvc.perform(get("/transactions/12"))
-                .andExpect(status().isFound());
-    }
-
-    /// Werkt nog niet
-    @Test
-    @WithMockUser(username = "Frank", password = "test", roles = "EMPLOYEE")
+    @WithMockUser(username = "EmployeeBank", password = "employee123", roles = "EMPLOYEE")
     public void getSpecificAccountAsEmployeeShouldReturnOk() throws Exception {
-        given(accountService.getAccountById(2L)).willReturn(account1);
-        this.mockMvc.perform(get("/accounts/2").contentType("application/json")).andExpect(status().isOk());
+        this.mockMvc.perform(get("/accounts/6").contentType("application/json")).andExpect(status().isOk());
     }
 
     @Test
-    @WithMockUser(username = "Frank", password = "test", roles = "USER")
+    @WithMockUser(username = "UserBank", password = "user123", roles = "USER")
     public void getSpecificAccountAsUserShouldReturnForbidden() throws Exception {
-        given(accountService.getAccountById(2L)).willReturn(account1);
-        this.mockMvc.perform(get("/accounts/2").contentType("application/json")).andExpect(status().isForbidden());
+        this.mockMvc.perform(get("/accounts/6").contentType("application/json")).andExpect(status().isForbidden());
     }
 
     @Test
-    @WithMockUser(username = "Frank", password = "test", roles = "EMPLOYEE")
-    public void getSpecificAccountWithIDIs1ShouldReturnForbidden() throws Exception {
-        given(accountService.getAccountById(2L)).willReturn(account1);
-        this.mockMvc.perform(get("/accounts/1").contentType("application/json")).andExpect(status().isForbidden());
-    }
+    @WithMockUser(username = "EmployeeBank", password = "employee123", roles = "EMPLOYEE")
+    public void createAccountSuccessfullyShouldGiveObject() throws Exception {
 
 
-
-    @Test
-    @WithMockUser(username = "Frank",password = "test", roles = "EMPLOYEE")
-    public void createAccountAsEmployeeShouldReturnOk() throws Exception
-    {
-        given(accountService.add(account1, false)).willReturn(account1);
-        this.mockMvc.perform( MockMvcRequestBuilders
-                        .post("/accounts")
-                        .content(asJsonString(account1))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(post("/accounts").content(asJsonString(account1)).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
                 .andExpect(status().isOk());
     }
 
     @Test
-    @WithMockUser(username = "Frank",password = "test", roles = "USER")
+    @WithMockUser(username = "UserBank", password = "user123", roles = "USER")
     public void createAccountAsUserShouldReturnBadRequest() throws Exception
     {
-        given(accountService.add(account1, false)).willReturn(account1);
-        this.mockMvc.perform( MockMvcRequestBuilders
-                        .post("/accounts")
+        this.mockMvc.perform( post("/accounts")
                         .content(asJsonString(account1))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -162,17 +149,55 @@ public class AccountsApiControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "Frank",password = "test", roles = "EMPLOYEE")
-    void changeAccountDetailsAsEmployeeShouldReturnOK() throws Exception{
-        given(accountService.save(account1)).willReturn(account1);
-        this.mockMvc.perform(put("/accounts/2").contentType("application/json")).andExpect(status().isOk());
+    @WithMockUser(username = "EmployeeBank", password = "employee123", roles = "EMPLOYEE")
+    public void updateAccountAsEmployeeShouldReturnOK() throws Exception {
+        testUser1.setUserId(3L);
+        testUser1.setUsername("EmployeeBank");
+        testUser1.setPassword("employee123");
+        testUser1.setFirstName("Willem");
+        testUser1.setLastName("Wiltenburg");
+        testUser1.setAccountStatus(User.AccountStatusEnum.ACTIVE);
+        testUser1.setDayLimit(100.00);
+        testUser1.setTransactionLimit(1000.00);
+        testUser1.setEmail("willem.wiltenburg@test.com");
+        testUser1.setDateOfBirth("03/03/19670");
+
+        this.mockMvc.perform(put("/users/3").content(asJsonString(testUser1)).contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
+
     }
 
     @Test
-    @WithMockUser(username = "Frank",password = "test", roles = "EMPLOYEE")
+    @WithMockUser(username = "UserBank", password = "user123", roles = "USER")
+    public void updateAccountAsUserShouldReturnForbidden() throws Exception {
+        testUser1.setUserId(3L);
+        testUser1.setUsername("EmployeeBank");
+        testUser1.setPassword("employee123");
+        testUser1.setFirstName("Willem");
+        testUser1.setLastName("Wiltenburg");
+        testUser1.setAccountStatus(User.AccountStatusEnum.ACTIVE);
+        testUser1.setDayLimit(100.00);
+        testUser1.setTransactionLimit(1000.00);
+        testUser1.setEmail("willem.wiltenburg@test.com");
+        testUser1.setDateOfBirth("03/03/19670");
+
+        this.mockMvc.perform(put("/users/3").content(asJsonString(testUser1)).contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isForbidden());
+
+    }
+
+    @Test
+    @WithMockUser(username = "EmployeeBank", password = "employee123", roles = "EMPLOYEE")
+    void changeAccountDetailsAsEmployeeShouldReturnOK() throws Exception{
+        this.mockMvc.perform(put("/accounts/6").contentType("application/json")).andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(username = "UserBank", password = "user123", roles = "USER")
     void changeAccountDetailsAsUserShouldReturnForbidden() throws Exception{
-        given(accountService.save(account1)).willReturn(account1);
-        this.mockMvc.perform(put("/accounts/2").contentType("application/json")).andExpect(status().isForbidden());
+        this.mockMvc.perform(put("/accounts/6").contentType("application/json")).andExpect(status().isForbidden());
     }
 
     public static String asJsonString(final Object obj) {

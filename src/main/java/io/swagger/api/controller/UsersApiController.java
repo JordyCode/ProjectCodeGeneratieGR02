@@ -51,6 +51,7 @@ public class UsersApiController implements UsersApi {
         this.request = request;
     }
 
+    @GetMapping(value = "/users/{userId}")
     @PreAuthorize("hasAnyRole('USER','EMPLOYEE')")
     public ResponseEntity<?> getSpecificUser(@Parameter(in = ParameterIn.PATH, description = "ID from the user", required = true, schema = @Schema()) @PathVariable("userId") Long userId) {
         try {
@@ -97,6 +98,7 @@ public class UsersApiController implements UsersApi {
         }
     }
 
+    @GetMapping
     @PreAuthorize("hasAnyRole('USER','EMPLOYEE')")
     public ResponseEntity<?> usersGet() {
         try {
