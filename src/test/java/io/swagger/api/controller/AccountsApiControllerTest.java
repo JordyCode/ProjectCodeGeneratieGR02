@@ -30,8 +30,6 @@ public class AccountsApiControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private AccountService accountService;
-    @MockBean
     private TransactionService transactionService;
 
     private final ObjectMapper mapper = new ObjectMapper();
@@ -117,7 +115,7 @@ public class AccountsApiControllerTest {
     @Test
     @WithMockUser(username = "UserBank", password = "user123", roles = "USER")
     public void getSpecificAccountAsUserShouldReturnForbidden() throws Exception {
-        this.mockMvc.perform(get("/accounts/6").contentType("application/json")).andExpect(status().isForbidden());
+        this.mockMvc.perform(get("/accounts/2").contentType("application/json")).andExpect(status().isForbidden());
     }
 
     @Test
