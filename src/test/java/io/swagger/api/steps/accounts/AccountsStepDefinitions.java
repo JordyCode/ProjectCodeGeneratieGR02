@@ -25,8 +25,8 @@ public class AccountsStepDefinitions extends BaseStepDefinitions implements En {
     //Might have to re-assign a token to user and employee
     private static final String EXPIRED_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJFbXBsb3llZUJhbmsiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn0seyJhdXRob3JpdHkiOiJST0xFX1VTRVIifV0sImlhdCI6MTY1NDE2NTM2MCwiZXhwIjoxNjU0MTY4OTYwfQ.j8dj-6HtG9uA0Oo---iJhUfNyHQh_GQWlk8a_AO-H-Y";
     private static final String INVALID_TOKEN = "this-token-doesnt-work";
-    private static final String VALID_USER_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJVc2VyQmFuayIsImF1dGgiOlt7ImF1dGhvcml0eSI6IlJPTEVfVVNFUiJ9XSwiaWF0IjoxNjU0NDE1OTI3LCJleHAiOjE2NTQ0MTk1Mjd9.759KSJFUZpzJX1cod_S_C--ywp7H85EWWYGrrvzPaa8";
-    private static final String VALID_EMPLOYEE_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJFbXBsb3llZUJhbmsiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn0seyJhdXRob3JpdHkiOiJST0xFX1VTRVIifV0sImlhdCI6MTY1NDQxNTk0NCwiZXhwIjoxNjU0NDE5NTQ0fQ.saRuuPAyVNLACk6H-cPmrgXrVrB14vK5857Q2ovhKVk";
+    private static final String VALID_USER_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJGcmVkZHlVc2VyIiwiYXV0aCI6W3siYXV0aG9yaXR5IjoiUk9MRV9VU0VSIn1dLCJpYXQiOjE2NTQ1MTg0NTgsImV4cCI6MTY1NDUyMjA1OH0.41UJKdu6gZAGEN_pJhm8jSNBBt_4GehUCg66ygS5H4g";
+    private static final String VALID_EMPLOYEE_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJFbXBsb3llZUJhbmsiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn0seyJhdXRob3JpdHkiOiJST0xFX1VTRVIifV0sImlhdCI6MTY1NDUxNjc5NSwiZXhwIjoxNjU0NTIwMzk1fQ.E-0RiFbgiumRUK1jSv8Q9Kjq6PbMECFEt994jmQm_CE";
 
     private final TestRestTemplate restTemplate = new TestRestTemplate();
     private final ObjectMapper mapper = new ObjectMapper();
@@ -53,11 +53,11 @@ public class AccountsStepDefinitions extends BaseStepDefinitions implements En {
             response = restTemplate.exchange(getBaseUrl() + "/accounts", HttpMethod.GET, request, String.class);
         });
 
-        When("^I request /accounts/id with id of 7 without login token$", () -> {
+        When("^I request /accounts/id with id of 9 without login token$", () -> {
             httpHeaders.add("Content-Type", "application/json");
 
             request = new HttpEntity<String>(mapper.writeValueAsString(accountDTO), httpHeaders);
-            response = restTemplate.postForEntity(getBaseUrl() + "/accounts/7", request, String.class);
+            response = restTemplate.postForEntity(getBaseUrl() + "/accounts/9", request, String.class);
         });
 
         When("^I request /accounts/id with id of 1$", () -> {
@@ -66,10 +66,10 @@ public class AccountsStepDefinitions extends BaseStepDefinitions implements En {
             response = restTemplate.exchange(getBaseUrl() + "/accounts/1", HttpMethod.GET, request, String.class);
         });
 
-        When("^I request /accounts/id with id of 7$", () -> {
+        When("^I request /accounts/id with id of 9$", () -> {
             httpHeaders.add("Authorization", "Bearer " + token);
             request = new HttpEntity<>(null, httpHeaders);
-            response = restTemplate.exchange(getBaseUrl() + "/accounts/7", HttpMethod.GET, request, String.class);
+            response = restTemplate.exchange(getBaseUrl() + "/accounts/9", HttpMethod.GET, request, String.class);
         });
 
         When("^I make a PUT request on the /accounts/id endpoint$", () -> {
@@ -169,7 +169,7 @@ public class AccountsStepDefinitions extends BaseStepDefinitions implements En {
         And("^I have all the account objects to update$", () -> {
             data = new HashMap<>();
 
-            data.put("IBAN", "NL53INHO4715545127");
+            data.put("IBAN", "NL53INHO4715545128");
             data.put("accountType", Account.AccountTypeEnum.CURRENT);
             data.put("balance", 500.0);
             data.put("absoluteLimit", 100.0);

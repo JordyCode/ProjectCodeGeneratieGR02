@@ -37,28 +37,28 @@ public class MyApplicationRunner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
 
-        //Create a user for the Bank's account, because according to the user story every account must have a user. (It was not stated that the bank's own account should not have a user attached)
-        User bankUser = new User();
-        bankUser.setUsername("BANK");
-        bankUser.setPassword("welkom10");
-        bankUser.setFirstName("BANK");
-        bankUser.setLastName("ACCOUNT");
-        bankUser.setAccountStatus(User.AccountStatusEnum.ACTIVE);
-        bankUser.setDayLimit(100000000.00);
-        bankUser.setTransactionLimit(100000000.00);
-        bankUser.setEmail("Bank");
-        bankUser.setDateOfBirth("01/01/1900");
-        userService.add(bankUser, true);
-
         //Create an account for the bank, this account will be hidden for all employees.
         Account bankAccount = new Account();
+        bankAccount.setId(1L);
         bankAccount.setAccountType(Account.AccountTypeEnum.CURRENT);
         bankAccount.setIBAN(bankIban);
-        bankAccount.setUser(bankUser);
         bankAccount.setBalance(150000000.00);
         bankAccount.setAbsoluteLimit(-100000000.00);
         bankAccount.setAccountStatus(Account.AccountStatusEnum.ACTIVE);
         accountService.add(bankAccount, false);
+
+        //Create a user for the Bank's account, because according to the user story every account must have a user. (It was not stated that the bank's own account should not have a user attached)
+        User emptyUser2 = new User();
+        emptyUser2.setUsername("emptyUser2");
+        emptyUser2.setPassword("welkom12");
+        emptyUser2.setFirstName("user");
+        emptyUser2.setLastName("empty");
+        emptyUser2.setAccountStatus(User.AccountStatusEnum.INACTIVE);
+        emptyUser2.setDayLimit(0.0);
+        emptyUser2.setTransactionLimit(0.0);
+        emptyUser2.setEmail("empty@empty.nl");
+        emptyUser2.setDateOfBirth("01/01/1900");
+        userService.add(emptyUser2, false);
 
         // Create a new employee
         User testUser1 = new User();
