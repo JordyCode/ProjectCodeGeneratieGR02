@@ -93,7 +93,7 @@ public class MyApplicationRunner implements ApplicationRunner {
         testUser2.setFirstName("Frank");
         testUser2.setLastName("Dersjant");
         testUser2.setAccountStatus(User.AccountStatusEnum.ACTIVE);
-        testUser2.setDayLimit(7000.00);
+        testUser2.setDayLimit(700.00);
         testUser2.setTransactionLimit(500.00);
         testUser2.setEmail("frank.dersjant@test.com");
         testUser2.setDateOfBirth("01/01/1970");
@@ -152,13 +152,13 @@ public class MyApplicationRunner implements ApplicationRunner {
 
         //A transaction from testuser2 to testuser3 both current account and performed by testUser2
         Transaction transaction1 = new Transaction();
-        transaction1.setAccountTo(account3.getIBAN());
-        transaction1.setAccountFrom(account2.getIBAN());
-        transaction1.performedBy(testUser2.getUserId().intValue());
+        transaction1.setAccountTo(account2.getIBAN());
+        transaction1.setAccountFrom(account3.getIBAN());
+        transaction1.performedBy(testUser3.getUserId().intValue());
         transaction1.timestamp(LocalDateTime.now().toString());
         transaction1.type(Transaction.TypeEnum.TRANSACTION);
         transaction1.setAmount(25.00);
-        transaction1.setUser(testUser2);
+        transaction1.setUser(testUser3);
         transactionService.addTransaction(transaction1);
 
         //A transaction from saving account to current account both belonging to testUser3 and performed by testUser3

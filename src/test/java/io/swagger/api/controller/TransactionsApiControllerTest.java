@@ -47,17 +47,9 @@ public class TransactionsApiControllerTest{
                 .andExpect(jsonPath("$", hasSize(9)));
     }
 
-    //This user is not an employee, so he only has access to his transactions
-    @Test
-    @WithMockUser(username = "UserBank",password = "user123", roles = "USER")
-    public void getTransactionsAsUserShouldReturnSizeOf1() throws Exception {
-        this.mockMvc.perform(get("/transactions"))
-                .andExpect(jsonPath("$", hasSize(1)));
-    }
-
     //This user is not an employee and has no transactions
     @Test
-    @WithMockUser(username = "EmptyUser",password = "welkom10", roles = "USER")
+    @WithMockUser(username = "UserBank",password = "welkom10", roles = "USER")
     public void getTransactionsAsUserShouldReturnBadRequest() throws Exception {
         this.mockMvc.perform(get("/transactions"))
                 .andExpect(status().isBadRequest());
@@ -81,7 +73,7 @@ public class TransactionsApiControllerTest{
 
     //This user has no access to the transaction
     @Test
-    @WithMockUser(username = "EmptyUser",password = "welkom10", roles = "USER")
+    @WithMockUser(username = "UserBank",password = "welkom10", roles = "USER")
     public void getSpecificTransactionWhenUserShouldNotReturnFound() throws Exception {
         this.mockMvc.perform(get("/transactions/8"))
                 .andExpect(status().isBadRequest());
@@ -146,7 +138,7 @@ public class TransactionsApiControllerTest{
 
     //This account belongs to the FreddyUser from his current to saving's account and is performed by an Empty User (with no access)
     @Test
-    @WithMockUser(username = "EmptyUser",password = "welkom10", roles = "USER")
+    @WithMockUser(username = "UserBank",password = "welkom10", roles = "USER")
     public void createTransactionAsUserShouldNotReturnCreated() throws Exception
     {
         // Create a new transaction
@@ -256,7 +248,7 @@ public class TransactionsApiControllerTest{
 
     //Empty user wants to make a deposit to the current account of FreddyUser
     @Test
-    @WithMockUser(username = "EmptyUser",password = "welkom10", roles = "USER")
+    @WithMockUser(username = "UserBank",password = "welkom10", roles = "USER")
     public void createDepositIntoCurrentAsUserWithNoAccessShouldNotReturnCreated() throws Exception
     {
         // Create a new transaction
@@ -345,7 +337,7 @@ public class TransactionsApiControllerTest{
 
     //Empty user wants to make a deposit to the current account of FreddyUser
     @Test
-    @WithMockUser(username = "EmptyUser",password = "welkom10", roles = "USER")
+    @WithMockUser(username = "UserBank",password = "welkom10", roles = "USER")
     public void createWithdrawFromCurrentAsUserWithNoAccessShouldNotReturnCreated() throws Exception
     {
         // Create a new transaction
