@@ -62,6 +62,7 @@ public class MyApplicationRunner implements ApplicationRunner {
 
         // Create a new employee
         User testUser1 = new User();
+        testUser1.setUserId(3L);
         testUser1.setUsername("EmployeeBank");
         testUser1.setPassword("employee123");
         testUser1.setFirstName("Willem");
@@ -88,6 +89,7 @@ public class MyApplicationRunner implements ApplicationRunner {
 
         // Create a new user
         User testUser2 = new User();
+        testUser2.setUserId(5L);
         testUser2.setUsername("UserBank");
         testUser2.setPassword("user123");
         testUser2.setFirstName("Frank");
@@ -119,6 +121,7 @@ public class MyApplicationRunner implements ApplicationRunner {
 
         //This user is a customer
         User testUser3 = new User();
+        testUser3.setUserId(8L);
         testUser3.setUsername("FreddyUser");
         testUser3.setPassword("welkom10");
         testUser3.setFirstName("Freddy");

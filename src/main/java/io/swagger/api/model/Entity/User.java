@@ -306,7 +306,10 @@ public class User {
   }
 
   public void setDayLimit(Double dayLimit) {
-    this.dayLimit = dayLimit;
+    if(dayLimit < 0)
+      throw new IllegalArgumentException("Day limit can not be lower than 0");
+    else
+      this.dayLimit = dayLimit;
   }
 
   public User transactionLimit(Double transactionLimit) {
@@ -326,7 +329,10 @@ public class User {
   }
 
   public void setTransactionLimit(Double transactionLimit) {
-    this.transactionLimit = transactionLimit;
+    if(transactionLimit < 0)
+      throw new IllegalArgumentException("Transaction limit can not be lower than 0");
+    else
+      this.transactionLimit = transactionLimit;
   }
 
 
