@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.api.model.Entity.Account;
 import io.swagger.api.model.Entity.User;
 import io.swagger.api.model.Role;
+import io.swagger.api.repository.AccountRepository;
+import io.swagger.api.repository.UserRepository;
+import io.swagger.api.service.AccountService;
 import io.swagger.api.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +24,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import static io.swagger.api.controller.AccountsApiControllerTest.asJsonString;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -34,7 +40,10 @@ public class UsersApiControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    UserService userService;
+    private UserService userService;
+
+    @MockBean
+    private AccountService accountService;
 
     User user1 = new User();
     User user2 = new User();
@@ -44,14 +53,13 @@ public class UsersApiControllerTest {
 
     List<User> users = new ArrayList<>();
     List<User> userList = new ArrayList<>();
-    List<Account> accounts = new ArrayList<>();
-    List<Account> usersAccountList = new ArrayList<>();
-
+    List<User> usersNoAccountList = new ArrayList<>();
 
     @BeforeEach
     public void setup() {
 
         user1.setUserId(2L);
+        user1.setFirstName("Willem");
         user1.setUsername("testuser1");
         user1.setPassword("welkom10");
         user1.setEmail("testuser1@mail.com");
@@ -60,35 +68,35 @@ public class UsersApiControllerTest {
         user1.setAccountStatus(User.AccountStatusEnum.ACTIVE);
         user1.setRoles(Arrays.asList(Role.ROLE_USER));
 
+        user2.setUserId(3L);
+        user2.setUsername("Frank");
+        user2.setPassword("bank123");
+        user2.setEmail("Frank@mail.com");
+        user2.setTransactionLimit(250.00);
+        user2.setDayLimit(1000.00);
+        user2.setAccountStatus(User.AccountStatusEnum.ACTIVE);
+        user2.setRoles(Arrays.asList(Role.ROLE_EMPLOYEE));
 
         account1.setId(2L);
         account1.setAccountType(Account.AccountTypeEnum.CURRENT);
+        account1.setUser(user1);
         account1.setIBAN("NL00INHO000000002");
         account1.setBalance(150.00);
         account1.setAbsoluteLimit(100.00);
         account1.setAccountStatus(Account.AccountStatusEnum.ACTIVE);
 
         account2.setId(3L);
-        account2.setAccountType(Account.AccountTypeEnum.CURRENT);
+        account2.setAccountType(Account.AccountTypeEnum.SAVINGS);
+        account2.setUser(user1);
         account2.setIBAN("NL00INHO000000003");
         account2.setBalance(320.00);
         account2.setAbsoluteLimit(50.00);
         account2.setAccountStatus(Account.AccountStatusEnum.ACTIVE);
 
-        account3.setId(4L);
-        account3.setAccountType(Account.AccountTypeEnum.SAVINGS);
-        account3.setIBAN("NL00INHO000000004");
-        account3.setBalance(1500.00);
-        account3.setAbsoluteLimit(20.00);
-        account3.setAccountStatus(Account.AccountStatusEnum.ACTIVE);
-
         users.add(user1);
         users.add(user2);
         userList.add(user1);
-        accounts.add(account1);
-        accounts.add(account2);
-        usersAccountList.add(account1);
-        usersAccountList.add(account3);
+        usersNoAccountList.add(user2);
     }
 
     @Test
@@ -108,7 +116,7 @@ public class UsersApiControllerTest {
     @Test
     @WithMockUser(username = "Frank", password = "test", roles = "EMPLOYEE")
     public void getSpecificUserAsEmployeeShouldFullDetailsAndReturnOk() throws Exception {
-        given(userService.getSpecificUser(2L)).willReturn(user1);
+        when(userService.getSpecificUser(2L)).thenReturn(user1);
         this.mockMvc.perform(get("/users/2").contentType("application/json")).andExpect(status().isOk());
     }
 
@@ -116,7 +124,7 @@ public class UsersApiControllerTest {
     @WithMockUser(username = "Frank", password = "test", roles = "USER")
     public void getSpecificUserAsUserShouldFewDetailsAndReturnOk() throws Exception {
         given(userService.getSpecificUser(2L)).willReturn(user1);
-        this.mockMvc.perform(get("/users/2").contentType("application/json")).andExpect(status().isOk());
+        this.mockMvc.perform(get("/users?userId=2").contentType("application/json")).andExpect(status().isOk());
     }
 
     @Test
@@ -150,13 +158,19 @@ public class UsersApiControllerTest {
         this.mockMvc.perform(put("/users/2").contentType("application/json")).andExpect(status().isOk());
     }
 
-
     // Toestaan dat User bepaalde properties mag changen? Zoals Email
     @Test
     @WithMockUser(username = "Frank",password = "test", roles = "EMPLOYEE")
-    void changeAccountDetailsAsUserShouldReturnForbidden() throws Exception{
+    void changeAccountDetailsAsUserShouldReturnOK() throws Exception{
         given(userService.saveUser(user1)).willReturn(user1);
-        this.mockMvc.perform(put("/users/2").contentType("application/json")).andExpect(status().isForbidden());
+        this.mockMvc.perform(put("/users/2").contentType("application/json")).andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(username = "Frank",password = "test", roles = "EMPLOYEE")
+    void getAllUsersWithAccountsIsNullShouldReturnOK() throws Exception{
+        given(userService.getUsersByAccountsIsNull()).willReturn(usersNoAccountList);
+        this.mockMvc.perform(get("/usersWhenNull").contentType("application/json")).andExpect(status().isOk());
     }
 
     public static String asJsonString(final Object obj) {

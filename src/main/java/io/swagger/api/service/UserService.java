@@ -28,7 +28,7 @@ public class UserService {
     @Autowired
     JwtTokenProvider jwtTokenProvider;
 
-
+    @Autowired
     private UserRepository userRepository;
 
     public UserService(UserRepository userRepository){

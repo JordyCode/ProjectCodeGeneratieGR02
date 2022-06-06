@@ -31,7 +31,7 @@ import java.util.List;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-04T11:53:18.205Z[GMT]")
 @RestController
-@RequestMapping(value = "/accounts", method = RequestMethod.POST)
+
 public class AccountsApiController implements AccountsApi {
 
     private static final Logger log = LoggerFactory.getLogger(AccountsApiController.class);
@@ -55,7 +55,7 @@ public class AccountsApiController implements AccountsApi {
     }
 
     @PreAuthorize("hasAnyRole('EMPLOYEE','USER')")
-    @GetMapping
+
     public ResponseEntity<?> accountsGet() {
         try {
             // Create a list to save the accounts
@@ -87,7 +87,7 @@ public class AccountsApiController implements AccountsApi {
     }
 
     @PreAuthorize("hasAnyRole('EMPLOYEE')")
-    @GetMapping(value = "/accounts/{id}")
+
     public ResponseEntity<?> accountsIDGet(@Parameter(in = ParameterIn.PATH, description = "Account id", required=true, schema=@Schema()) @PathVariable("id") Long id) {
         try
         {

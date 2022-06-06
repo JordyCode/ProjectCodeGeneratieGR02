@@ -29,6 +29,7 @@ public class LoginApiController implements LoginApi {
 
     private final HttpServletRequest request;
 
+    @Autowired
     private UserService userService;
 
     @Autowired
