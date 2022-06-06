@@ -145,9 +145,8 @@ public class TransactionsApiController implements TransactionsApi {
             transaction.setPerformedBy(user.getUserId().intValue());
             transaction.setUser(account.getUser());
             transaction.setAmount(body.getAmount());
-            Transaction created = transactionService.addTransaction(transaction);
             Account sender = accountRepository.findByIBAN(transaction.getAccountFrom());
-
+            Transaction created = transactionService.addTransaction(transaction);
             Long total = transactionRepository.getTransactionsTotalByUser(sender.getUser().getUserId());
             if (total == null){
                 total = 0L;

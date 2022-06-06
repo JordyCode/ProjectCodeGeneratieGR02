@@ -79,7 +79,7 @@ public class MyApplicationRunner implements ApplicationRunner {
         emptyUser.setPassword("welkom10");
         emptyUser.setFirstName("Empty");
         emptyUser.setLastName("UserEmpty");
-        emptyUser.setAccountStatus(User.AccountStatusEnum.ACTIVE);
+        emptyUser.setAccountStatus(User.AccountStatusEnum.INACTIVE);
         emptyUser.setDayLimit(1000.00);
         emptyUser.setTransactionLimit(500.00);
         emptyUser.setEmail("test@mail.ml");;
