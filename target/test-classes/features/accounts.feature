@@ -9,13 +9,13 @@ Feature: Accounts
     Given I have an "employee" bearer token
     When I request the /accounts endpoint
     Then I get a response of 200
-    Then I get a list of 4 accounts
+    Then I get a list of 5 accounts
 
   Scenario: Get all accounts as an user
     Given I have an "user" bearer token
     When I request the /accounts endpoint
     Then I get a response of 200
-    Then I get a list of 1 accounts
+    Then I get a list of 2 accounts
 
   Scenario: Get all accounts with expired token
     Given I have an "expired" bearer token
@@ -29,7 +29,7 @@ Feature: Accounts
 
   # Scenario's to get a single account
   Scenario: Get single account without login token
-    When I request /accounts/id with id of 7 without login token
+    When I request /accounts/id with id of 9 without login token
     Then I get a response of 403
 
   Scenario: Get the bank information as an employee
@@ -44,19 +44,19 @@ Feature: Accounts
 
   Scenario: Get a single account as an employee
     Given I have an "employee" bearer token
-    When I request /accounts/id with id of 7
+    When I request /accounts/id with id of 9
     Then I get a response of 200
-    And I get JSON objects containing "iban" with value of "NL53INHO4715545127"
+    And I get JSON objects containing "iban" with value of "NL53INHO4715545128"
 
   Scenario: Get own account when calling /accounts as an user
     Given I have an "user" bearer token
     When I request the /accounts endpoint
     Then I get a response of 200
-    And I get JSON array containing "iban" with value of "NL00INHO000000002"
+    And I get JSON array containing "iban" with value of "NL53INHO4715545127"
 
   Scenario: Get other account as an user
     Given I have an "user" bearer token
-    When I request /accounts/id with id of 7
+    When I request /accounts/id with id of 9
     Then I get a response of 403
 
   # Scenario's to update account
@@ -67,13 +67,13 @@ Feature: Accounts
   Scenario: Update account as an user
     Given I have an "user" bearer token
     And I have all the account objects to update
-    When I make a PUT request on the /accounts/id with id of 5
+    When I make a PUT request on the /accounts/id with id of 6
     Then I get a response of 403
 
   Scenario: Update account as an employee
     Given I have an "employee" bearer token
     And I have all the account objects to update
-    When I make a PUT request on the /accounts/id with id of 5
+    When I make a PUT request on the /accounts/id with id of 6
     Then I get a response of 200
 
   # Scenario's to post accounts
