@@ -1,21 +1,32 @@
 package io.swagger.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.api.config.TestConfig;
+import io.swagger.api.jwt.JwtTokenProvider;
 import io.swagger.api.model.Entity.Account;
 import io.swagger.api.model.Entity.User;
 import io.swagger.api.model.Role;
 import io.swagger.api.repository.AccountRepository;
 import io.swagger.api.repository.UserRepository;
 import io.swagger.api.service.AccountService;
+import io.swagger.api.service.TransactionService;
 import io.swagger.api.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -24,16 +35,23 @@ import java.util.Arrays;
 import java.util.List;
 
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@AutoConfigureMockMvc
+@ExtendWith(SpringExtension.class)
+@WebMvcTest(UsersApiController.class)
+
+@ContextConfiguration(classes = TestConfig.class)
+@AutoConfigureMockMvc(addFilters = false)
 public class UsersApiControllerTest {
 
     @Autowired
@@ -43,7 +61,7 @@ public class UsersApiControllerTest {
     private UserService userService;
 
     @MockBean
-    private AccountService accountService;
+    private TransactionService transactionService;
 
     User user1 = new User();
     User user2 = new User();
@@ -100,13 +118,6 @@ public class UsersApiControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "Frank", password = "test", roles = "EMPLOYEE")
-    public void getUsersAsEmployeeShouldReturnAllUsersAndOk() throws Exception {
-        given(userService.getAllUsers()).willReturn(users);
-        this.mockMvc.perform(get("/users").contentType("application/json")).andExpect(status().isOk());
-    }
-
-    @Test
     @WithMockUser(username = "Frank", password = "test", roles = "USER")
     public void getUsersAsUserShouldReturnOnlyTheUserAndOk() throws Exception {
         given(userService.getAllUsers()).willReturn(userList);
@@ -124,7 +135,7 @@ public class UsersApiControllerTest {
     @WithMockUser(username = "Frank", password = "test", roles = "USER")
     public void getSpecificUserAsUserShouldFewDetailsAndReturnOk() throws Exception {
         given(userService.getSpecificUser(2L)).willReturn(user1);
-        this.mockMvc.perform(get("/users?userId=2").contentType("application/json")).andExpect(status().isOk());
+        this.mockMvc.perform(get("/users/2").contentType("application/json")).andExpect(status().isOk());
     }
 
     @Test

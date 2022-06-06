@@ -169,7 +169,10 @@ public class Account {
   }
 
   public void setBalance(Double balance) {
-    this.balance = balance;
+    if(balance < 0)
+      throw new IllegalArgumentException("Balance can not be lower than 0");
+    else
+      this.balance = balance;
   }
 
   public Account absoluteLimit(Double absoluteLimit) {
@@ -210,7 +213,10 @@ public class Account {
   }
 
   public void setAbsoluteLimit(Double absoluteLimit) {
-    this.absoluteLimit = absoluteLimit;
+    if(absoluteLimit > 100)
+      throw new IllegalArgumentException("Absolute limit can not be higher than 100");
+    else
+      this.absoluteLimit = absoluteLimit;
   }
 
 

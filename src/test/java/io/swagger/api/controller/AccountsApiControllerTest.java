@@ -7,6 +7,7 @@ import io.swagger.api.model.Entity.User;
 import io.swagger.api.model.Role;
 import io.swagger.api.repository.AccountRepository;
 import io.swagger.api.service.AccountService;
+import io.swagger.api.service.TransactionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,9 @@ public class AccountsApiControllerTest {
 
     @MockBean
     AccountService accountService;
+
+    @MockBean
+    private TransactionService transactionService;
 
     User user1 = new User();
     Account account1 = new Account();
@@ -95,10 +99,16 @@ public class AccountsApiControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "Frank", password = "test", roles = "USER")
+    @WithMockUser(username = "FreddyUser", password = "welkom10", roles = "USER")
     public void getAccountsAsUserShouldReturnOnlyUsersAccountAndOk() throws Exception {
-        given(accountService.getAllAccounts()).willReturn(usersAccountList);
-        this.mockMvc.perform(get("/accounts").contentType("application/json")).andExpect(status().isOk());
+        this.mockMvc.perform(get("/accounts/10").contentType("application/json")).andExpect(status().isFound());
+    }
+
+    @Test
+    @WithMockUser(username = "FreddyUser",password = "welkom10", roles = "USER")
+    public void getSpecificTransactionWhenUserShouldReturnFound() throws Exception {
+        this.mockMvc.perform(get("/transactions/12"))
+                .andExpect(status().isFound());
     }
 
     /// Werkt nog niet
