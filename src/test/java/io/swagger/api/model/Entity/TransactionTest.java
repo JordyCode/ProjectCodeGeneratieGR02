@@ -58,7 +58,7 @@ class TransactionTest {
 
         // Account savings for user 1
         savingAccountUser1 = new Account();
-        savingAccountUser1.setIBAN("NL00INHO0000000003");
+        savingAccountUser1.setIBAN("NL00INHO0000004001");
         savingAccountUser1.setUser(user1);
         savingAccountUser1.setAccountType(Account.AccountTypeEnum.SAVINGS);
         savingAccountUser1.setBalance(1000.00);
@@ -74,7 +74,7 @@ class TransactionTest {
 
         // Account current for employee 1
         AccountEmployee = new Account();
-        AccountEmployee.setIBAN("NL00INHO0000000003");
+        AccountEmployee.setIBAN("NL00INHO0000000004");
         AccountEmployee.setUser(user1);
         AccountEmployee.setAccountType(Account.AccountTypeEnum.SAVINGS);
         AccountEmployee.setBalance(1000.00);

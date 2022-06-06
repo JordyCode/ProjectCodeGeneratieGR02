@@ -16,6 +16,9 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
 
     boolean existsByUserAndTransactionId(User user, Integer transactionId);
 
+//    boolean existsByTransactionIdAndName(User user, Integer transactionId);
+
+
     List<Transaction> getTransactionByUser(User user);
 
     @Query(

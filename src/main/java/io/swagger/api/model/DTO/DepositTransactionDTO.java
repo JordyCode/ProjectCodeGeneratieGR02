@@ -71,7 +71,6 @@ public class DepositTransactionDTO   {
      * @return performedBy
      **/
     @Schema(example = "151", required = true, description = "")
-    @NotNull
 
     public Integer getPerformedBy() {
         return performedBy;

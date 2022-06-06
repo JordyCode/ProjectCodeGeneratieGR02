@@ -36,14 +36,6 @@ public class Transaction {
   @JsonBackReference
   private User user;
 
-//  @ManyToOne
-//  @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-//  private Account account_from;
-//
-//  @ManyToOne
-//  @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-//  private Account account_to;
-
   /**
    * Gets or Sets type
    */
@@ -98,24 +90,19 @@ public class Transaction {
     this.transactionId = transactionId;
     return this;
   }
-//
-//  public Account getAccount_from() {
-//    return account_from;
-//  }
-//
-//  public void setAccount_from(Account accountFrom) {
-//    this.account_from = accountFrom;
-//  }
-//
-//  public Account getAccount_to() {
-//    return account_to;
-//  }
-//
-//  public void setAccount_to(Account accountTo) {
-//    this.account_to = accountTo;
-//  }
+  public Transaction(Integer transactionId, Transaction.TypeEnum type, User user, String timestamp, String accountFrom, String accountTo, Integer performedBy, Double amount) {
+    this.transactionId = transactionId;
+    this.type = type;
+    this.user = user;
+    this.timestamp = timestamp;
+    this.accountFrom = accountFrom;
+    this.accountTo = accountTo;
+    this.performedBy = performedBy;
+    this.amount = amount;
+  }
 
-
+  public Transaction() {
+  }
 
   /**
    * Get transactionId
@@ -217,6 +204,15 @@ public class Transaction {
     return this;
   }
 
+  public User getUser() {
+    return user;
+  }
+
+  public void setUser(User user) {
+    this.user = user;
+  }
+
+
   /**
    * Get performedBy
    * @return performedBy
@@ -269,7 +265,9 @@ public class Transaction {
             Objects.equals(this.accountFrom, transaction.accountFrom) &&
             Objects.equals(this.accountTo, transaction.accountTo) &&
             Objects.equals(this.performedBy, transaction.performedBy) &&
-            Objects.equals(this.amount, transaction.amount);
+            Objects.equals(this.amount, transaction.amount) &&
+            Objects.equals(this.user, transaction.user);
+
   }
 
   @Override
@@ -304,16 +302,6 @@ public class Transaction {
     return o.toString().replace("\n", "\n    ");
   }
 
-  public Transaction() {
-  }
 
-  public Transaction(Integer transactionId, Transaction.TypeEnum type, String timestamp, String accountFrom, String accountTo, Integer performedBy, Double amount) {
-    this.transactionId = transactionId;
-    this.type = type;
-    this.timestamp = timestamp;
-    this.accountFrom = accountFrom;
-    this.accountTo = accountTo;
-    this.performedBy = performedBy;
-    this.amount = amount;
-  }
+
 }

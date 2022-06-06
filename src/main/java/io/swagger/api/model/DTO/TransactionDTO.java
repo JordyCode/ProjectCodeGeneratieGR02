@@ -107,17 +107,17 @@ public class TransactionDTO {
     public void setAmount(Double amount) {
         this.amount = amount;
     }
-//
-//    public TransactionDTO() {
-//    }
-//
-//    public TransactionDTO(Integer transactionId, TypeEnum type, String timestamp, String accountFrom, String accountTo, Integer performedBy, Double amount) {
-//        this.transactionId = transactionId;
-//        this.type = type;
-//        this.timestamp = timestamp;
-//        this.accountFrom = accountFrom;
-//        this.accountTo = accountTo;
-//        this.performedBy = performedBy;
-//        this.amount = amount;
-//    }
+
+    public TransactionDTO() {
+    }
+
+    public TransactionDTO(Integer transactionId, TypeEnum type, String timestamp, String accountFrom, String accountTo, Integer performedBy, Double amount) {
+        this.transactionId = transactionId;
+        this.type = type;
+        this.timestamp = timestamp;
+        this.accountFrom = accountFrom;
+        this.accountTo = accountTo;
+        this.performedBy = performedBy;
+        this.amount = amount;
+    }
 }

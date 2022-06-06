@@ -72,7 +72,7 @@ public class TransactionService {
     public Transaction addTransaction(Transaction transaction) {
         Account sender = accountRepository.findByIBAN(transaction.getAccountFrom());
         Account receiver = accountRepository.findByIBAN(transaction.getAccountTo());
-//        User senderLimit = userRepository.getUserByUserId(sender.getUser().getUserId());
+        User user = transaction.getUser();
         User performedBy = userRepository.getUserByUserId(transaction.getPerformedBy().longValue());
 
         //check if the sender and receiver IBANs exist and the accounts haven't been closed
