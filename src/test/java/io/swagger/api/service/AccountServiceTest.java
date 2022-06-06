@@ -25,6 +25,9 @@ public class AccountServiceTest {
     @MockBean
     private AccountRepository accountRepository;
 
+    @MockBean
+    private TransactionService transactionService;
+
     User user1 =  new User();
     User user2 =  new User();
     Account account1 =  new Account();

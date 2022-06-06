@@ -1,11 +1,8 @@
 package io.swagger.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import io.swagger.api.model.Entity.Account;
 import io.swagger.api.model.Entity.User;
-import io.swagger.api.model.Role;
-import io.swagger.api.repository.AccountRepository;
 import io.swagger.api.service.AccountService;
 import io.swagger.api.service.TransactionService;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,18 +14,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -42,6 +33,8 @@ public class AccountsApiControllerTest {
     private AccountService accountService;
     @MockBean
     private TransactionService transactionService;
+
+    private final ObjectMapper mapper = new ObjectMapper();
 
     User user1 = new User();
     User user2 = new User();
@@ -84,7 +77,7 @@ public class AccountsApiControllerTest {
 
         account1.setAccountType(Account.AccountTypeEnum.CURRENT);
         account1.setUser(testUser1);
-        account1.setIBAN("NL00INHO000000002");
+        account1.setIBAN("NL00INHO000000007");
         account1.setBalance(150.00);
         account1.setAbsoluteLimit(100.00);
         account1.setAccountStatus(Account.AccountStatusEnum.ACTIVE);
@@ -129,12 +122,23 @@ public class AccountsApiControllerTest {
 
     @Test
     @WithMockUser(username = "EmployeeBank", password = "employee123", roles = "EMPLOYEE")
-    public void createAccountSuccessfullyShouldGiveObject() throws Exception {
+    public void createAccountAsEmployeeShouldReturnOK() throws Exception {
+
+        Account account = new Account();
+        account.setId(20L);
+        account.setAccountType(Account.AccountTypeEnum.CURRENT);
+        account.setUser(testUser1);
+        account.setIBAN("NL00INHO000000007");
+        account.setBalance(150.00);
+        account.setAbsoluteLimit(100.00);
+        account.setAccountStatus(Account.AccountStatusEnum.ACTIVE);
+
+        mockMvc.perform(post("/accounts")
+                        .content(mapper.writeValueAsString(account))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated());
 
 
-        this.mockMvc.perform(post("/accounts").content(asJsonString(account1)).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isOk());
     }
 
     @Test
@@ -188,17 +192,6 @@ public class AccountsApiControllerTest {
 
     }
 
-    @Test
-    @WithMockUser(username = "EmployeeBank", password = "employee123", roles = "EMPLOYEE")
-    void changeAccountDetailsAsEmployeeShouldReturnOK() throws Exception{
-        this.mockMvc.perform(put("/accounts/6").contentType("application/json")).andExpect(status().isOk());
-    }
-
-    @Test
-    @WithMockUser(username = "UserBank", password = "user123", roles = "USER")
-    void changeAccountDetailsAsUserShouldReturnForbidden() throws Exception{
-        this.mockMvc.perform(put("/accounts/6").contentType("application/json")).andExpect(status().isForbidden());
-    }
 
     public static String asJsonString(final Object obj) {
         try {

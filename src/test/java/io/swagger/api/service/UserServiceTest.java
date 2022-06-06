@@ -5,8 +5,6 @@ import io.swagger.api.model.Entity.User;
 import io.swagger.api.model.Role;
 import io.swagger.api.repository.AccountRepository;
 import io.swagger.api.repository.UserRepository;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,6 +31,9 @@ public class UserServiceTest {
 
     @MockBean
     private AccountRepository accountRepository;
+
+    @MockBean
+    private TransactionService transactionService;
 
     User user1 =  new User();
     User user2 =  new User();

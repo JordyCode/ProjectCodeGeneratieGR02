@@ -1,11 +1,11 @@
 package io.swagger.api.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.api.UsersApi;
+import io.swagger.api.model.DTO.UserDTO;
 import io.swagger.api.model.DTO.UserDetailsDTO;
 import io.swagger.api.model.Entity.Account;
 import io.swagger.api.model.Entity.User;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.api.model.DTO.UserDTO;
 import io.swagger.api.model.Role;
 import io.swagger.api.service.AccountService;
 import io.swagger.api.service.UserService;
@@ -16,17 +16,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-05-04T11:53:18.205Z[GMT]")
