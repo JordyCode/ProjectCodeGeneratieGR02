@@ -158,6 +158,7 @@ public class MyApplicationRunner implements ApplicationRunner {
         transaction1.timestamp(LocalDateTime.now().toString());
         transaction1.type(Transaction.TypeEnum.TRANSACTION);
         transaction1.setAmount(25.00);
+        transaction1.setUser(testUser2);
         transactionService.addTransaction(transaction1);
 
         //A transaction from saving account to current account both belonging to testUser3 and performed by testUser3
@@ -168,6 +169,7 @@ public class MyApplicationRunner implements ApplicationRunner {
         transaction2.timestamp(LocalDateTime.now().toString());
         transaction2.type(Transaction.TypeEnum.TRANSACTION);
         transaction2.setAmount(50.00);
+        transaction2.setUser(account3.getUser());
         transactionService.addTransaction(transaction2);
 
         // A transaction from testUser3 to testUser2 both current account and performed by testUser1 (which is an employee)
@@ -178,6 +180,7 @@ public class MyApplicationRunner implements ApplicationRunner {
         transaction3.timestamp(LocalDateTime.now().toString());
         transaction3.type(Transaction.TypeEnum.TRANSACTION);
         transaction3.setAmount(33.00);
+        transaction3.setUser(account3.getUser());
         transactionService.addTransaction(transaction3);
 
         // A deposit to testUser3's current account and performed by testUser3 (which is the only one who can make a deposit to this account)
@@ -188,6 +191,7 @@ public class MyApplicationRunner implements ApplicationRunner {
         depositTransaction.timestamp(LocalDateTime.now().toString());
         depositTransaction.type(Transaction.TypeEnum.DEPOSIT);
         depositTransaction.setAmount(20.00);
+        depositTransaction.setUser(testUser3);
         transactionService.addDepositTransaction(depositTransaction);
 
         // A withdraw from testUser3's current account and performed by testUser3 (which is the only one who can make a withdraw from this account)
@@ -198,6 +202,7 @@ public class MyApplicationRunner implements ApplicationRunner {
         withdrawTransaction.timestamp(LocalDateTime.now().toString());
         withdrawTransaction.type(Transaction.TypeEnum.WITHDRAW);
         withdrawTransaction.setAmount(30.00);
+        withdrawTransaction.setUser(testUser3);
         transactionService.addWithdrawTransaction(withdrawTransaction);
     }
 }

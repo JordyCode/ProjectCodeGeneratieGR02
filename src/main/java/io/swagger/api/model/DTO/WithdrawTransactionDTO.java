@@ -71,7 +71,6 @@ public class WithdrawTransactionDTO   {
      * @return performedBy
      **/
     @Schema(example = "151", required = true, description = "")
-    @NotNull
 
     public Integer getPerformedBy() {
         return performedBy;
@@ -92,8 +91,7 @@ public class WithdrawTransactionDTO   {
         }
         WithdrawTransactionDTO withdrawTransactionDTO = (WithdrawTransactionDTO) o;
         return Objects.equals(this.accountFrom, withdrawTransactionDTO.accountFrom) &&
-                Objects.equals(this.amount, withdrawTransactionDTO.amount) &&
-                Objects.equals(this.performedBy, withdrawTransactionDTO.performedBy);
+                Objects.equals(this.amount, withdrawTransactionDTO.amount);
     }
 
     @Override
@@ -108,7 +106,6 @@ public class WithdrawTransactionDTO   {
 
         sb.append("    accountFrom: ").append(toIndentedString(accountFrom)).append("\n");
         sb.append("    amount: ").append(toIndentedString(amount)).append("\n");
-        sb.append("    performedBy: ").append(toIndentedString(performedBy)).append("\n");
         sb.append("}");
         return sb.toString();
     }

@@ -133,16 +133,21 @@ public class TransactionsApiController implements TransactionsApi {
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'USER')")
     public ResponseEntity<?> postTransactions(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema = @Schema()) @Valid @RequestBody TransactionDTO body) {
         try {
+            Principal principal = request.getUserPrincipal();
+            User user = userService.findByUsername(principal.getName());
+
             Transaction transaction = new Transaction();
+            Account account = accountRepository.findByIBAN(body.getAccountFrom());
             transaction.setAccountFrom(body.getAccountFrom());
             transaction.setAccountTo(body.getAccountTo());
             transaction.setType(Transaction.TypeEnum.TRANSACTION);
             transaction.setTimestamp(OffsetDateTime.now().toString());;
-            transaction.setPerformedBy(body.getPerformedBy());
+            transaction.setPerformedBy(user.getUserId().intValue());
+            transaction.setUser(account.getUser());
             transaction.setAmount(body.getAmount());
-            Account sender = accountRepository.findByIBAN(transaction.getAccountFrom());
             Transaction created = transactionService.addTransaction(transaction);
-            User user = userService.getSpecificUser(sender.getUser().getUserId());
+            Account sender = accountRepository.findByIBAN(transaction.getAccountFrom());
+
             Long total = transactionRepository.getTransactionsTotalByUser(sender.getUser().getUserId());
             if (total == null){
                 total = 0L;
@@ -151,8 +156,8 @@ public class TransactionsApiController implements TransactionsApi {
 
             if (Objects.equals(created.getPerformedBy(), sender.getUser().getUserId().intValue())) {
                 Map<String, Object> result = new HashMap<String,Object>();
-                result.put("Total amount left of daily limit",dailyLimitLeft.doubleValue());
                 result.put("Transaction", created);
+                result.put("Total amount left of daily limit",dailyLimitLeft.doubleValue());
                 return new ResponseEntity<Map<String, Object>>(result, HttpStatus.CREATED);
 
                 //return ResponseEntity.status(HttpStatus.MULTI_STATUS).body(result + dailyLimitLeft.toString() + " is left of your daily limit!");
@@ -167,16 +172,24 @@ public class TransactionsApiController implements TransactionsApi {
 
     public ResponseEntity<?> postTransactionDeposit(@Parameter(in = ParameterIn.DEFAULT, description = "JSON data for the transaction that has to be created.", required=true, schema=@Schema()) @Valid @RequestBody DepositTransactionDTO body) {
         try {
+            Principal principal = request.getUserPrincipal();
+            User user = userService.findByUsername(principal.getName());
             Transaction transaction = new Transaction();
             transaction.setAccountFrom(bankIban);
             transaction.setAccountTo(body.getAccountTo());
             transaction.setType(Transaction.TypeEnum.DEPOSIT);
             transaction.setTimestamp(OffsetDateTime.now().toString());
-            transaction.setPerformedBy(body.getPerformedBy());
+            transaction.setUser(user);
+            transaction.setPerformedBy(user.getUserId().intValue());
             transaction.setAmount(body.getAmount());
-
             Transaction result = transactionService.addDepositTransaction(transaction);
-            return ResponseEntity.status(HttpStatus.OK).body(result);
+            Account account = accountRepository.findByIBAN(body.getAccountTo());
+
+            Map<String, Object> result2 = new HashMap<String,Object>();
+            result2.put("Transaction", result);
+            result2.put("Amount deposited:",transaction.getAmount().doubleValue());
+            result2.put("New balance:", account.getBalance());
+            return new ResponseEntity<Map<String, Object>>(result2, HttpStatus.CREATED);
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
@@ -184,16 +197,23 @@ public class TransactionsApiController implements TransactionsApi {
 
     public ResponseEntity<?> postTransactionWithdraw(@Parameter(in = ParameterIn.DEFAULT, description = "JSON data for the transaction that has to be created.", required=true, schema=@Schema()) @Valid @RequestBody WithdrawTransactionDTO body) {
         try {
+            Principal principal = request.getUserPrincipal();
+            User user = userService.findByUsername(principal.getName());
             Transaction transaction = new Transaction();
             transaction.setAccountFrom(body.getAccountFrom());
             transaction.setAccountTo(bankIban);
             transaction.setType(Transaction.TypeEnum.WITHDRAW);
+            transaction.setUser(user);
             transaction.setTimestamp(OffsetDateTime.now().toString());
-            transaction.setPerformedBy(body.getPerformedBy());
+            transaction.setPerformedBy(user.getUserId().intValue());
             transaction.setAmount(body.getAmount());
-
             Transaction result = transactionService.addWithdrawTransaction(transaction);
-            return ResponseEntity.status(HttpStatus.OK).body(result);
+            Account account = accountRepository.findByIBAN(body.getAccountFrom());
+            Map<String, Object> result3 = new HashMap<String,Object>();
+            result3.put("Transaction", result);
+            result3.put("Amount withdrew:",transaction.getAmount().doubleValue());
+            result3.put("New balance:", account.getBalance());
+            return new ResponseEntity<Map<String, Object>>(result3, HttpStatus.CREATED);
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
