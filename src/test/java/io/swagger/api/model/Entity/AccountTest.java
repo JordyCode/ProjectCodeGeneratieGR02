@@ -1,5 +1,6 @@
 package io.swagger.api.model.Entity;
 
+import io.swagger.Swagger2SpringBoot;
 import io.swagger.api.model.Role;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +14,7 @@ import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
+@SpringBootTest (classes = { Swagger2SpringBoot.class })
 @AutoConfigureMockMvc
 class AccountTest {
 
@@ -72,6 +73,7 @@ class AccountTest {
     void setBalanceToNegativeShouldThrowException() {
         assertThrows(IllegalArgumentException.class, () -> account.setBalance(-1.00));
     }
+
     @Test
     @WithMockUser(username = "Frank",password = "test", roles = "EMPLOYEE")
     void setAccountStatusToActive() {
@@ -88,7 +90,7 @@ class AccountTest {
 
     @Test
     @WithMockUser(username = "Frank",password = "test", roles = "EMPLOYEE")
-    void setAbsoluteLimitToPositiveShouldThrowException() {
-        assertThrows(IllegalArgumentException.class, () -> account.setAbsoluteLimit(1.00));
+    void setAbsoluteLimitAboveOneHundredShouldThrowException() {
+        assertThrows(IllegalArgumentException.class, () -> account.setAbsoluteLimit(120.00));
     }
 }
