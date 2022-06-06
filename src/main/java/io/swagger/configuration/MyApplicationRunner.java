@@ -47,7 +47,6 @@ public class MyApplicationRunner implements ApplicationRunner {
         bankAccount.setAccountStatus(Account.AccountStatusEnum.ACTIVE);
         accountService.add(bankAccount, false);
 
-        //Create a user for the Bank's account, because according to the user story every account must have a user. (It was not stated that the bank's own account should not have a user attached)
         User emptyUser2 = new User();
         emptyUser2.setUsername("emptyUser2");
         emptyUser2.setPassword("welkom12");

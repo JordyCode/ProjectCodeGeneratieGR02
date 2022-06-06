@@ -25,8 +25,8 @@ public class AccountsStepDefinitions extends BaseStepDefinitions implements En {
     //Might have to re-assign a token to user and employee
     private static final String EXPIRED_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJFbXBsb3llZUJhbmsiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn0seyJhdXRob3JpdHkiOiJST0xFX1VTRVIifV0sImlhdCI6MTY1NDE2NTM2MCwiZXhwIjoxNjU0MTY4OTYwfQ.j8dj-6HtG9uA0Oo---iJhUfNyHQh_GQWlk8a_AO-H-Y";
     private static final String INVALID_TOKEN = "this-token-doesnt-work";
-    private static final String VALID_USER_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJGcmVkZHlVc2VyIiwiYXV0aCI6W3siYXV0aG9yaXR5IjoiUk9MRV9VU0VSIn1dLCJpYXQiOjE2NTQ1MTg0NTgsImV4cCI6MTY1NDUyMjA1OH0.41UJKdu6gZAGEN_pJhm8jSNBBt_4GehUCg66ygS5H4g";
-    private static final String VALID_EMPLOYEE_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJFbXBsb3llZUJhbmsiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn0seyJhdXRob3JpdHkiOiJST0xFX1VTRVIifV0sImlhdCI6MTY1NDUxNjc5NSwiZXhwIjoxNjU0NTIwMzk1fQ.E-0RiFbgiumRUK1jSv8Q9Kjq6PbMECFEt994jmQm_CE";
+    private static final String VALID_USER_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJGcmVkZHlVc2VyIiwiYXV0aCI6W3siYXV0aG9yaXR5IjoiUk9MRV9VU0VSIn1dLCJpYXQiOjE2NTQ1MzY3MDYsImV4cCI6MTY1NDU0MDMwNn0.aq5I8jI_DSroG2ngNdsVDWe61BQUQcQfuJ8Z9fWgPR4";
+    private static final String VALID_EMPLOYEE_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJFbXBsb3llZUJhbmsiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn0seyJhdXRob3JpdHkiOiJST0xFX1VTRVIifV0sImlhdCI6MTY1NDUzNjcyMywiZXhwIjoxNjU0NTQwMzIzfQ.JXbtKJr_e73EjkNreNgtJ2TB9oHRv9EmE_9hJ_UIINU";
 
     private final TestRestTemplate restTemplate = new TestRestTemplate();
     private final ObjectMapper mapper = new ObjectMapper();
@@ -157,19 +157,29 @@ public class AccountsStepDefinitions extends BaseStepDefinitions implements En {
         And("^I have all the account objects$", () -> {
 
             accountDTO = new AccountDTO();
-            User user = new User();
+            User testUser1 = new User();
+            testUser1.setUserId(3L);
+            testUser1.setUsername("test12346");
+            testUser1.setPassword("15123daf");
+            testUser1.setFirstName("Willem");
+            testUser1.setLastName("Wiltenburg");
+            testUser1.setAccountStatus(User.AccountStatusEnum.ACTIVE);
+            testUser1.setDayLimit(100.00);
+            testUser1.setTransactionLimit(1000.00);
+            testUser1.setEmail("willem.wiltenburg@test.com");
+            testUser1.setDateOfBirth("03/03/19670");
 
             accountDTO.setAccountStatusEnum(Account.AccountStatusEnum.ACTIVE);
             accountDTO.setAccountTypeEnum(Account.AccountTypeEnum.CURRENT);
             accountDTO.setAbsoluteLimit(100.0);
             accountDTO.setBalance(200.0);
-            accountDTO.setUser(user.userId(2L));
+            accountDTO.setUser(testUser1.userId(3L));
         });
 
         And("^I have all the account objects to update$", () -> {
             data = new HashMap<>();
 
-            data.put("IBAN", "NL53INHO4715545128");
+            data.put("IBAN", "NL53INHO4715545127");
             data.put("accountType", Account.AccountTypeEnum.CURRENT);
             data.put("balance", 500.0);
             data.put("absoluteLimit", 100.0);

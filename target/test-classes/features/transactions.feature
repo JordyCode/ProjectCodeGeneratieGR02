@@ -11,6 +11,7 @@ Feature: Transactions
     Then I get a response of 302 for transactions
     Then I get a list of 5 transactions
 
+    #This user has 5 transactions from his account
   Scenario: Get all transactions as user
     Given I have a valid token for user
     When I request the /transactions endpoint
