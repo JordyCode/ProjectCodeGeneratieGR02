@@ -18,10 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -153,6 +150,28 @@ public class UsersApiController implements UsersApi {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
 
+    }
+
+    @PostMapping(value = "/users/signup")
+    public ResponseEntity<?> usersSignUp(@Parameter(in = ParameterIn.DEFAULT, description = "Creates a new user as a guest", required = true, schema = @Schema()) @Valid @RequestBody UserDTO body) {
+        try {
+            User user = new User();
+            user.setUsername(body.getUsername());
+            user.setPassword(body.getPassword());
+            user.setFirstName(body.getFirstName());
+            user.setLastName(body.getLastName());
+            user.setAccountStatus(User.AccountStatusEnum.ACTIVE);
+            user.setDayLimit(body.getDayLimit());
+            user.setTransactionLimit(body.getTransactionLimit());
+            user.setEmail(body.getEmail());
+            user.dateOfBirth(body.getDateOfBirth());
+
+            User result = userService.add(user, false);
+
+            return ResponseEntity.status(200).body(result);
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        }
     }
 
     @PreAuthorize("hasRole('EMPLOYEE')")

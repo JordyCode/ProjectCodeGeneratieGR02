@@ -135,13 +135,13 @@ public class UsersApiControllerTest {
 
     @Test
     @WithMockUser(username = "UserBank", password = "user123", roles = "USER")
-    public void createUserAsUserShouldReturnForbidden() throws Exception {
+    public void createUserAsUserShouldReturnOK() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders
-                        .post("/users")
-                        .content(asJsonString(user1))
+                        .post("/users/signup")
+                        .content(asJsonString(testUser1))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isOk());
     }
 
     @Test
