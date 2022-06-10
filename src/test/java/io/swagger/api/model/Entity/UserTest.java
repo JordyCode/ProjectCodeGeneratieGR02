@@ -32,7 +32,7 @@ class UserTest {
         user1.setEmail("testuser1@mail.com");
         user1.setTransactionLimit(1000.00);
         user1.setDayLimit(10000.00);
-        user1.setAccountStatus(User.AccountStatusEnum.ACTIVE);
+        user1.setUserStatus(User.UserStatusEnum.ACTIVE);
         user1.setRoles(Arrays.asList(Role.ROLE_USER));
     }
 
@@ -51,7 +51,7 @@ class UserTest {
         assertEquals("testuser1@mail.com", user1.getEmail());
         assertEquals((Double)1000.00, user1.getTransactionLimit());
         assertEquals((Double)10000.00, user1.getDayLimit());
-        assertEquals(User.AccountStatusEnum.ACTIVE, user1.getAccountStatus());
+        assertEquals(User.UserStatusEnum.ACTIVE, user1.getUserStatus());
         assertEquals(Arrays.asList(Role.ROLE_USER), user1.getRoles());
     }
 

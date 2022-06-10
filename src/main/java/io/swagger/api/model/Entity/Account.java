@@ -229,7 +229,9 @@ public class Account {
       return false;
     }
     Account account = (Account) o;
-    return Objects.equals(this.IBAN, account.IBAN) &&
+    return  Objects.equals(this.id, account.id) &&
+            Objects.equals(this.IBAN, account.IBAN) &&
+            Objects.equals(this.user, account.user) &&
             Objects.equals(this.accountType, account.accountType) &&
             Objects.equals(this.balance, account.balance) &&
             Objects.equals(this.absoluteLimit, account.absoluteLimit) &&

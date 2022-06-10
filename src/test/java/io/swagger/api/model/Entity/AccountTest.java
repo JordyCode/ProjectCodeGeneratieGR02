@@ -32,7 +32,7 @@ class AccountTest {
         user1.setEmail("testuser1@mail.com");
         user1.setTransactionLimit(1000.00);
         user1.setDayLimit(10000.00);
-        user1.setAccountStatus(User.AccountStatusEnum.ACTIVE);
+        user1.setUserStatus(User.UserStatusEnum.ACTIVE);
         user1.setRoles(Arrays.asList(Role.ROLE_USER));
 
         account = new Account();

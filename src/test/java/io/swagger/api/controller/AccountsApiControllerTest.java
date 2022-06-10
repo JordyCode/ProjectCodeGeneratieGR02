@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -18,8 +20,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -55,7 +59,7 @@ public class AccountsApiControllerTest {
         testUser1.setPassword("employee123");
         testUser1.setFirstName("Willem");
         testUser1.setLastName("Wiltenburg");
-        testUser1.setAccountStatus(User.AccountStatusEnum.ACTIVE);
+        testUser1.setUserStatus(User.UserStatusEnum.ACTIVE);
         testUser1.setDayLimit(100.00);
         testUser1.setTransactionLimit(1000.00);
         testUser1.setEmail("willem.wiltenburg@test.com");
@@ -66,7 +70,7 @@ public class AccountsApiControllerTest {
         testUser2.setPassword("user123");
         testUser2.setFirstName("Frank");
         testUser2.setLastName("Dersjant");
-        testUser2.setAccountStatus(User.AccountStatusEnum.ACTIVE);
+        testUser2.setUserStatus(User.UserStatusEnum.ACTIVE);
         testUser2.setDayLimit(1000.00);
         testUser2.setTransactionLimit(500.00);
         testUser2.setEmail("frank.dersjant@test.com");
@@ -97,25 +101,36 @@ public class AccountsApiControllerTest {
     @Test
     @WithMockUser(username = "EmployeeBank", password = "employee123", roles = "EMPLOYEE")
     public void getAccountsAsEmployeeShouldReturnAllAccountsAndOk() throws Exception {
-        this.mockMvc.perform(get("/accounts").contentType("application/json")).andExpect(status().isOk());
+        mockMvc.perform(get("/accounts").contentType("application/json"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(5)))
+                .andExpect(jsonPath("$[0].balance").value(150000000));
     }
 
     @Test
     @WithMockUser(username = "UserBank", password = "user123", roles = "USER")
     public void getAccountsAsUserShouldReturnOnlyUsersAccountAndOk() throws Exception {
-        this.mockMvc.perform(get("/accounts").contentType("application/json")).andExpect(status().isOk());
+        mockMvc.perform(get("/accounts"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].id").value(6))
+                .andExpect(jsonPath("$[0].absoluteLimit").value(-100.00));
     }
 
     @Test
     @WithMockUser(username = "EmployeeBank", password = "employee123", roles = "EMPLOYEE")
     public void getSpecificAccountAsEmployeeShouldReturnOk() throws Exception {
-        this.mockMvc.perform(get("/accounts/6").contentType("application/json")).andExpect(status().isOk());
+        mockMvc.perform(get("/accounts/9").contentType("application/json"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.balance").value(500.00))
+                .andExpect(jsonPath("$.accountStatus").value("active"));
     }
 
     @Test
     @WithMockUser(username = "UserBank", password = "user123", roles = "USER")
     public void getSpecificAccountAsUserShouldReturnForbidden() throws Exception {
-        this.mockMvc.perform(get("/accounts/2").contentType("application/json")).andExpect(status().isForbidden());
+        mockMvc.perform(get("/accounts/2").contentType("application/json"))
+                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -128,22 +143,21 @@ public class AccountsApiControllerTest {
         account.setUser(testUser1);
         account.setIBAN("NL00INHO000000007");
         account.setBalance(150.00);
-        account.setAbsoluteLimit(100.00);
+        account.setAbsoluteLimit(-100.00);
         account.setAccountStatus(Account.AccountStatusEnum.ACTIVE);
 
         mockMvc.perform(post("/accounts")
                         .content(mapper.writeValueAsString(account))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated());
-
-
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.iban").value("NL00INHO000000007"));
     }
 
     @Test
     @WithMockUser(username = "UserBank", password = "user123", roles = "USER")
     public void createAccountAsUserShouldReturnBadRequest() throws Exception
     {
-        this.mockMvc.perform( post("/accounts")
+        mockMvc.perform(post("/accounts")
                         .content(asJsonString(account1))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -153,21 +167,17 @@ public class AccountsApiControllerTest {
     @Test
     @WithMockUser(username = "EmployeeBank", password = "employee123", roles = "EMPLOYEE")
     public void updateAccountAsEmployeeShouldReturnOK() throws Exception {
-        testUser1.setUserId(3L);
-        testUser1.setUsername("EmployeeBank");
-        testUser1.setPassword("employee123");
-        testUser1.setFirstName("Willem");
-        testUser1.setLastName("Wiltenburg");
-        testUser1.setAccountStatus(User.AccountStatusEnum.ACTIVE);
-        testUser1.setDayLimit(100.00);
-        testUser1.setTransactionLimit(1000.00);
-        testUser1.setEmail("willem.wiltenburg@test.com");
-        testUser1.setDateOfBirth("03/03/19670");
+        account2.setId(6L);
+        account2.setAccountType(Account.AccountTypeEnum.CURRENT);
+        account2.setUser(testUser2);
+        account2.setBalance(500.00);
+        account2.setAccountStatus(Account.AccountStatusEnum.INACTIVE);
+        account2.setAbsoluteLimit(-100.00);
 
-        this.mockMvc.perform(put("/users/3").content(asJsonString(testUser1)).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(put("/accounts/6").content(asJsonString(account2)).contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isOk());
-
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.balance").value(500.00));
     }
 
     @Test
@@ -178,13 +188,13 @@ public class AccountsApiControllerTest {
         testUser1.setPassword("employee123");
         testUser1.setFirstName("Willem");
         testUser1.setLastName("Wiltenburg");
-        testUser1.setAccountStatus(User.AccountStatusEnum.ACTIVE);
+        testUser1.setUserStatus(User.UserStatusEnum.ACTIVE);
         testUser1.setDayLimit(100.00);
         testUser1.setTransactionLimit(1000.00);
         testUser1.setEmail("willem.wiltenburg@test.com");
         testUser1.setDateOfBirth("03/03/19670");
 
-        this.mockMvc.perform(put("/users/3").content(asJsonString(testUser1)).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(put("/users/3").content(asJsonString(testUser1)).contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isForbidden());
 

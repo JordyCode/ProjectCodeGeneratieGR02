@@ -110,7 +110,7 @@ public class UsersStepDefinitions extends BaseStepDefinitions implements En {
             user.setPassword("Welkom10");
             user.setFirstName("Cucumber");
             user.setLastName("User");
-            user.setAccountStatus(User.AccountStatusEnum.ACTIVE);
+            user.setUserStatus(User.UserStatusEnum.ACTIVE);
             user.setDayLimit(1000.00);
             user.setTransactionLimit(500.00);
             user.setEmail("Cuccumber@mail.ml");;

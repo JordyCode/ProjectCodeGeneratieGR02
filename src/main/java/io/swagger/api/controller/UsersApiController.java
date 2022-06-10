@@ -148,7 +148,7 @@ public class UsersApiController implements UsersApi {
             }
             User result = userService.saveUser(body);
 
-            return ResponseEntity.status(200).body(result);
+            return ResponseEntity.status(HttpStatus.OK).body(result);
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
@@ -164,7 +164,7 @@ public class UsersApiController implements UsersApi {
             user.setPassword(body.getPassword());
             user.setFirstName(body.getFirstName());
             user.setLastName(body.getLastName());
-            user.setAccountStatus(User.AccountStatusEnum.ACTIVE);
+            user.setUserStatus(User.UserStatusEnum.ACTIVE);
             user.setDayLimit(body.getDayLimit());
             user.setTransactionLimit(body.getTransactionLimit());
             user.setEmail(body.getEmail());
@@ -172,7 +172,7 @@ public class UsersApiController implements UsersApi {
 
             User result = userService.add(user, false);
 
-            return ResponseEntity.status(200).body(result);
+            return ResponseEntity.status(HttpStatus.CREATED).body(result);
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }

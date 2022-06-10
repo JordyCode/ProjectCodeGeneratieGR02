@@ -27,7 +27,7 @@ class TransactionTest {
         user1.setEmail("testuser1@mail.com");
         user1.setTransactionLimit(1000.00);
         user1.setDayLimit(10000.00);
-        user1.setAccountStatus(User.AccountStatusEnum.ACTIVE);
+        user1.setUserStatus(User.UserStatusEnum.ACTIVE);
         user1.setRoles(Arrays.asList(Role.ROLE_USER));
 
         user2 = new User();
@@ -36,7 +36,7 @@ class TransactionTest {
         user2.setEmail("testuser2@mail.com");
         user2.setTransactionLimit(1000.00);
         user2.setDayLimit(10000.00);
-        user2.setAccountStatus(User.AccountStatusEnum.ACTIVE);
+        user2.setUserStatus(User.UserStatusEnum.ACTIVE);
         user2.setRoles(Arrays.asList(Role.ROLE_USER));
 
         employee1 = new User();
@@ -45,7 +45,7 @@ class TransactionTest {
         employee1.setEmail("testuser3@mail.com");
         employee1.setTransactionLimit(10000.00);
         employee1.setDayLimit(100000.00);
-        employee1.setAccountStatus(User.AccountStatusEnum.ACTIVE);
+        employee1.setUserStatus(User.UserStatusEnum.ACTIVE);
         employee1.setRoles(Arrays.asList(Role.ROLE_EMPLOYEE));
 
         // Account current for user 1

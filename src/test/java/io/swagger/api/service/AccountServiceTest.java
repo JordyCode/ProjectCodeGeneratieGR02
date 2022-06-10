@@ -47,7 +47,7 @@ public class AccountServiceTest {
         user1.setDateOfBirth("10/05/1976");
         user1.setTransactionLimit(1000.00);
         user1.setDayLimit(10000.00);
-        user1.setAccountStatus(User.AccountStatusEnum.ACTIVE);
+        user1.setUserStatus(User.UserStatusEnum.ACTIVE);
         user1.setRoles(Arrays.asList(Role.ROLE_USER));
 
         user2.setUsername("EmployeeBank");
@@ -55,7 +55,7 @@ public class AccountServiceTest {
         user2.setEmail("willem.wiltenburg@test.com");
         user2.setTransactionLimit(1000.00);
         user2.setDayLimit(200.00);
-        user2.setAccountStatus(User.AccountStatusEnum.ACTIVE);
+        user2.setUserStatus(User.UserStatusEnum.ACTIVE);
         user2.setRoles(Arrays.asList(Role.ROLE_EMPLOYEE));
 
         account1.setId(1L);

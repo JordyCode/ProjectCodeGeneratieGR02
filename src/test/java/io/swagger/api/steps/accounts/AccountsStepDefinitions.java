@@ -163,7 +163,7 @@ public class AccountsStepDefinitions extends BaseStepDefinitions implements En {
             testUser1.setPassword("15123daf");
             testUser1.setFirstName("Willem");
             testUser1.setLastName("Wiltenburg");
-            testUser1.setAccountStatus(User.AccountStatusEnum.ACTIVE);
+            testUser1.setUserStatus(User.UserStatusEnum.ACTIVE);
             testUser1.setDayLimit(100.00);
             testUser1.setTransactionLimit(1000.00);
             testUser1.setEmail("willem.wiltenburg@test.com");
