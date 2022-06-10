@@ -104,20 +104,21 @@ public class MyApplicationRunner implements ApplicationRunner {
         Account account2 = new Account();
         account2.setAccountType(Account.AccountTypeEnum.CURRENT);
         account2.setUser(testUser2);
-//        account2.setIBAN("NL53INHO4715545129");
+        account2.setIBAN("NL53INHO4715545129");
         account2.setBalance(500.00);
         account2.setAccountStatus(Account.AccountStatusEnum.ACTIVE);
         account2.setAbsoluteLimit(-100.00);
-        accountService.add(account2, true);
+        accountService.add(account2, false);
 
         //This account is a saving account and belongs to user2 UserBank DO NOT USE!!!
         Account inactiveAccount = new Account();
         inactiveAccount.setAccountType(Account.AccountTypeEnum.SAVINGS);
         inactiveAccount.setUser(testUser2);
         inactiveAccount.setBalance(0.00);
-        inactiveAccount.setAccountStatus(Account.AccountStatusEnum.INACTIVE);
+        inactiveAccount.setIBAN("NL53INHO4715545130");
+        inactiveAccount.setAccountStatus(Account.AccountStatusEnum.ACTIVE);
         inactiveAccount.setAbsoluteLimit(0.0);
-        accountService.add(inactiveAccount, true);
+        accountService.add(inactiveAccount, false);
 
         //This user is a customer
         User testUser3 = new User();
@@ -127,8 +128,8 @@ public class MyApplicationRunner implements ApplicationRunner {
         testUser3.setFirstName("Freddy");
         testUser3.setLastName("User3");
         testUser3.setAccountStatus(User.AccountStatusEnum.ACTIVE);
-        testUser3.setDayLimit(1000.00);
-        testUser3.setTransactionLimit(500.00);
+        testUser3.setDayLimit(600.00);
+        testUser3.setTransactionLimit(400.00);
         testUser3.setEmail("test@mail.ml");;
         testUser3.setDateOfBirth("01/01/2001");
         userService.add(testUser3, false);
