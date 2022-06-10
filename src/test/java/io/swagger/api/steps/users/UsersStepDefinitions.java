@@ -24,8 +24,8 @@ public class UsersStepDefinitions extends BaseStepDefinitions implements En {
 
     private static final String EXPIRED_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJFbXBsb3llZUJhbmsiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn0seyJhdXRob3JpdHkiOiJST0xFX1VTRVIifV0sImlhdCI6MTY1NDE2NTM2MCwiZXhwIjoxNjU0MTY4OTYwfQ.j8dj-6HtG9uA0Oo---iJhUfNyHQh_GQWlk8a_AO-H-Y";
     private static final String INVALID_TOKEN = "this-token-doesnt-work";
-    private static final String VALID_USER_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJVc2VyQmFuayIsImF1dGgiOlt7ImF1dGhvcml0eSI6IlJPTEVfRU1QTE9ZRUUifV0sImlhdCI6MTY1NDQ1NzIwNiwiZXhwIjoxNjU0NDYwODA2fQ.qJFg0_Auvum7R5eTYOxkDgedT4KSt5D8x0v3XsJEOgE";
-    private static final String VALID_EMPLOYEE_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJFbXBsb3llZUJhbmsiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn0seyJhdXRob3JpdHkiOiJST0xFX1VTRVIifV0sImlhdCI6MTY1NDQ1NTg1NywiZXhwIjoxNjU0NDU5NDU3fQ.V6BpOBAFa_iZ4Ib_WfOKOSIk9j0RgBuGQjG1-dF86JM";
+    private static final String VALID_USER_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJGcmVkZHlVc2VyIiwiYXV0aCI6W3siYXV0aG9yaXR5IjoiUk9MRV9VU0VSIn1dLCJpYXQiOjE2NTQ3ODE1OTAsImV4cCI6MTY1NDc4NTE5MH0.D3CeH0LeB5tMzkGYp8quLSK_udP8YbkDF8xAO311MnU";
+    private static final String VALID_EMPLOYEE_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJFbXBsb3llZUJhbmsiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn0seyJhdXRob3JpdHkiOiJST0xFX1VTRVIifV0sImlhdCI6MTY1NDc4MTY0MywiZXhwIjoxNjU0Nzg1MjQzfQ.9Ss6xf7ATLIqIIgafpRAnYTK_xMQFlI1UEOdtGFY9Cw";
     private static final String VALID_EMPTY_USER = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJFbXB0eVVzZXIiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX1VTRVIifV0sImlhdCI6MTY1NDQyNDg5MiwiZXhwIjoxNjU0NDI4NDkyfQ.J_uGkdHtgH72mBI11SbrLk15G0A87OKmaxbdmTpUpcU";
 
 
@@ -143,6 +143,17 @@ public class UsersStepDefinitions extends BaseStepDefinitions implements En {
 
             response = restTemplate.exchange(getBaseUrl() + "/users/" + arg0, HttpMethod.PUT ,request, String.class);
             status = response.getStatusCodeValue();
+        });
+        When("^I request the POST /users/signup endpoint$", () -> {
+
+            httpHeaders.add("Content-Type", "application/json");
+            request = new HttpEntity<>(mapper.writeValueAsString(user), httpHeaders);
+            response = restTemplate.postForEntity(getBaseUrl() + "/users/signup", request, String.class);
+            status = response.getStatusCodeValue();
+
+        });
+        Given("^I have no user token$", () -> {
+
         });
 
     }

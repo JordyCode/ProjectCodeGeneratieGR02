@@ -18,7 +18,7 @@ Feature: Users
     Then I get a list of 1 users
 
   Scenario: Get all users as an employee with no valid token
-    Given I have an invalid token for users
+    Given I have a invalid token for users
     When I request the /users endpoint
     Then I get a response of 403 for users
 
@@ -34,7 +34,7 @@ Feature: Users
     Then I get a response of 200 for users
 
   Scenario: Get a specific user as a user with access
-    Given I have an invalid token for users
+    Given I have a invalid token for users
     When I request the /users/userId with 5 endpoint
     Then I get a response of 403 for users
 
@@ -52,7 +52,7 @@ Feature: Users
     Then I get a response of 403 for users
 
   Scenario: Create an user without login
-    Given I have an invalid token for users
+    Given I have no user token
     And I have all user objects filled
     When I request the POST /users/signup endpoint
     Then I get a response of 200 for users

@@ -104,6 +104,7 @@ public class MyApplicationRunner implements ApplicationRunner {
         Account account2 = new Account();
         account2.setAccountType(Account.AccountTypeEnum.CURRENT);
         account2.setUser(testUser2);
+//        account2.setIBAN("NL53INHO4715545129");
         account2.setBalance(500.00);
         account2.setAccountStatus(Account.AccountStatusEnum.ACTIVE);
         account2.setAbsoluteLimit(-100.00);
