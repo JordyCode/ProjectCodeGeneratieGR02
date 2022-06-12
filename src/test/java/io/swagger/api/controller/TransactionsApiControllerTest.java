@@ -4,7 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.api.model.DTO.DepositTransactionDTO;
 import io.swagger.api.model.DTO.TransactionDTO;
 import io.swagger.api.model.DTO.WithdrawTransactionDTO;
+import io.swagger.api.model.Entity.Account;
 import io.swagger.api.model.Entity.Transaction;
+import io.swagger.api.model.Entity.User;
+import io.swagger.api.service.TransactionService;
+import org.junit.Before;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -14,6 +20,9 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.threeten.bp.OffsetDateTime;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -29,56 +38,6 @@ public class TransactionsApiControllerTest{
     @Autowired
     private MockMvc mockMvc;
 
-    //This user is an employee, so he has access to all transactions
-    //This only works when you run it alone, because if you run everything at ones is creates new transaction and expects 9 trans actions
-//    @Test
-//    @WithMockUser(username = "EmployeeBank",password = "employee123", roles = "EMPLOYEE")
-//    public void getTransactionsAsEmployeeShouldReturnSizeOf5() throws Exception {
-//        this.mockMvc.perform(get("/transactions"))
-//                .andExpect(jsonPath("$", hasSize(5)));
-//    }
-
-    //READ ABOVE!! USE THIS WHEN YOU RUN THE CLASS ALL ONE
-    //THIS IS FOR WHEN THE TEST CREATES NEW TRANSACTIONS, THE NEW TOTAL IS 9
-    @Test
-    @WithMockUser(username = "EmployeeBank",password = "employee123", roles = "EMPLOYEE")
-    public void getTransactionsAsEmployeeShouldReturnSizeOf9() throws Exception {
-        this.mockMvc.perform(get("/transactions"))
-                .andExpect(jsonPath("$", hasSize(9)));
-    }
-
-    //This user is not an employee and has no transactions
-    @Test
-    @WithMockUser(username = "UserBank",password = "welkom10", roles = "USER")
-    public void getTransactionsAsUserShouldReturnBadRequest() throws Exception {
-        this.mockMvc.perform(get("/transactions"))
-                .andExpect(status().isBadRequest());
-    }
-
-    //This user is an employee, so he has access to specific transactions
-    @Test
-    @WithMockUser(username = "EmployeeBank",password = "employee123", roles = "EMPLOYEE")
-    public void getSpecificTransactionWhenEmployeeShouldReturnFound() throws Exception {
-        this.mockMvc.perform(get("/transactions/13"))
-                .andExpect(status().isFound());
-    }
-
-    //This user has  access to the transaction
-    @Test
-    @WithMockUser(username = "FreddyUser",password = "welkom10", roles = "USER")
-    public void getSpecificTransactionWhenUserShouldReturnFound() throws Exception {
-        this.mockMvc.perform(get("/transactions/12"))
-                .andExpect(status().isFound());
-    }
-
-    //This user has no access to the transaction
-    @Test
-    @WithMockUser(username = "UserBank",password = "welkom10", roles = "USER")
-    public void getSpecificTransactionWhenUserShouldNotReturnFound() throws Exception {
-        this.mockMvc.perform(get("/transactions/8"))
-                .andExpect(status().isBadRequest());
-    }
-
     //This account belongs to the FreddyUser from his current to saving's account
     @Test
     @WithMockUser(username = "FreddyUser",password = "welkom10", roles = "USER")
@@ -88,13 +47,16 @@ public class TransactionsApiControllerTest{
         TransactionDTO transaction = new TransactionDTO();
         transaction.setAccountFrom("NL53INHO4715545128");
         transaction.setAccountTo("NL53INHO4715545127");
-        transaction.setAmount(15.0);
+        transaction.setAmount(34.23);
 
-        this.mockMvc.perform( MockMvcRequestBuilders
+        mockMvc.perform( MockMvcRequestBuilders
                         .post("/transactions")
                         .content(asJsonString(transaction))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.Transaction.transactionId").value(19))
+                .andExpect(jsonPath("$.Transaction.amount").value(34.23))
+                .andExpect(jsonPath("$.Transaction.accountfrom").value("NL53INHO4715545128"))
                 .andExpect(status().isCreated());
     }
 
@@ -128,11 +90,14 @@ public class TransactionsApiControllerTest{
         transaction.setAccountTo("NL53INHO4715545127");
         transaction.setAmount(20.0);
 
-        this.mockMvc.perform( MockMvcRequestBuilders
+        mockMvc.perform( MockMvcRequestBuilders
                         .post("/transactions")
                         .content(asJsonString(transaction))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.transactionId").value(20))
+                .andExpect(jsonPath("$.amount").value(20.0))
+                .andExpect(jsonPath("$.accountto").value("NL53INHO4715545127"))
                 .andExpect(status().isCreated());
     }
 
@@ -184,11 +149,14 @@ public class TransactionsApiControllerTest{
         transaction.setAccountTo("NL53INHO4715545128");
         transaction.setAmount(15.0);
 
-        this.mockMvc.perform( MockMvcRequestBuilders
+        mockMvc.perform( MockMvcRequestBuilders
                         .post("/transactions/deposit")
                         .content(asJsonString(transaction))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.Transaction.transactionId").value(18))
+                .andExpect(jsonPath("$.Transaction.amount").value(15.0))
+                .andExpect(jsonPath("$.Transaction.accountto").value("NL53INHO4715545128"))
                 .andExpect(status().isCreated());
     }
 
@@ -238,7 +206,7 @@ public class TransactionsApiControllerTest{
         transaction.setAccountTo("NL53INHO4715545128");
         transaction.setAmount(15.0);
 
-        this.mockMvc.perform( MockMvcRequestBuilders
+        mockMvc.perform( MockMvcRequestBuilders
                         .post("/transactions/deposit")
                         .content(asJsonString(transaction))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -256,7 +224,7 @@ public class TransactionsApiControllerTest{
         transaction.setAccountTo("NL53INHO4715545128");
         transaction.setAmount(15.0);
 
-        this.mockMvc.perform( MockMvcRequestBuilders
+        mockMvc.perform( MockMvcRequestBuilders
                         .post("/transactions/deposit")
                         .content(asJsonString(transaction))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -272,13 +240,16 @@ public class TransactionsApiControllerTest{
         // Create a new transaction
         WithdrawTransactionDTO transaction = new WithdrawTransactionDTO();
         transaction.setAccountFrom("NL53INHO4715545128");
-        transaction.setAmount(15.0);
+        transaction.setAmount(40.0);
 
-        this.mockMvc.perform( MockMvcRequestBuilders
+        mockMvc.perform( MockMvcRequestBuilders
                         .post("/transactions/withdraw")
                         .content(asJsonString(transaction))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.Transaction.transactionId").value(17))
+                .andExpect(jsonPath("$.Transaction.accountfrom").value("NL53INHO4715545128"))
+                .andExpect(jsonPath("$.Transaction.amount").value(40.0))
                 .andExpect(status().isCreated());
     }
 
@@ -353,6 +324,72 @@ public class TransactionsApiControllerTest{
                 .andExpect(status().isBadRequest());
     }
 
+    //This user is not an employee and has no transactions
+    @Test
+    @WithMockUser(username = "UserBank",password = "welkom10", roles = "USER")
+    public void getTransactionsAsUserShouldReturnBadRequest() throws Exception {
+        mockMvc.perform(get("/transactions"))
+                .andExpect(status().isBadRequest());
+    }
+
+    //This user is an employee, so he has access to specific transactions
+    @Test
+    @WithMockUser(username = "EmployeeBank",password = "employee123", roles = "EMPLOYEE")
+    public void getSpecificTransactionWhenEmployeeShouldReturnFound() throws Exception {
+        mockMvc.perform(get("/transactions/13"))
+                .andExpect(jsonPath("$.transactionId").value(13))
+                .andExpect(jsonPath("$.amount").value(50.0))
+                .andExpect(jsonPath("$.accountfrom").value("NL53INHO4715545127"))
+                .andExpect(status().isFound());
+    }
+
+    //This user has  access to the transaction
+    @Test
+    @WithMockUser(username = "FreddyUser",password = "welkom10", roles = "USER")
+    public void getSpecificTransactionWhenUserShouldReturnFound() throws Exception {
+        mockMvc.perform(get("/transactions/12"))
+                .andExpect(jsonPath("$.transactionId").value(12))
+                .andExpect(jsonPath("$.amount").value(25.0))
+                .andExpect(jsonPath("$.accountto").value("NL53INHO4715545129"))
+                .andExpect(status().isFound());
+    }
+
+    //This user has no access to the transaction
+    @Test
+    @WithMockUser(username = "UserBank",password = "welkom10", roles = "USER")
+    public void getSpecificTransactionWhenUserShouldNotReturnFound() throws Exception {
+        mockMvc.perform(get("/transactions/8"))
+                .andExpect(status().isBadRequest());
+    }
+
+    //THIS IS FOR WHEN THE TEST CREATES NEW TRANSACTIONS, THE NEW TOTAL IS 9
+    @Test
+    @WithMockUser(username = "EmployeeBank",password = "employee123", roles = "EMPLOYEE")
+    public void getTransactionsAsEmployeeShouldReturnSizeOf9() throws Exception {
+        this.mockMvc.perform(get("/transactions"))
+                .andExpect(jsonPath("$", hasSize(9)))
+                .andExpect(jsonPath("$[0].transactionId").value(12))
+                .andExpect(jsonPath("$[1].transactionId").value(13))
+                .andExpect(jsonPath("$[8].transactionId").value(20));
+    }
+
+    //READ ABOVE!! USE THIS WHEN YOU RUN THE CLASS ONE BY ONE
+    //This only works when you run it alone, because if you run everything at ones is creates new transaction and expects 9 trans actions
+    //This user is an employee, so he has access to all transactions
+//    @Test
+//    @WithMockUser(username = "EmployeeBank",password = "employee123", roles = "EMPLOYEE")
+//    public void getTransactionsAsEmployeeShouldReturnSizeOf5() throws Exception {
+//
+//        mockMvc.perform(get("/transactions"))
+//                .andExpect(jsonPath("$", hasSize(5)))
+//                .andExpect(jsonPath("$[0].transactionId").value(12))
+//                .andExpect(jsonPath("$[1].transactionId").value(13))
+//                .andExpect(jsonPath("$[2].transactionId").value(14))
+//                .andExpect(jsonPath("$[3].transactionId").value(15))
+//                .andExpect(status().isFound());
+//
+//
+//    }
 
     public static String asJsonString(final Object obj) {
         try {
@@ -362,19 +399,4 @@ public class TransactionsApiControllerTest{
         }
     }
 
-    public static String asJsonString2(final Object obj) {
-        try {
-            return new ObjectMapper().writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static String asJsonString3(final Object obj) {
-        try {
-            return new ObjectMapper().writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

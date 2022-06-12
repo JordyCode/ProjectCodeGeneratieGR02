@@ -106,9 +106,10 @@ public class MyApplicationRunner implements ApplicationRunner {
         account2.setAccountType(Account.AccountTypeEnum.CURRENT);
         account2.setUser(testUser2);
         account2.setBalance(500.00);
+        account2.setIBAN("NL53INHO4715545129");
         account2.setAccountStatus(Account.AccountStatusEnum.ACTIVE);
         account2.setAbsoluteLimit(-100.00);
-        accountService.add(account2, true);
+        accountService.add(account2, false);
 
         //This account is a saving account and belongs to user2 UserBank DO NOT USE!!!
         Account inactiveAccount = new Account();
@@ -127,8 +128,8 @@ public class MyApplicationRunner implements ApplicationRunner {
         testUser3.setFirstName("Freddy");
         testUser3.setLastName("User3");
         testUser3.setUserStatus(User.UserStatusEnum.ACTIVE);
-        testUser3.setDayLimit(1000.00);
-        testUser3.setTransactionLimit(500.00);
+        testUser3.setDayLimit(600.00);
+        testUser3.setTransactionLimit(400.00);
         testUser3.setEmail("test@mail.ml");;
         testUser3.setDateOfBirth("01/01/2001");
         userService.add(testUser3, false);
