@@ -98,7 +98,7 @@ public class TransactionsApiController implements TransactionsApi {
             }
 
             if (transactions != null) {
-                return ResponseEntity.status(HttpStatus.FOUND).body(transactions);
+                return ResponseEntity.status(HttpStatus.OK).body(transactions);
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
@@ -117,7 +117,7 @@ public class TransactionsApiController implements TransactionsApi {
             if (transaction != null) {
                 if (request.isUserInRole("ROLE_EMPLOYEE") || transactionService.checkIfTransactionBelongsToUser(user, transactionId)) {
 
-                    return ResponseEntity.status(HttpStatus.FOUND).body(transaction);
+                    return ResponseEntity.status(HttpStatus.OK).body(transaction);
                 } else {
 
                     return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

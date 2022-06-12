@@ -8,14 +8,14 @@ Feature: Transactions
   Scenario: Get all transactions as an employee
     Given I have a valid token for employee
     When I request the /transactions endpoint
-    Then I get a response of 302 for transactions
+    Then I get a response of 200 for transactions
     Then I get a list of 5 transactions
 
     #This user has 5 transactions from his account
   Scenario: Get all transactions as user
     Given I have a valid token for user
     When I request the /transactions endpoint
-    Then I get a response of 302 for transactions
+    Then I get a response of 200 for transactions
     Then I get a list of 5 transactions
 
   Scenario: Get all transactions as user with no transactions
@@ -27,12 +27,12 @@ Feature: Transactions
   Scenario: Get a specific transaction as an employee
     Given I have a valid token for employee
     When I request the /transactions/id with id of 12
-    Then I get a response of 302 for transactions
+    Then I get a response of 200 for transactions
 
   Scenario: Get a specific transaction as user with access
     Given I have a valid token for user
     When I request the /transactions/id with id of 12
-    Then I get a response of 302 for transactions
+    Then I get a response of 200 for transactions
 
   Scenario: Get a specific transaction as user with no access
     Given I have a valid token for empty user

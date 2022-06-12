@@ -340,7 +340,7 @@ public class TransactionsApiControllerTest{
                 .andExpect(jsonPath("$.transactionId").value(13))
                 .andExpect(jsonPath("$.amount").value(50.0))
                 .andExpect(jsonPath("$.accountfrom").value("NL53INHO4715545127"))
-                .andExpect(status().isFound());
+                .andExpect(status().isOk());
     }
 
     //This user has  access to the transaction
@@ -351,7 +351,7 @@ public class TransactionsApiControllerTest{
                 .andExpect(jsonPath("$.transactionId").value(12))
                 .andExpect(jsonPath("$.amount").value(25.0))
                 .andExpect(jsonPath("$.accountto").value("NL53INHO4715545129"))
-                .andExpect(status().isFound());
+                .andExpect(status().isOk());
     }
 
     //This user has no access to the transaction
