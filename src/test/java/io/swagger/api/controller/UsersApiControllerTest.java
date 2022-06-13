@@ -100,7 +100,7 @@ public class UsersApiControllerTest {
 
     @Test
     @WithMockUser(username = "EmployeeBank", password = "employee123", roles = "EMPLOYEE")
-    public void getUsersAsEmployeeShouldReturnOnlyTheUserAndOk() throws Exception {
+    public void getUsersAsEmployeeShouldReturnAllUsersAndOk() throws Exception {
         mockMvc.perform(get("/users").contentType("application/json"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(5)))
@@ -132,7 +132,7 @@ public class UsersApiControllerTest {
 
     @Test
     @WithMockUser(username = "EmployeeBank", password = "employee123", roles = "EMPLOYEE")
-    public void createUserAsEmployeeShouldReturnOk() throws Exception {
+    public void createUserAsEmployeeShouldReturnIsCreated() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/users")
                         .content(asJsonString(testUser1))

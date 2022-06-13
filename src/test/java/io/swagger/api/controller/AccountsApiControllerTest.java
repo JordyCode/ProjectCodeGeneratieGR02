@@ -76,7 +76,7 @@ public class AccountsApiControllerTest {
         testUser2.setEmail("frank.dersjant@test.com");
         testUser2.setDateOfBirth("01/01/1970");
 
-
+        account1.setId(20L);
         account1.setAccountType(Account.AccountTypeEnum.CURRENT);
         account1.setUser(testUser1);
         account1.setIBAN("NL00INHO000000007");
@@ -135,19 +135,9 @@ public class AccountsApiControllerTest {
 
     @Test
     @WithMockUser(username = "EmployeeBank", password = "employee123", roles = "EMPLOYEE")
-    public void createAccountAsEmployeeShouldReturnOK() throws Exception {
-
-        Account account = new Account();
-        account.setId(20L);
-        account.setAccountType(Account.AccountTypeEnum.CURRENT);
-        account.setUser(testUser1);
-        account.setIBAN("NL00INHO000000007");
-        account.setBalance(150.00);
-        account.setAbsoluteLimit(-100.00);
-        account.setAccountStatus(Account.AccountStatusEnum.ACTIVE);
-
+    public void createAccountAsEmployeeShouldReturnIsCreated() throws Exception {
         mockMvc.perform(post("/accounts")
-                        .content(mapper.writeValueAsString(account))
+                        .content(mapper.writeValueAsString(account1))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.iban").value("NL00INHO000000007"));
@@ -155,8 +145,7 @@ public class AccountsApiControllerTest {
 
     @Test
     @WithMockUser(username = "UserBank", password = "user123", roles = "USER")
-    public void createAccountAsUserShouldReturnBadRequest() throws Exception
-    {
+    public void createAccountAsUserShouldReturnBadRequest() throws Exception {
         mockMvc.perform(post("/accounts")
                         .content(asJsonString(account1))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -197,7 +186,6 @@ public class AccountsApiControllerTest {
         mockMvc.perform(put("/users/3").content(asJsonString(testUser1)).contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isForbidden());
-
     }
 
 
