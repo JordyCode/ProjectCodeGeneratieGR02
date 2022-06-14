@@ -40,7 +40,9 @@ public class LoginApiControllerTest {
                         .content(asJsonString(loginDTO))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
+//                .andExpect(jsonPath("$.token").value("Cannot be tested with andExpect because with each test it creates a new token"))
                 .andExpect(status().isOk());
+
     }
 
     @Test

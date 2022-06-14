@@ -101,7 +101,14 @@ public class Transaction {
     this.amount = amount;
   }
 
+  public Transaction(String accountFrom, String accountTo, Double amount) {
+    this.accountFrom = accountFrom;
+    this.accountTo = accountTo;
+    this.amount = amount;
+  }
+
   public Transaction() {
+
   }
 
   /**
