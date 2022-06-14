@@ -38,12 +38,31 @@ Feature: Users
     When I request the /users/userId with 5 endpoint
     Then I get a response of 403 for users
 
+    #  Update User
+  Scenario: Update a user as an employee
+    Given I have a valid employee token for users
+    And I have user objects that need to be updated
+    When I request the PUT /users/id with id of 25 endpoint
+    Then I get a response of 200 for users
+
+  Scenario: Update a user as user
+    Given I have a valid user token for users
+    And I have user objects that need to be updated
+    When I request the PUT /users/id with id of 25 endpoint
+    Then I get a response of 403 for users
+
+  Scenario: Update a user as user with no access
+    Given I have a valid user token for empty users
+    And I have user objects that need to be updated
+    When I request the PUT /users/id with id of 25 endpoint
+    Then I get a response of 403 for users
+
 #    Create User
   Scenario: Create a user as an employee
     Given I have a valid employee token for users
     And I have all user objects filled
     When I request the POST /users endpoint
-    Then I get a response of 200 for users
+    Then I get a response of 201 for users
 
   Scenario: Create a user as a user
     Given I have a valid user token for users
@@ -56,21 +75,3 @@ Feature: Users
     When I request the POST /users endpoint
     Then I get a response of 403 for users
 
-#    Update User
-  Scenario: Update a user as an employee
-    Given I have a valid employee token for users
-    And I have user objects that need to be updated
-    When I request the PUT /users/id with id of 5 endpoint
-    Then I get a response of 200 for users
-
-  Scenario: Update a user as user
-    Given I have a valid user token for users
-    And I have user objects that need to be updated
-    When I request the PUT /users/id with id of 5 endpoint
-    Then I get a response of 403 for users
-
-  Scenario: Update a user as user with no access
-    Given I have a valid user token for empty users
-    And I have user objects that need to be updated
-    When I request the PUT /users/id with id of 3 endpoint
-    Then I get a response of 403 for users

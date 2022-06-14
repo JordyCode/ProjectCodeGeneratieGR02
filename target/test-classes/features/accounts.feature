@@ -9,7 +9,7 @@ Feature: Accounts
     Given I have an "employee" bearer token
     When I request the /accounts endpoint
     Then I get a response of 200
-    Then I get a list of 5 accounts
+    Then I get a list of 6 accounts
 
   Scenario: Get all accounts as an user
     Given I have an "user" bearer token
@@ -91,4 +91,4 @@ Feature: Accounts
     Given I have an "employee" bearer token
     And I have all the account objects
     When I make a POST request on the /accounts endpoint
-    Then I get a response of 200
+    Then I get a response of 201
