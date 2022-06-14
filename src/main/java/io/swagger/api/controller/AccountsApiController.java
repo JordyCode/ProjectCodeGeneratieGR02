@@ -17,11 +17,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
+
 import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
@@ -53,6 +53,7 @@ public class AccountsApiController implements AccountsApi {
         this.objectMapper = objectMapper;
         this.request = request;
     }
+
 
     @PreAuthorize("hasAnyRole('EMPLOYEE','USER')")
     public ResponseEntity<?> accountsGet() {
@@ -147,7 +148,7 @@ public class AccountsApiController implements AccountsApi {
             // Add the new properties to the Account result
             Account result = accountService.add(account, true);
 
-            return ResponseEntity.status(HttpStatus.OK).body(result);
+            return ResponseEntity.status(HttpStatus.CREATED).body(result);
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
@@ -170,18 +171,7 @@ public class AccountsApiController implements AccountsApi {
             // Fill list with all the accounts of the user
             accounts = accountService.getAccountsByUser(user);
 
-            // Create BalanceDTO
-            BalanceDTO balanceDTO = new BalanceDTO();
-
-            if (accounts.size() > 0) {
-                for (Account a : accounts) {
-                    totalBalance += a.getBalance();
-                }
-                balanceDTO.setTotalBalance(totalBalance);
-            }
-            else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            }
+            BalanceDTO balanceDTO = accountService.totalBalance(accounts);
 
             if (balanceDTO != null) {
                 return ResponseEntity.status(HttpStatus.OK).body(balanceDTO);

@@ -1,5 +1,6 @@
 package io.swagger.api.service;
 
+import io.swagger.api.model.DTO.BalanceDTO;
 import io.swagger.api.model.Entity.Account;
 import io.swagger.api.model.Entity.User;
 import io.swagger.api.repository.AccountRepository;
@@ -17,6 +18,9 @@ public class AccountService {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    private BalanceDTO balanceDTO = new BalanceDTO();
+
 
     public Account add(Account account, boolean randomIBAN) {
         try{
@@ -72,6 +76,19 @@ public class AccountService {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "No accounts found");
         }
         return accountRepository.save(users);
+    }
+
+    public BalanceDTO totalBalance(List<Account> accounts){
+        double totalBalance = 0.00;
+
+        if (accounts.size() < 1) {
+            throw new IllegalArgumentException();
+        }
+        for (Account account : accounts) {
+            totalBalance += account.getBalance();
+        }
+        balanceDTO.setTotalBalance(totalBalance);
+        return balanceDTO;
     }
 
     public List<Account> getAccountsByUser(User user) {

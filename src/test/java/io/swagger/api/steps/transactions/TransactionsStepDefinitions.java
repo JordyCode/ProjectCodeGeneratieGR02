@@ -103,7 +103,7 @@ public class TransactionsStepDefinitions extends BaseStepDefinitions implements 
             user1.setPassword("Welkom10");
             user1.setFirstName("Cucumber");
             user1.setLastName("User");
-            user1.setAccountStatus(User.AccountStatusEnum.ACTIVE);
+            user1.setUserStatus(User.UserStatusEnum.ACTIVE);
             user1.setDayLimit(1000.00);
             user1.setTransactionLimit(500.00);
             user1.setEmail("Cuccumber@mail.ml");;
@@ -115,7 +115,7 @@ public class TransactionsStepDefinitions extends BaseStepDefinitions implements 
             user2.setPassword("Welkom10");
             user2.setFirstName("Cucumber");
             user2.setLastName("User");
-            user2.setAccountStatus(User.AccountStatusEnum.ACTIVE);
+            user2.setUserStatus(User.UserStatusEnum.ACTIVE);
             user2.setDayLimit(1000.00);
             user2.setTransactionLimit(500.00);
             user2.setEmail("Cuccumber@mail.ml");;

@@ -36,7 +36,7 @@ public class UserService {
         String token = "";
         try {
             User user = userRepository.findByUsername(username);
-            if(user.getAccountStatus() == User.AccountStatusEnum.INACTIVE){
+            if(user.getUserStatus() == User.UserStatusEnum.INACTIVE){
                 throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "An inactive user cannot login");
             }
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));

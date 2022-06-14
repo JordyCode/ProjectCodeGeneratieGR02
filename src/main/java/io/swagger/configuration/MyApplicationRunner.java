@@ -3,6 +3,7 @@ package io.swagger.configuration;
 import io.swagger.api.model.Entity.Account;
 import io.swagger.api.model.Entity.Transaction;
 import io.swagger.api.model.Entity.User;
+import io.swagger.api.model.Role;
 import io.swagger.api.service.AccountService;
 import io.swagger.api.service.TransactionService;
 import io.swagger.api.service.UserService;
@@ -52,7 +53,7 @@ public class MyApplicationRunner implements ApplicationRunner {
         emptyUser2.setPassword("welkom12");
         emptyUser2.setFirstName("user");
         emptyUser2.setLastName("empty");
-        emptyUser2.setAccountStatus(User.AccountStatusEnum.INACTIVE);
+        emptyUser2.setUserStatus(User.UserStatusEnum.INACTIVE);
         emptyUser2.setDayLimit(0.0);
         emptyUser2.setTransactionLimit(0.0);
         emptyUser2.setEmail("empty@empty.nl");
@@ -66,7 +67,7 @@ public class MyApplicationRunner implements ApplicationRunner {
         testUser1.setPassword("employee123");
         testUser1.setFirstName("Willem");
         testUser1.setLastName("Wiltenburg");
-        testUser1.setAccountStatus(User.AccountStatusEnum.ACTIVE);
+        testUser1.setUserStatus(User.UserStatusEnum.ACTIVE);
         testUser1.setDayLimit(100.00);
         testUser1.setTransactionLimit(1000.00);
         testUser1.setEmail("willem.wiltenburg@test.com");
@@ -79,7 +80,7 @@ public class MyApplicationRunner implements ApplicationRunner {
         emptyUser.setPassword("welkom10");
         emptyUser.setFirstName("Empty");
         emptyUser.setLastName("UserEmpty");
-        emptyUser.setAccountStatus(User.AccountStatusEnum.INACTIVE);
+        emptyUser.setUserStatus(User.UserStatusEnum.INACTIVE);
         emptyUser.setDayLimit(1000.00);
         emptyUser.setTransactionLimit(500.00);
         emptyUser.setEmail("test@mail.ml");;
@@ -93,7 +94,7 @@ public class MyApplicationRunner implements ApplicationRunner {
         testUser2.setPassword("user123");
         testUser2.setFirstName("Frank");
         testUser2.setLastName("Dersjant");
-        testUser2.setAccountStatus(User.AccountStatusEnum.ACTIVE);
+        testUser2.setUserStatus(User.UserStatusEnum.ACTIVE);
         testUser2.setDayLimit(700.00);
         testUser2.setTransactionLimit(500.00);
         testUser2.setEmail("frank.dersjant@test.com");
@@ -125,7 +126,7 @@ public class MyApplicationRunner implements ApplicationRunner {
         testUser3.setPassword("welkom10");
         testUser3.setFirstName("Freddy");
         testUser3.setLastName("User3");
-        testUser3.setAccountStatus(User.AccountStatusEnum.ACTIVE);
+        testUser3.setUserStatus(User.UserStatusEnum.ACTIVE);
         testUser3.setDayLimit(1000.00);
         testUser3.setTransactionLimit(500.00);
         testUser3.setEmail("test@mail.ml");;
@@ -151,6 +152,14 @@ public class MyApplicationRunner implements ApplicationRunner {
         account4.setAccountStatus(Account.AccountStatusEnum.ACTIVE);
         account4.setAbsoluteLimit(-100.00);
         accountService.add(account4, false);
+
+        Account account5 = new Account();
+        account5.setAccountType(Account.AccountTypeEnum.CURRENT);
+        account5.setUser(testUser1);
+        account5.setBalance(500.00);
+        account5.setAccountStatus(Account.AccountStatusEnum.ACTIVE);
+        account5.setAbsoluteLimit(-100.00);
+        accountService.add(account5, true);
 
         //A transaction from testuser2 to testuser3 both current account and performed by testUser2
         Transaction transaction1 = new Transaction();
