@@ -53,7 +53,7 @@ public class MyApplicationRunner implements ApplicationRunner {
         emptyUser2.setPassword("welkom12");
         emptyUser2.setFirstName("user");
         emptyUser2.setLastName("empty");
-        emptyUser2.setUserStatus(User.UserStatusEnum.INACTIVE);
+        emptyUser2.setUserStatus(User.UserStatusEnum.ACTIVE);
         emptyUser2.setDayLimit(0.0);
         emptyUser2.setTransactionLimit(0.0);
         emptyUser2.setEmail("empty@empty.nl");

@@ -24,9 +24,9 @@ public class UsersStepDefinitions extends BaseStepDefinitions implements En {
 
     private static final String EXPIRED_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJFbXBsb3llZUJhbmsiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn0seyJhdXRob3JpdHkiOiJST0xFX1VTRVIifV0sImlhdCI6MTY1NDE2NTM2MCwiZXhwIjoxNjU0MTY4OTYwfQ.j8dj-6HtG9uA0Oo---iJhUfNyHQh_GQWlk8a_AO-H-Y";
     private static final String INVALID_TOKEN = "this-token-doesnt-work";
-    private static final String VALID_USER_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJVc2VyQmFuayIsImF1dGgiOlt7ImF1dGhvcml0eSI6IlJPTEVfRU1QTE9ZRUUifV0sImlhdCI6MTY1NDQ1NzIwNiwiZXhwIjoxNjU0NDYwODA2fQ.qJFg0_Auvum7R5eTYOxkDgedT4KSt5D8x0v3XsJEOgE";
-    private static final String VALID_EMPLOYEE_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJFbXBsb3llZUJhbmsiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn0seyJhdXRob3JpdHkiOiJST0xFX1VTRVIifV0sImlhdCI6MTY1NDQ1NTg1NywiZXhwIjoxNjU0NDU5NDU3fQ.V6BpOBAFa_iZ4Ib_WfOKOSIk9j0RgBuGQjG1-dF86JM";
-    private static final String VALID_EMPTY_USER = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJFbXB0eVVzZXIiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX1VTRVIifV0sImlhdCI6MTY1NDQyNDg5MiwiZXhwIjoxNjU0NDI4NDkyfQ.J_uGkdHtgH72mBI11SbrLk15G0A87OKmaxbdmTpUpcU";
+    private static final String VALID_USER_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJVc2VyQmFuayIsImF1dGgiOlt7ImF1dGhvcml0eSI6IlJPTEVfVVNFUiJ9XSwiaWF0IjoxNjU1MjExNzQ1LCJleHAiOjE2NTU1NzE3NDV9.qZV3jQfpRIUxI83teRc6dY2YgdoBu9eELBCp_HRBvHM";
+    private static final String VALID_EMPLOYEE_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJFbXBsb3llZUJhbmsiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn0seyJhdXRob3JpdHkiOiJST0xFX1VTRVIifV0sImlhdCI6MTY1NTIxMTYyOCwiZXhwIjoxNjU1NTcxNjI4fQ.o4HBKpcPwhz8QA179G6K1pucMdExQiGTqeY42tgqAKY";
+    private static final String VALID_EMPTY_USER = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJlbXB0eVVzZXIyIiwiYXV0aCI6W3siYXV0aG9yaXR5IjoiUk9MRV9VU0VSIn1dLCJpYXQiOjE2NTUyMTAyOTUsImV4cCI6MTY1NTU3MDI5NX0.OQ2Qv4chltathTweIxt2PmLoonQCO7eUr83ihVwEr0k";
 
 
     private final TestRestTemplate restTemplate = new TestRestTemplate();
@@ -128,7 +128,7 @@ public class UsersStepDefinitions extends BaseStepDefinitions implements En {
             updateData.put("password" , "user123");
             updateData.put("firstName" , "Frank");
             updateData.put("lastName" , "Dersjant");
-            updateData.put("accountStatus" , "Active");
+            updateData.put("userStatus" , "Active");
             updateData.put("transactionLimit", "200.0");
             updateData.put("email" , "frank.dersjant@test.com");
             updateData.put( "dateOfBirth", "01/01/1970");
