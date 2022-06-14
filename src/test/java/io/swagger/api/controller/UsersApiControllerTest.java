@@ -33,7 +33,6 @@ public class UsersApiControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
     @MockBean
     private AccountService accountService;
     @MockBean
@@ -103,7 +102,7 @@ public class UsersApiControllerTest {
     public void getUsersAsEmployeeShouldReturnAllUsersAndOk() throws Exception {
         mockMvc.perform(get("/users").contentType("application/json"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(5)))
+                .andExpect(jsonPath("$", hasSize(6)))
                 .andExpect(jsonPath("$[1].userId").value(2))
                 .andExpect(jsonPath("$[1].firstName").value("Willem"))
                 .andExpect(jsonPath("$[1].lastName").value("Wiltenburg"));
@@ -123,10 +122,10 @@ public class UsersApiControllerTest {
     @Test
     @WithMockUser(username = "EmployeeBank", password = "employee123", roles = "EMPLOYEE")
     public void getSpecificUserAsEmployeeShouldFullDetailsAndReturnOk() throws Exception {
-        mockMvc.perform(get("/users/4").contentType("application/json"))
+        mockMvc.perform(get("/users/3").contentType("application/json"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.email").value("frank.dersjant@test.com"))
-                .andExpect(jsonPath("$.dateOfBirth").value("01/01/1970"))
+                .andExpect(jsonPath("$.email").value("test@mail.ml"))
+                .andExpect(jsonPath("$.dateOfBirth").value("01/01/2001"))
                 .andExpect(jsonPath("$.transactionLimit").value(500.00));
     }
 

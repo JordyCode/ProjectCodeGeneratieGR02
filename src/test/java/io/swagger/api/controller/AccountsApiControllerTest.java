@@ -1,9 +1,9 @@
 package io.swagger.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.api.model.DTO.AccountDTO;
 import io.swagger.api.model.Entity.Account;
 import io.swagger.api.model.Entity.User;
-import io.swagger.api.service.AccountService;
 import io.swagger.api.service.TransactionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
-import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -40,12 +38,10 @@ public class AccountsApiControllerTest {
 
     User user1 = new User();
     User user2 = new User();
-    Account account1 = new Account();
+    AccountDTO account1 = new AccountDTO();
     Account account2 = new Account();
-    Account account3 = new Account();
     User testUser1 = new User();
     User testUser2 = new User();
-
 
     List<User> users = new ArrayList<>();
     List<User> userList = new ArrayList<>();
@@ -76,14 +72,11 @@ public class AccountsApiControllerTest {
         testUser2.setEmail("frank.dersjant@test.com");
         testUser2.setDateOfBirth("01/01/1970");
 
-        account1.setId(20L);
-        account1.setAccountType(Account.AccountTypeEnum.CURRENT);
+        account1.setAccountTypeEnum(Account.AccountTypeEnum.CURRENT);
         account1.setUser(testUser1);
-        account1.setIBAN("NL00INHO000000007");
         account1.setBalance(150.00);
         account1.setAbsoluteLimit(100.00);
-        account1.setAccountStatus(Account.AccountStatusEnum.ACTIVE);
-
+        account1.setAccountStatusEnum(Account.AccountStatusEnum.ACTIVE);
 
         account2.setAccountType(Account.AccountTypeEnum.SAVINGS);
         account2.setUser(testUser2);
@@ -103,7 +96,7 @@ public class AccountsApiControllerTest {
     public void getAccountsAsEmployeeShouldReturnAllAccountsAndOk() throws Exception {
         mockMvc.perform(get("/accounts").contentType("application/json"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(5)))
+                .andExpect(jsonPath("$", hasSize(7)))
                 .andExpect(jsonPath("$[0].balance").value(150000000));
     }
 
@@ -140,17 +133,19 @@ public class AccountsApiControllerTest {
                         .content(mapper.writeValueAsString(account1))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.iban").value("NL00INHO000000007"));
+                .andExpect(jsonPath("$.balance").value(150.00))
+                .andExpect(jsonPath("$.accountStatus").value("active"))
+                .andExpect(jsonPath("$.absoluteLimit").value(100.00));
     }
 
     @Test
     @WithMockUser(username = "UserBank", password = "user123", roles = "USER")
-    public void createAccountAsUserShouldReturnBadRequest() throws Exception {
+    public void createAccountAsUserShouldReturnForbidden() throws Exception {
         mockMvc.perform(post("/accounts")
                         .content(asJsonString(account1))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isForbidden());
     }
 
     @Test

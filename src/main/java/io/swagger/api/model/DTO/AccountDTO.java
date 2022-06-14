@@ -1,13 +1,30 @@
 package io.swagger.api.model.DTO;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.api.model.Entity.Account;
 import io.swagger.api.model.Entity.User;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
 public class AccountDTO {
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    @Id
+    @GeneratedValue
+    @JsonProperty("id")
+    private Long id;
+
     @NotNull
     private Account.AccountTypeEnum accountTypeEnum;
 
