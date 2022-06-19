@@ -64,9 +64,9 @@ public class Account {
   }
 
   public enum AccountStatusEnum {
-    ACTIVE("active"),
+    ACTIVE("Active"),
 
-    INACTIVE("inactive");
+    INACTIVE("Inactive");
 
     private String value;
 

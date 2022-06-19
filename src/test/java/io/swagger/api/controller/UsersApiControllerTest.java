@@ -62,7 +62,7 @@ public class UsersApiControllerTest {
         testUser1.setDayLimit(100.00);
         testUser1.setTransactionLimit(1000.00);
         testUser1.setEmail("willem.wiltenburg@test.com");
-        testUser1.setDateOfBirth("03/03/19670");
+        testUser1.setDateOfBirth("03/03/1970");
 
         testUser2.setUserId(4L);
         testUser2.setUsername("UserBank123");
@@ -105,7 +105,12 @@ public class UsersApiControllerTest {
                 .andExpect(jsonPath("$", hasSize(6)))
                 .andExpect(jsonPath("$[1].userId").value(2))
                 .andExpect(jsonPath("$[1].firstName").value("Willem"))
-                .andExpect(jsonPath("$[1].lastName").value("Wiltenburg"));
+                .andExpect(jsonPath("$[1].lastName").value("Wiltenburg"))
+                .andExpect(jsonPath("$[3].username").value("UserBank"))
+                .andExpect(jsonPath("$[4].userStatus").value("Active"))
+                .andExpect(jsonPath("$[3].dayLimit").value(700.00))
+                .andExpect(jsonPath("$[4].email").value("test@mail.ml"))
+                .andExpect(jsonPath("$[2].dateOfBirth").value("01/01/2001"));
     }
 
     @Test
@@ -116,7 +121,11 @@ public class UsersApiControllerTest {
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].userId").value(4))
                 .andExpect(jsonPath("$[0].username").value("UserBank"))
-                .andExpect(jsonPath("$[0].transactionLimit").value(500.00));
+                .andExpect(jsonPath("$[0].transactionLimit").value(500.00))
+                .andExpect(jsonPath("$[0].dayLimit").value(700.00))
+                .andExpect(jsonPath("$[0].firstName").value("Frank"))
+                .andExpect(jsonPath("$[0].email").value("frank.dersjant@test.com"))
+                .andExpect(jsonPath("$[0].userStatus").value("Active"));
     }
 
     @Test
@@ -124,9 +133,12 @@ public class UsersApiControllerTest {
     public void getSpecificUserAsEmployeeShouldFullDetailsAndReturnOk() throws Exception {
         mockMvc.perform(get("/users/3").contentType("application/json"))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.userId").value(3))
                 .andExpect(jsonPath("$.email").value("test@mail.ml"))
                 .andExpect(jsonPath("$.dateOfBirth").value("01/01/2001"))
-                .andExpect(jsonPath("$.transactionLimit").value(500.00));
+                .andExpect(jsonPath("$.transactionLimit").value(500.00))
+                .andExpect(jsonPath("$.username").value("EmptyUser"))
+                .andExpect(jsonPath("$.dateOfBirth").value("01/01/2001"));
     }
 
     @Test
@@ -138,9 +150,12 @@ public class UsersApiControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.userId").value(6))
                 .andExpect(jsonPath("$.lastName").value("Wiltenburg"))
                 .andExpect(jsonPath("$.dayLimit").value(100.00))
-                .andExpect(jsonPath("$.email").value("willem.wiltenburg@test.com"));
+                .andExpect(jsonPath("$.email").value("willem.wiltenburg@test.com"))
+                .andExpect(jsonPath("$.transactionLimit").value(1000.00))
+                .andExpect(jsonPath("$.username").value("EmployeeBank123"));
     }
 
     @Test
@@ -166,14 +181,18 @@ public class UsersApiControllerTest {
         testUser1.setDayLimit(100.00);
         testUser1.setTransactionLimit(1000.00);
         testUser1.setEmail("willem.wiltenburg@test.com");
-        testUser1.setDateOfBirth("03/03/19670");
+        testUser1.setDateOfBirth("03/03/1970");
 
         mockMvc.perform(put("/users/3").content(asJsonString(testUser1)).contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.userId").value(3))
                 .andExpect(jsonPath("$.username").value("EmployeeBank"))
                 .andExpect(jsonPath("$.userStatus").value("Inactive"))
-                .andExpect(jsonPath("$.lastName").value("Visser"));
+                .andExpect(jsonPath("$.lastName").value("Visser"))
+                .andExpect(jsonPath("$.dayLimit").value(100.00))
+                .andExpect(jsonPath("$.dayOfBirth").value("03/03/1970"))
+                .andExpect(jsonPath("$.email").value("willem.wiltenburg@test.com"));
     }
 
     @Test
@@ -188,7 +207,7 @@ public class UsersApiControllerTest {
         testUser1.setDayLimit(100.00);
         testUser1.setTransactionLimit(1000.00);
         testUser1.setEmail("willem.wiltenburg@test.com");
-        testUser1.setDateOfBirth("03/03/19670");
+        testUser1.setDateOfBirth("03/03/1970");
 
         mockMvc.perform(put("/users/3").content(asJsonString(testUser1)).contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -201,9 +220,13 @@ public class UsersApiControllerTest {
         mockMvc.perform(get("/usersWhenNull").contentType("application/json"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(5)))
+                .andExpect(jsonPath("$[0].userId").value(1))
+                .andExpect(jsonPath("$[3].userId").value(4))
                 .andExpect(jsonPath("$[0].email").value("empty@empty.nl"))
                 .andExpect(jsonPath("$[1].lastName").value("Wiltenburg"))
-                .andExpect(jsonPath("$[2].transactionLimit").value(500.00));
+                .andExpect(jsonPath("$[2].transactionLimit").value(500.00))
+                .andExpect(jsonPath("$[3].transactionLimit").value(500.00))
+                .andExpect(jsonPath("$[4].dateOfBirth").value("01/01/2001"));
     }
 
     public static String asJsonString(final Object obj) {

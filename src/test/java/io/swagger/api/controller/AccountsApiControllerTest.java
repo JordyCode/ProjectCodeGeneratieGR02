@@ -97,7 +97,12 @@ public class AccountsApiControllerTest {
         mockMvc.perform(get("/accounts").contentType("application/json"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(7)))
-                .andExpect(jsonPath("$[0].balance").value(150000000));
+                .andExpect(jsonPath("$[0].balance").value(150000000))
+                .andExpect(jsonPath("$[5].id").value(11))
+                .andExpect(jsonPath("$[5].absoluteLimit").value(-100.00))
+                .andExpect(jsonPath("$[3].accountType").value("Current"))
+                .andExpect(jsonPath("$[2].balance").value(0.00))
+                .andExpect(jsonPath("$[1].accountStatus").value("Active"));
     }
 
     @Test
@@ -107,7 +112,12 @@ public class AccountsApiControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].id").value(6))
-                .andExpect(jsonPath("$[0].absoluteLimit").value(-100.00));
+                .andExpect(jsonPath("$[0].balance").value(500.00))
+                .andExpect(jsonPath("$[0].accountType").value("Current"))
+                .andExpect(jsonPath("$[0].accountStatus").value("Active"))
+                .andExpect(jsonPath("$[1].accountStatus").value("Inactive"))
+                .andExpect(jsonPath("$[1].id").value(7))
+                .andExpect(jsonPath("$[1].accountType").value("Savings"));
     }
 
     @Test
@@ -116,7 +126,8 @@ public class AccountsApiControllerTest {
         mockMvc.perform(get("/accounts/9").contentType("application/json"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.balance").value(500.00))
-                .andExpect(jsonPath("$.accountStatus").value("active"));
+                .andExpect(jsonPath("$.accountStatus").value("Active"))
+                .andExpect(jsonPath("$.id").value(9));
     }
 
     @Test
@@ -134,8 +145,9 @@ public class AccountsApiControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.balance").value(150.00))
-                .andExpect(jsonPath("$.accountStatus").value("active"))
-                .andExpect(jsonPath("$.absoluteLimit").value(100.00));
+                .andExpect(jsonPath("$.accountStatus").value("Active"))
+                .andExpect(jsonPath("$.absoluteLimit").value(100.00))
+                .andExpect(jsonPath("$.id").value(12));
     }
 
     @Test
@@ -161,7 +173,10 @@ public class AccountsApiControllerTest {
         mockMvc.perform(put("/accounts/6").content(asJsonString(account2)).contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.balance").value(500.00));
+                .andExpect(jsonPath("$.balance").value(500.00))
+                .andExpect(jsonPath("$.accountStatus").value("Inactive"))
+                .andExpect(jsonPath("$.absoluteLimit").value(-100.00))
+                .andExpect(jsonPath("$.id").value(6));
     }
 
     @Test
