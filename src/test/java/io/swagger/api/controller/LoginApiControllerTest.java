@@ -1,5 +1,6 @@
 package io.swagger.api.controller;
 
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.api.model.DTO.DepositTransactionDTO;
@@ -18,7 +19,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.threeten.bp.OffsetDateTime;
 
-import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -40,7 +40,8 @@ public class LoginApiControllerTest {
                         .content(asJsonString(loginDTO))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(jsonPath("$.token").value("Cannot be tested with andExpect because with each test it creates a new token"))
+                .andExpect(jsonPath("$.token").exists())
+                .andExpect(jsonPath("$.token").value(startsWith("ey")))
                 .andExpect(status().isOk());
 
     }
@@ -53,6 +54,7 @@ public class LoginApiControllerTest {
                         .content(asJsonString(loginDTO))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").value(containsString("Invalid username/password")))
                 .andExpect(status().isBadRequest());
     }
 
@@ -64,6 +66,7 @@ public class LoginApiControllerTest {
                         .content(asJsonString(loginDTO))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").value(containsString("An inactive user cannot login")))
                 .andExpect(status().isBadRequest());
     }
 
@@ -76,3 +79,4 @@ public class LoginApiControllerTest {
         }
     }
 }
+

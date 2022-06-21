@@ -1,3 +1,4 @@
+
 package io.swagger.api.service;
 
 import io.swagger.api.controller.LoginApiController;
@@ -81,6 +82,9 @@ public class TransactionService {
         } else if (receiver == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The receiver IBAN does not exist!");
         }
+        else if (user == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The receiver IBAN does not exist!");
+        }
 
         if (sender.getAccountStatus() == Account.AccountStatusEnum.INACTIVE) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The receiver's account has been closed!");
@@ -134,15 +138,15 @@ public class TransactionService {
 
         //check if the sender isn't attempting an illegal transaction and doesn't have insufficient funds to complete the transaction, register this transaction to the database
         if (!(transaction.getAmount() <= 0.00)) {
-           if (!((sender.getBalance() - transaction.getAmount()) < sender.getAbsoluteLimit())) {
+            if (!((sender.getBalance() - transaction.getAmount()) < sender.getAbsoluteLimit())) {
                 sender.setBalance(sender.getBalance() - transaction.getAmount());
                 receiver.setBalance(receiver.getBalance() + transaction.getAmount());
 //                senderLimit.setDayLimit(senderLimit.getDayLimit() - transaction.getAmount());
 //                userRepository.save(senderLimit);
-               transactionRepository.save(transaction);
+                transactionRepository.save(transaction);
                 accountRepository.save(sender);
                 accountRepository.save(receiver);
-           }
+            }
             else {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "Insufficient funds!");
             }
@@ -259,4 +263,8 @@ public class TransactionService {
     }
 
 }
+
+
+
+
 
