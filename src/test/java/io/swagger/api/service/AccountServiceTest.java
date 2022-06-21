@@ -89,6 +89,10 @@ public class AccountServiceTest {
         doReturn(Arrays.asList(account1, account2)).when(accountRepository).findAll();
         List<Account> accounts = accountService.getAllAccounts();
         Assertions.assertEquals(2, accounts.size(), "The sizes should be the same");
+        Assertions.assertEquals(accounts.get(0).getId(), account1.getId(), "The id's should be the same");
+        Assertions.assertEquals(accounts.get(1).getId(), account2.getId(), "The id's should be the same");
+        Assertions.assertEquals(accounts.get(1).getBalance(), account2.getBalance(), "The balances should be the same");
+        Assertions.assertEquals(accounts.get(0).getAccountStatus(), account1.getAccountStatus(), "The status should be the same");
     }
 
     @Test
@@ -97,6 +101,7 @@ public class AccountServiceTest {
         Account account = accountService.getAccountById(1L);
         Assertions.assertEquals(account.getId(), account1.getId(), "The id's should be the same");
         Assertions.assertEquals(account.getIBAN(), account1.getIBAN(), "The IBAN's should be the same");
+        Assertions.assertEquals(account.getUser(), account1.getUser(), "The users should be the same");
     }
 
     @Test
@@ -111,6 +116,10 @@ public class AccountServiceTest {
         doReturn(Arrays.asList(account2, account3)).when(accountRepository).getAccountByUser(user1);
         List<Account> accounts = accountService.getAccountsByUser(user1);
         Assertions.assertEquals(2, accounts.size(), "The sizes should be the same");
+        Assertions.assertEquals(accounts.get(0).getId(), account2.getId(), "The id's should be the same");
+        Assertions.assertEquals(accounts.get(1).getId(), account3.getId(), "The id's should be the same");
+        Assertions.assertEquals(accounts.get(1).getAbsoluteLimit(), account3.getAbsoluteLimit(), "The limits should be the same");
+        Assertions.assertEquals(accounts.get(0).getAccountType(), account3.getAccountType(), "The account types should be the same");
     }
 
     @Test
@@ -125,6 +134,9 @@ public class AccountServiceTest {
         doReturn(account2).when(accountRepository).save(account2);
         Account account = accountService.add(account2, false);
         Assertions.assertNotNull(account, "Account can not be null");
+        Assertions.assertEquals(account.getIBAN(), account2.getIBAN(), "The IBAN's should be the same");
+        Assertions.assertEquals(account.getAbsoluteLimit(), account2.getAbsoluteLimit(), "The limits should be the same");
+        Assertions.assertEquals(account.getId(), account2.getId(), "The id's should be the same");
     }
 
 }

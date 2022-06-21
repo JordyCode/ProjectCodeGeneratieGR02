@@ -96,6 +96,12 @@ public class UserServiceTest {
         doReturn(Arrays.asList(user1, user2)).when(userRepository).findAll();
         List<User> users = userService.getAllUsers();
         Assertions.assertEquals(2, users.size(), "The sizes should be the same");
+        Assertions.assertEquals(users.get(0).getUserId(), user1.getUserId(), "The id's should be the same");
+        Assertions.assertEquals(users.get(1).getUserId(), user2.getUserId(), "The id's should be the same");
+        Assertions.assertEquals(users.get(1).getFirstName(), user2.getFirstName(), "The firstnames should be the same");
+        Assertions.assertEquals(users.get(0).getDayLimit(), user1.getDayLimit(), "The day limits should be the same");
+        Assertions.assertEquals(users.get(0).getUserStatus(), user1.getUserStatus(), "The status should be the same");
+        Assertions.assertEquals(users.get(1).getUserStatus(), user2.getUserStatus(), "The status should be the same");
     }
 
     @Test
@@ -103,14 +109,19 @@ public class UserServiceTest {
         doReturn(user1).when(userRepository).getUserByUserId(1L);
         User user = userService.getSpecificUser(1L);
         Assertions.assertEquals(user.getUserId(), user1.getUserId(), "The id's should be the same");
-        Assertions.assertEquals(user.getFirstName(), user1.getFirstName(), "The firstname should be the same");
+        Assertions.assertEquals(user.getFirstName(), user1.getFirstName(), "The firstnames should be the same");
+        Assertions.assertEquals(user.getLastName(), user1.getLastName(), "The lastnames should be the same");
+        Assertions.assertEquals(user.getUsername(), user1.getUsername(), "The usernames should be the same");
+        Assertions.assertEquals(user.getTransactionLimit(), user1.getTransactionLimit(), "The transaction limits should be the same");
     }
 
     @Test
     void findByUsername(){
         doReturn(user1).when(userRepository).findByUsername("Frank");
         User user = userService.findByUsername("Frank");
-        Assertions.assertEquals(user.getFirstName(), user1.getFirstName(), "The firstname should be the same");
+        Assertions.assertEquals(user.getFirstName(), user1.getFirstName(), "The firstnames should be the same");
+        Assertions.assertEquals(user.getLastName(), user1.getLastName(), "The lastnames should be the same");
+        Assertions.assertEquals(user.getEmail(), user1.getEmail(), "The emails should be the same");
     }
 
     @Test
@@ -118,6 +129,11 @@ public class UserServiceTest {
         doReturn(Arrays.asList(user2, user3)).when(userRepository).getUsersByAccountsIsNull();
         List<User> usersWithoutAccount = userService.getUsersByAccountsIsNull();
         Assertions.assertEquals(2, usersWithoutAccount.size(), "The sizes should be the same");
+        Assertions.assertEquals(usersWithoutAccount.get(0).getUserId(), user2.getUserId(), "The id's should be the same");
+        Assertions.assertEquals(usersWithoutAccount.get(1).getUserId(), user3.getUserId(), "The id's should be the same");
+        Assertions.assertEquals(usersWithoutAccount.get(1).getUserStatus(), user3.getUserStatus(), "The status should be the same");
+        Assertions.assertEquals(usersWithoutAccount.get(1).getEmail(), user3.getEmail(), "The emails should be the same");
+        Assertions.assertEquals(usersWithoutAccount.get(0).getEmail(), user2.getEmail(), "The emails should be the same");
     }
 
     @Test
@@ -125,5 +141,9 @@ public class UserServiceTest {
         doReturn(user1).when(userRepository).save(user1);
         User user = userService.add(user1, false);
         Assertions.assertNotNull(user, "User can not be null");
+        Assertions.assertEquals(user.getEmail(), user1.getEmail(), "The emails should be the same");
+        Assertions.assertEquals(user.getUserId(), user1.getUserId(), "The id's should be the same");
+        Assertions.assertEquals(user.getUsername(), user1.getUsername(), "The usernames should be the same");
+        Assertions.assertEquals(user.getDayLimit(), user1.getDayLimit(), "The day limits should be the same");
     }
 }
