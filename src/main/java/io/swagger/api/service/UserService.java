@@ -15,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class UserService {
@@ -36,6 +37,12 @@ public class UserService {
         String token = "";
         try {
             User user = userRepository.findByUsername(username);
+            if(username.isEmpty() || password.isEmpty()){
+                throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Please fill in all fields");
+            }
+            if (user == null) {
+                throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "User does not exist");
+            }
             if(user.getUserStatus() == User.UserStatusEnum.INACTIVE){
                 throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "An inactive user cannot login");
             }
@@ -107,3 +114,5 @@ public class UserService {
         return userRepository.getUsersByAccountsIsNull();
     }
 }
+
+
