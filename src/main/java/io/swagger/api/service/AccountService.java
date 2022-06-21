@@ -51,14 +51,14 @@ public class AccountService {
 
     public List<Account> getAllAccounts() {
         if (accountRepository.findAll().size() == 0) {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "No accounts found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No accounts found");
         }
         return accountRepository.findAll();
     }
 
     public Account getAccountById(Long id) {
         if (accountRepository.getAccountById(id) == null) {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Id not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Id not found");
         }
         return accountRepository.getAccountById(id);
     }
@@ -66,14 +66,14 @@ public class AccountService {
     public boolean checkIfAccountIsUser(Long id, User user) {
         if(!accountRepository.existsByIdAndUser(id, user))
         {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Account does not belong to user");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Account does not belong to user");
         }
         return accountRepository.existsByIdAndUser(id, user);
     }
 
     public Account save(Account users) {
         if (accountRepository.getAccountById(users.getId()) == null) {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "No accounts found");
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "No account found");
         }
         return accountRepository.save(users);
     }

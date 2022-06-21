@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -136,6 +137,15 @@ public class AccountsApiControllerTest {
         mockMvc.perform(get("/accounts/2").contentType("application/json"))
                 .andExpect(status().isForbidden());
     }
+
+    @Test
+    @WithMockUser(username = "EmployeeBank", password = "employee123", roles = "EMPLOYEE")
+    public void getSpecificAccountAsEmployeeInvalidIDShouldReturnNotFound() throws Exception {
+        mockMvc.perform(get("/accounts/20").contentType("application/json"))
+                .andExpect(jsonPath("$").value(containsString("Id not found")))
+                .andExpect(status().isBadRequest());
+    }
+
 
     @Test
     @WithMockUser(username = "EmployeeBank", password = "employee123", roles = "EMPLOYEE")

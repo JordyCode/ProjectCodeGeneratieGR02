@@ -49,20 +49,25 @@ public class UserService {
     }
 
     public User add(User user, boolean isEmployee) {
-        // Check if the user already exist
-        if (userRepository.findByUsername(user.getUsername()) == null) {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        if (user.getUsername() == null || user.getPassword() == null || user.getUserStatus() == null || user.getFirstName() == null ||
+                user.getLastName() == null || user.getEmail() == null || user.getDayLimit() == null || user.getTransactionLimit() == null || user.getDateOfBirth() == null) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "User data not filled in completely"); }
+        else {
+            // Check if the user already exist
+            if (userRepository.findByUsername(user.getUsername()) == null) {
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-            if (isEmployee) {
-                user.setRoles(Arrays.asList(Role.ROLE_EMPLOYEE, Role.ROLE_USER));
+                if (isEmployee) {
+                    user.setRoles(Arrays.asList(Role.ROLE_EMPLOYEE, Role.ROLE_USER));
+                } else {
+                    user.setRoles(List.of(Role.ROLE_USER));
+                }
+
+                userRepository.save(user);
+                return user;
             } else {
-                user.setRoles(List.of(Role.ROLE_USER));
+                throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Username is already in use");
             }
-
-            userRepository.save(user);
-            return user;
-        } else {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Username is already in use");
         }
     }
     public User saveUser(User user) {
@@ -70,7 +75,7 @@ public class UserService {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             return userRepository.save(user);
         } else {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Username not found");
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "No user found");
         }
     }
 
@@ -83,21 +88,21 @@ public class UserService {
 
     public User findByUsername(String name) {
         if (userRepository.findByUsername(name) == null) {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Username not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Username not found");
         }
         return userRepository.findByUsername(name);
     }
 
     public User getSpecificUser(Long userId) {
         if (userRepository.getUserByUserId(userId) == null) {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Id not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Id not found");
         }
         return userRepository.getUserByUserId(userId);
     }
 
     public List<User> getUsersByAccountsIsNull() {
         if (userRepository.getUsersByAccountsIsNull().size() == 0) {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "No users without any account found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No users without any account found");
         }
         return userRepository.getUsersByAccountsIsNull();
     }

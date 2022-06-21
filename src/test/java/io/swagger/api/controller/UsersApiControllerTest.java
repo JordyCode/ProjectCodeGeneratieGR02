@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -45,6 +46,7 @@ public class UsersApiControllerTest {
     Account account2 = new Account();
     User testUser1 = new User();
     User testUser2 = new User();
+    User testUser20 = new User();
 
     List<User> users = new ArrayList<>();
     List<User> userList = new ArrayList<>();
@@ -56,7 +58,6 @@ public class UsersApiControllerTest {
         testUser1.setUserId(2L);
         testUser1.setUsername("EmployeeBank123");
         testUser1.setPassword("employee123");
-        testUser1.setFirstName("Willem");
         testUser1.setLastName("Wiltenburg");
         testUser1.setUserStatus(User.UserStatusEnum.ACTIVE);
         testUser1.setDayLimit(100.00);
@@ -167,6 +168,50 @@ public class UsersApiControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "EmployeeBank", password = "employee123", roles = "EMPLOYEE")
+    public void createUserAsEmployeeWithTakenUsernameShouldReturnIsBadRequest() throws Exception {
+        testUser1.setUserId(3L);
+        testUser1.setUsername("EmployeeBank");
+        testUser1.setPassword("employee123");
+        testUser1.setFirstName("Willem");
+        testUser1.setLastName("Visser");
+        testUser1.setUserStatus(User.UserStatusEnum.INACTIVE);
+        testUser1.setDayLimit(100.00);
+        testUser1.setTransactionLimit(1000.00);
+        testUser1.setEmail("willem.wiltenburg@test.com");
+        testUser1.setDateOfBirth("03/03/1970");
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post("/users")
+                        .content(asJsonString(testUser1))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").value(containsString("Username is already in use")))
+                .andExpect(status().isBadRequest());
+
+    }
+
+    @Test
+    @WithMockUser(username = "EmployeeBank", password = "employee123", roles = "EMPLOYEE")
+    public void createUserAsEmployeeWithoutCompleteDataShouldReturnIsBadRequest() throws Exception {
+        testUser20.setUserId(3L);
+        testUser20.setUsername("EmployeeBank42");
+        testUser20.setPassword("employee123");
+        testUser20.setLastName("Visser");
+        testUser20.setUserStatus(User.UserStatusEnum.INACTIVE);
+        testUser20.setDayLimit(100.00);
+        testUser20.setTransactionLimit(1000.00);
+        testUser20.setEmail("willem.wiltenburg@test.com");
+        testUser20.setDateOfBirth("03/03/1970");
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post("/users")
+                        .content(asJsonString(testUser20))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").value(containsString("User data not filled in completely")))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
