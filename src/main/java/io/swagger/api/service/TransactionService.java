@@ -87,9 +87,9 @@ public class TransactionService {
         }
 
         if (sender.getAccountStatus() == Account.AccountStatusEnum.INACTIVE) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The receiver's account has been closed!");
-        } else if (receiver.getAccountStatus() == Account.AccountStatusEnum.INACTIVE) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The sender's account has been closed!");
+        } else if (receiver.getAccountStatus() == Account.AccountStatusEnum.INACTIVE) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The receiver's account has been closed!");
         }
 
         if(Objects.equals(sender.getIBAN(), receiver.getIBAN()))
@@ -138,11 +138,9 @@ public class TransactionService {
 
         //check if the sender isn't attempting an illegal transaction and doesn't have insufficient funds to complete the transaction, register this transaction to the database
         if (!(transaction.getAmount() <= 0.00)) {
-            if (!((sender.getBalance() - transaction.getAmount()) < sender.getAbsoluteLimit())) {
+            if ((sender.getBalance() - transaction.getAmount()) >= sender.getAbsoluteLimit()) {
                 sender.setBalance(sender.getBalance() - transaction.getAmount());
                 receiver.setBalance(receiver.getBalance() + transaction.getAmount());
-//                senderLimit.setDayLimit(senderLimit.getDayLimit() - transaction.getAmount());
-//                userRepository.save(senderLimit);
                 transactionRepository.save(transaction);
                 accountRepository.save(sender);
                 accountRepository.save(receiver);

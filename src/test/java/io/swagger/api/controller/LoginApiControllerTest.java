@@ -59,6 +59,30 @@ public class LoginApiControllerTest {
     }
 
     @Test
+    public void getLoginTokenWithDataThatDoesNotExistShouldReturnNotOk() throws Exception{
+        LoginDTO loginDTO = new LoginDTO("EmployeeBank23", "test");
+        this.mockMvc.perform( MockMvcRequestBuilders
+                        .post("/login")
+                        .content(asJsonString(loginDTO))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").value(containsString("User does not exist")))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void getLoginTokenWithEmptyDataShouldReturnNotOk() throws Exception{
+        LoginDTO loginDTO = new LoginDTO("", "");
+        this.mockMvc.perform( MockMvcRequestBuilders
+                        .post("/login")
+                        .content(asJsonString(loginDTO))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").value(containsString("Please fill in all fields")))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     public void getLoginTokenAsUserThatIsInactiveNoDataShouldReturnNotOk() throws Exception{
         LoginDTO loginDTO = new LoginDTO("EmptyUser", "welkom10");
         this.mockMvc.perform( MockMvcRequestBuilders

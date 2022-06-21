@@ -40,12 +40,8 @@ public class UserService {
             if(username.isEmpty() || password.isEmpty()){
                 throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Please fill in all fields");
             }
-            if (user == null)
-            {
+            if (user == null) {
                 throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "User does not exist");
-            }
-            if(!Objects.equals(user.getPassword(), password)){
-                throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Password is not correct");
             }
             if(user.getUserStatus() == User.UserStatusEnum.INACTIVE){
                 throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "An inactive user cannot login");

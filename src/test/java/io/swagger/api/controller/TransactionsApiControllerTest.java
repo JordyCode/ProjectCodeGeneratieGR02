@@ -4,13 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.api.model.DTO.DepositTransactionDTO;
 import io.swagger.api.model.DTO.TransactionDTO;
 import io.swagger.api.model.DTO.WithdrawTransactionDTO;
-import io.swagger.api.model.Entity.Account;
-import io.swagger.api.model.Entity.Transaction;
-import io.swagger.api.model.Entity.User;
-import io.swagger.api.service.TransactionService;
-import org.junit.Before;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -19,11 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.threeten.bp.OffsetDateTime;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
@@ -76,6 +65,7 @@ public class TransactionsApiControllerTest{
                         .content(asJsonString(transaction))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").value(containsString("Zero or negative amounts are not allowed!")))
                 .andExpect(status().isBadRequest());
     }
 
@@ -117,6 +107,7 @@ public class TransactionsApiControllerTest{
                         .content(asJsonString(transaction))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").value(containsString("User is not allowed to transfer money from another user's account")))
                 .andExpect(status().isBadRequest());
     }
 
@@ -136,6 +127,108 @@ public class TransactionsApiControllerTest{
                         .content(asJsonString(transaction))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").value(containsString("Transaction amount exceeds transaction limit for user!")))
+                .andExpect(status().isBadRequest());
+    }
+
+    //This User wants to make a transaction but the transaction exceeds his daily limit
+    @Test
+    @WithMockUser(username = "UserBank",password = "user123", roles = "USER")
+    public void createTransactionAsUserWithLowFundsShouldNotReturnCreated() throws Exception
+    {
+        // Create a new transaction
+        TransactionDTO transaction = new TransactionDTO();
+        transaction.setAccountFrom("NL53INHO4715545129");
+        transaction.setAccountTo("NL53INHO4715545128");
+        transaction.setAmount(40.0);
+        this.mockMvc.perform( MockMvcRequestBuilders
+                        .post("/transactions")
+                        .content(asJsonString(transaction))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").value(containsString("Insufficient funds!")))
+                .andExpect(status().isBadRequest());
+    }
+
+    //TBC
+    @Test
+    @WithMockUser(username = "FreddyUser",password = "welkom10", roles = "USER")
+    public void createTransactionAsUserWhereAmountIsEmptyShouldNotReturnCreated() throws Exception
+    {
+        // Create a new transaction
+        TransactionDTO transaction = new TransactionDTO();
+        transaction.setAccountFrom("NL53INHO4715545128");
+        transaction.setAccountTo("NL53INHO4715545127");
+        //The transaction amount has not been set
+
+        this.mockMvc.perform( MockMvcRequestBuilders
+                        .post("/transactions")
+                        .content(asJsonString(transaction))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").value(containsString("Transaction amount has not been filled")))
+                .andExpect(status().isBadRequest());
+    }
+
+    //This User wants to make a transaction but the receiver's IBAN does not exist
+    @Test
+    @WithMockUser(username = "FreddyUser",password = "welkom10", roles = "USER")
+    public void createTransactionWithIbanThatExistDoesNotShouldNotReturnCreated() throws Exception
+    {
+        // Create a new transaction
+        TransactionDTO transaction = new TransactionDTO();
+        transaction.setAccountFrom("NL53INHO4715545128");
+        transaction.setAccountTo("NL53INHO4715545145");
+        transaction.setAmount(20.0);
+        //The ReceiverIban does not exist (SetAccountTo)
+        this.mockMvc.perform( MockMvcRequestBuilders
+                        .post("/transactions")
+                        .content(asJsonString(transaction))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").value(containsString("The receiver IBAN does not exist!")))
+                .andExpect(status().isBadRequest());
+    }
+
+    //This User wants to make a transaction but the sender's IBAN has been closed
+    @Test
+    @WithMockUser(username = "UserBank",password = "user123", roles = "USER")
+    public void createTransactionWithSenderIbanThatHasBeenClosedShouldNotReturnCreated() throws Exception
+    {
+        // Create a new transaction
+        TransactionDTO transaction = new TransactionDTO();
+        //The sender Iban Has been closed
+        transaction.setAccountFrom("NL53INHO4715545130");
+        transaction.setAccountTo("NL53INHO4715545129");
+        transaction.setAmount(20.0);
+
+        this.mockMvc.perform( MockMvcRequestBuilders
+                        .post("/transactions")
+                        .content(asJsonString(transaction))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").value(containsString("The sender's account has been closed!")))
+                .andExpect(status().isBadRequest());
+    }
+
+    //This User wants to make a transaction but the sender's IBAN has been closed
+    @Test
+    @WithMockUser(username = "UserBank",password = "user123", roles = "USER")
+    public void createTransactionWithReceiverIbanThatHasBeenClosedShouldNotReturnCreated() throws Exception
+    {
+        // Create a new transaction
+        TransactionDTO transaction = new TransactionDTO();
+        transaction.setAccountFrom("NL53INHO4715545129");
+        transaction.setAccountTo("NL53INHO4715545130");
+        //The receiver Iban Has been closed
+        transaction.setAmount(20.0);
+
+        this.mockMvc.perform( MockMvcRequestBuilders
+                        .post("/transactions")
+                        .content(asJsonString(transaction))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").value(containsString("The receiver's account has been closed!")))
                 .andExpect(status().isBadRequest());
     }
 
@@ -175,6 +268,7 @@ public class TransactionsApiControllerTest{
                         .content(asJsonString(transaction))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").value(containsString("Cannot deposit into a saving's account")))
                 .andExpect(status().isBadRequest());
     }
 
@@ -193,6 +287,7 @@ public class TransactionsApiControllerTest{
                         .content(asJsonString(transaction))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").value(containsString("Cannot deposit an amount lower than 10 euro")))
                 .andExpect(status().isBadRequest());
     }
 
@@ -211,6 +306,7 @@ public class TransactionsApiControllerTest{
                         .content(asJsonString(transaction))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").value(containsString("Only the user who the account belongs to is allowed to deposit")))
                 .andExpect(status().isBadRequest());
     }
 
@@ -229,6 +325,7 @@ public class TransactionsApiControllerTest{
                         .content(asJsonString(transaction))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").value(containsString("Only the user who the account belongs to is allowed to deposit")))
                 .andExpect(status().isBadRequest());
     }
 
@@ -268,6 +365,7 @@ public class TransactionsApiControllerTest{
                         .content(asJsonString(transaction))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").value(containsString("Cannot withdraw from a saving's account")))
                 .andExpect(status().isBadRequest());
     }
 
@@ -285,6 +383,7 @@ public class TransactionsApiControllerTest{
                         .content(asJsonString(transaction))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").value(containsString("Cannot withdraw an amount lower than 10 euro")))
                 .andExpect(status().isBadRequest());
     }
 
@@ -303,6 +402,7 @@ public class TransactionsApiControllerTest{
                         .content(asJsonString(transaction))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").value(containsString("Only the user who the account belongs to is allowed to withdraw")))
                 .andExpect(status().isBadRequest());
     }
 
@@ -321,6 +421,7 @@ public class TransactionsApiControllerTest{
                         .content(asJsonString(transaction))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").value(containsString("Only the user who the account belongs to is allowed to withdraw")))
                 .andExpect(status().isBadRequest());
     }
 
@@ -329,6 +430,7 @@ public class TransactionsApiControllerTest{
     @WithMockUser(username = "UserBank",password = "welkom10", roles = "USER")
     public void getTransactionsAsUserShouldReturnBadRequest() throws Exception {
         mockMvc.perform(get("/transactions"))
+                .andExpect(jsonPath("$").value(containsString("No user transactions found")))
                 .andExpect(status().isBadRequest());
     }
 
@@ -354,11 +456,21 @@ public class TransactionsApiControllerTest{
                 .andExpect(status().isOk());
     }
 
+    //This user has no access to the transaction and the transaction does not exist
+    @Test
+    @WithMockUser(username = "UserBank",password = "welkom10", roles = "USER")
+    public void getSpecificTransactionThatDoesNotExistWhenUserShouldNotReturnFound() throws Exception {
+        mockMvc.perform(get("/transactions/8"))
+                .andExpect(jsonPath("$").value(containsString("No transactions found")))
+                .andExpect(status().isBadRequest());
+    }
+
     //This user has no access to the transaction
     @Test
     @WithMockUser(username = "UserBank",password = "welkom10", roles = "USER")
     public void getSpecificTransactionWhenUserShouldNotReturnFound() throws Exception {
-        mockMvc.perform(get("/transactions/8"))
+        mockMvc.perform(get("/transactions/12"))
+                .andExpect(jsonPath("$").value(containsString("Transactions does not belong to user")))
                 .andExpect(status().isBadRequest());
     }
 
