@@ -1,13 +1,28 @@
 package io.swagger.api.model.Entity;
 
+import io.swagger.Swagger2SpringBoot;
 import io.swagger.api.model.Role;
 import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.time.LocalDateTime;
 import java.util.Arrays;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@SpringBootTest(classes = { Swagger2SpringBoot.class })
+@AutoConfigureMockMvc
 class TransactionTest {
+
+    @Autowired
+    private MockMvc mockMvc;
 
     private User user1;
     private User user2;
@@ -16,6 +31,11 @@ class TransactionTest {
     private Account savingAccountUser1;
     private Account currentAccountUser2;
     private Account AccountEmployee;
+
+    private Transaction transaction1;
+
+    private Transaction transaction2;
+
 
     @BeforeEach
     public void prepareRefData(){
@@ -50,6 +70,7 @@ class TransactionTest {
 
         // Account current for user 1
         currentAccountUser1 = new Account();
+        currentAccountUser1.setId(40L);
         currentAccountUser1.setIBAN("NL00INHO0000000002");
         currentAccountUser1.setUser(user1);
         currentAccountUser1.setAccountType(Account.AccountTypeEnum.CURRENT);
@@ -58,6 +79,7 @@ class TransactionTest {
 
         // Account savings for user 1
         savingAccountUser1 = new Account();
+        savingAccountUser1.setId(41L);
         savingAccountUser1.setIBAN("NL00INHO0000004001");
         savingAccountUser1.setUser(user1);
         savingAccountUser1.setAccountType(Account.AccountTypeEnum.SAVINGS);
@@ -79,34 +101,45 @@ class TransactionTest {
         AccountEmployee.setAccountType(Account.AccountTypeEnum.SAVINGS);
         AccountEmployee.setBalance(1000.00);
         AccountEmployee.setAbsoluteLimit(0.00);
+
+        transaction1 = new Transaction();
+        transaction1.setTransactionId(30);
+        transaction1.setAccountFrom(currentAccountUser1.getIBAN());
+        transaction1.setAccountTo(savingAccountUser1.getIBAN());
+        transaction1.setPerformedBy(currentAccountUser1.getId().intValue());
+        transaction1.setUser(currentAccountUser1.getUser());
+        transaction1.timestamp(LocalDateTime.now().toString());
+        transaction1.type(Transaction.TypeEnum.TRANSACTION);
+        transaction1.setAmount(20.00);
     }
 
     @Test
+    @WithMockUser(username = "Frank",password = "test", roles = "EMPLOYEE")
     public void newTransactionNotNull() {
-        Transaction transaction = new Transaction();
-        Assert.assertNotNull(transaction);
+        Assertions.assertNotNull(transaction1);
     }
 
     @Test
-    public void userDataIsSet() {
+    @WithMockUser(username = "Frank",password = "test", roles = "EMPLOYEE")
+    public void transactionDataIsSet() {
 
-        Transaction transaction = new Transaction();
-        transaction.setTransactionId(8);
-        transaction.setAccountFrom("NL00INHO0000000002");
-        transaction.setAccountTo("NL00INHO0000000003");
-        transaction.setAmount(100.00);
-        transaction.setPerformedBy(1);
+        transaction1.setTransactionId(8);
+        transaction1.setAccountFrom("NL00INHO0000000002");
+        transaction1.setAccountTo("NL00INHO0000000003");
+        transaction1.setAmount(100.00);
+        transaction1.setPerformedBy(1);
 
-        Assert.assertNotNull(transaction);
-        Assert.assertEquals(transaction.getAccountFrom(), "NL00INHO0000000002");
-        Assert.assertEquals(transaction.getAccountTo(), "NL00INHO0000000003");
-        Assert.assertEquals(transaction.getAmount(),100.00, 0.001);
-        Assert.assertEquals(transaction.getPerformedBy(),1, 0.001);
+        Assert.assertNotNull(transaction1);
+        Assert.assertEquals(transaction1.getAccountFrom(), "NL00INHO0000000002");
+        Assert.assertEquals(transaction1.getAccountTo(), "NL00INHO0000000003");
+        Assert.assertEquals(transaction1.getAmount(),100.00, 0.001);
+        Assert.assertEquals(transaction1.getPerformedBy(),1, 0.001);
 
     }
 
     @Test
-    public void userTransactionAccountNotSet() {
+    @WithMockUser(username = "Frank",password = "test", roles = "EMPLOYEE")
+    public void transactionDataIsNotSet() {
 
         Transaction transaction = new Transaction();
         transaction.setAmount(25.50);
@@ -116,5 +149,34 @@ class TransactionTest {
         Assert.assertNull(transaction.getAccountFrom());
         Assert.assertNull(transaction.getAccountTo());
 
+    }
+
+    @Test
+    @WithMockUser(username = "Frank",password = "test", roles = "EMPLOYEE")
+    public void transactionIbanFromIsSet() {
+        transaction1.setAccountFrom("NL00INHO0000000002");
+        assertEquals("NL00INHO0000000002", transaction1.getAccountFrom());
+    }
+
+    @Test
+    @WithMockUser(username = "Frank",password = "test", roles = "EMPLOYEE")
+    public void transactionIbanToIsSet() {
+        transaction1.setAccountTo("NL00INHO0000000002");
+        assertEquals("NL00INHO0000000002", transaction1.getAccountTo());
+    }
+
+    @Test
+    @WithMockUser(username = "Frank",password = "test", roles = "EMPLOYEE")
+    public void transactionAmountToIsSet() {
+        Double newBalance = 100.00;
+        transaction1.setAmount(newBalance);
+        assertEquals(newBalance, transaction1.getAmount());
+    }
+
+    @Test
+    @WithMockUser(username = "Frank",password = "test", roles = "EMPLOYEE")
+    public void transactionUserIsSet() {
+        transaction1.setUser(user1);
+        assertEquals(user1, transaction1.getUser());
     }
 }

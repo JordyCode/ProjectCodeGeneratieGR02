@@ -113,7 +113,7 @@ public class AccountsApiControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].id").value(6))
-                .andExpect(jsonPath("$[0].balance").value(500.00))
+                .andExpect(jsonPath("$[0].balance").value(0.00))
                 .andExpect(jsonPath("$[0].accountType").value("Current"))
                 .andExpect(jsonPath("$[0].accountStatus").value("Active"))
                 .andExpect(jsonPath("$[1].accountStatus").value("Inactive"))

@@ -119,7 +119,7 @@ public class AccountServiceTest {
         Assertions.assertEquals(accounts.get(0).getId(), account2.getId(), "The id's should be 1");
         Assertions.assertEquals(accounts.get(1).getId(), account3.getId(), "The id's should be 2");
         Assertions.assertEquals(accounts.get(1).getAbsoluteLimit(), account3.getAbsoluteLimit(), "The absolute limits should be 100.00");
-        Assertions.assertEquals(accounts.get(0).getAccountType(), account3.getAccountType(), "The account types should be savings");
+        Assertions.assertEquals(accounts.get(1).getAccountType(), account3.getAccountType(), "The account types should be savings");
     }
 
     @Test
