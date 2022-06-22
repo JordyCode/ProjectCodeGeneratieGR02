@@ -25,8 +25,8 @@ public class AccountsStepDefinitions extends BaseStepDefinitions implements En {
     //Might have to re-assign a token to user and employee
     private static final String EXPIRED_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJFbXBsb3llZUJhbmsiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn0seyJhdXRob3JpdHkiOiJST0xFX1VTRVIifV0sImlhdCI6MTY1NDE2NTM2MCwiZXhwIjoxNjU0MTY4OTYwfQ.j8dj-6HtG9uA0Oo---iJhUfNyHQh_GQWlk8a_AO-H-Y";
     private static final String INVALID_TOKEN = "this-token-doesnt-work";
-    private static final String VALID_USER_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJGcmVkZHlVc2VyIiwiYXV0aCI6W3siYXV0aG9yaXR5IjoiUk9MRV9VU0VSIn1dLCJpYXQiOjE2NTUyMTAwNzksImV4cCI6MTY1NTU3MDA3OX0.HqikNF-fadu_0kAbNNZhiA-MB-Z0xniDNxpl_gKMHaQ";
-    private static final String VALID_EMPLOYEE_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJFbXBsb3llZUJhbmsiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn0seyJhdXRob3JpdHkiOiJST0xFX1VTRVIifV0sImlhdCI6MTY1NTIxMDEwOCwiZXhwIjoxNjU1NTcwMTA4fQ.6yOvKGAebCAYtcM9Ym6JqCrOPD3yLoCLoPb6Ej25IhU";
+    private static final String VALID_USER_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJGcmVkZHlVc2VyIiwiYXV0aCI6W3siYXV0aG9yaXR5IjoiUk9MRV9VU0VSIn1dLCJpYXQiOjE2NTU4ODE3ODAsImV4cCI6MTY1NjI0MTc4MH0.62Rk6NU9Yec0fMsQzdGq5m6pPztAQhqAFDX_4fekJtk";
+    private static final String VALID_EMPLOYEE_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJFbXBsb3llZUJhbmsiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX0VNUExPWUVFIn0seyJhdXRob3JpdHkiOiJST0xFX1VTRVIifV0sImlhdCI6MTY1NTg4MTYwOSwiZXhwIjoxNjU2MjQxNjA5fQ.Krna1Y2msJ1u6Ql9mLsJI_16pNt1VS-Lgs9P6tjLqso";
 
     private final TestRestTemplate restTemplate = new TestRestTemplate();
     private final ObjectMapper mapper = new ObjectMapper();
